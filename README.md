@@ -41,13 +41,13 @@ puede utilizar algoritmo evolutivo como variante de metaheurística.
 Para poder considerar infinitos criterios de vecindad se construye el lenguaje
 formal formado por todos los posibles criterios de vecindad que se pueden tener
 para este problema, y cada vez que se “cambia de estructura de entorno” se
-genera una nueva cadena del lenguaje, usando una gram´atica libre del contexto.
+genera una nueva cadena del lenguaje, usando una gramática libre del contexto.
 Las cadenas del lenguaje se pueden convertir en código ejecutable para que,
 dada una solución, se pueda explorar su vecindad utilizando el criterio especificado por la cadena.
 
 # Simulación
 
-Se quiere simular el prblema anterior pero asociado al transporte de una empresa para sus trabajadores. 
+Se quiere simular el problema anterior pero asociado al transporte de una empresa para sus trabajadores. 
 Para ello se cuenta con una flota de carros, de distintos modelos, y varios almacenes. Los
 carros salen de sus almacenes o parqueos, respectivamente. Estos siempre pasan por una ruta asociada a cada uno, la misma cada día.
 Los vehículos, con el tiempo, se deterioran y necesitan mantenimiento, con lo
@@ -68,5 +68,5 @@ La empresa cuenta con un monto inicial para la flota de vehiculos y destina en c
 Puede pasar que no hay presupuesto en un momento dado o es muy bajo y 
 se escoge llevar a mantenimiento a un carro con el que se pierde dinero en vez de darlo de baja y comprar uno nuevo.
 	
-El objetivo de los vehiculos es cubrir la ruta, y se quiere disminuir el tiempo de las personas en la parada, 
+El objetivo de los vehículos es cubrir la ruta, y se quiere disminuir el tiempo de las personas en la parada, 
 el gasto de combustible y el tiempo de viaje de todos los trabajadores hasta la empresa.
