@@ -29,17 +29,19 @@ class Route:
 
     def __init__(self, id):
         self.id=id
+        self.stops = []
     
-    def create_route(list):
+    def create_route(stops):
         # verify list is a secuence of positions in a matrix 
-        pass
+        self.stops = stops
         
         
 class Authority:
     """Represents the traffic authorities """
-
-    def __init__(self, id):
+ #position: posicion i,j de la autoridad del transito en la matriz
+    def __init__(self, id, position):
         self.id = id
+        self.position = position
         
 
 class Company:
@@ -57,29 +59,27 @@ class Company:
         self.clients.append(new_client)
 
     
-    
-
 class Vehicle:
     """Represents the vehicles of the company"""
 
-    def __init__(self, id, capacity):
+    def __init__(self, id, capacity, state_of_live):
         self.id = id
         self.capacity=capacity
+        self.state_of_life = state_of_live
                     
 
 class Client:
     """Represents the clients of the company"""
 
-    def __init__(self, id):
+    def __init__(self, id, company):
         self.id=id
+        self.route = []
+        self.company = company
 
 class Person:
     """Represents the person that the vehicle transports"""
 
-    def __init__(self, id):
+    def __init__(self, id, stop, client):
         self.id = id
-        
-
-
-
-
+        self.stop = stop
+        self.client = client
