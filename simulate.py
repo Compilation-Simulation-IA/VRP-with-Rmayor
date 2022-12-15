@@ -25,8 +25,7 @@ def create_vehicules(capacity_list):
     for value, index in enumerate(capacity_list):
         v = Vehicle(index, value, 10)
 
-def get_distance(start, end):
-    pass
+
 
 def generateExponential(lambda_value):
     return -(lambda_value * math.log(random.random()))
@@ -37,7 +36,7 @@ def generateUniform(a,b):
     raise Exception("Invalid argument")
 
 Map = Graph(5,5)
-r1 = Route(id = 1)
+r1 = Route(id = 0)
 #posiciones de la ruta, el 1er elem es la salida y el ultimo la llegada
 r1.create_route([(1,1),(3,2),(4,4),(5,5)])
 Map.insert_route(r1)
