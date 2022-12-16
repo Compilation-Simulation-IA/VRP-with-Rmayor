@@ -12,7 +12,7 @@ class Graph:
         #Asi obtenemos la cantidad de personas en cada parada que conforman una ruta
         self.person_for_stop = [] 
         self.clients = []
-        self.currents = [] # posicion actual de los vehiculos
+        self.currents = [] # posicion actual de los vehiculos( representa un entero)
         self.Arrived = [] #la cantidad de arrivos es igual a la cantidad de clientes q tenga la empresa
         self.Departure = [] # misma idea de Arrived
 
@@ -36,22 +36,27 @@ class Graph:
 
     def drive_next_stop(self, id_vehicle,id_route):
         """ Moves to the next stop until Arrived at the end """
-        if self.currents[id_vehicle] is self.Arrived[id_route]:
+        actual_pos = self.currents[id_vehicle]
+        if actual_pos is self.Arrived[id_route]:
             return 1 #Llego con exito a su destino
 
-        #next_stop = ME QUEDE AQUI
-        
+        self.currents[id_vehicle] = self.routes[id_route][actual_pos + 1]
 
+
+    #start =(x1,y1) , end = (x2,y2)
     def get_distance(self, start, end):
-        pass
+        """Return distance between current and next position in the route"""
+        x_squared = pow((start[0] - end[0]), 2)
+        y_squared = pow((start[1] - end[1]), 2)
+
+        return sqrt(x_squared + y_squared)
 
     def assign_vehicle_to_route(id_vehicle, id_route):
         self.vehicles[id_route].append(id_vehicle)
         
-
 class Route:
     """Represents the path of the map that the vehicle takes to transport product"""
-
+    
     def __init__(self, id):
         self.id=id
         self.stops = []
@@ -59,7 +64,41 @@ class Route:
     def create_route(stops):
         # verify list is a secuence of positions in a matrix 
         self.stops = stops
-        
+
+# Añadir una nueva parada a la ruta
+    def add_stop(self, index_pos, stop):
+        if stop not in self.stops:
+            self.stops.insert(index_pos,stop)
+
+#Eliminar una parada de la ruta
+    def remove_depot_stop(self, depot_stop):
+        self.depot_stops.remove(depot_stop)
+
+
+class Stop:
+    def __init__(self, id_route, x_axis, y_axis, person_list = [], time_waiting = 0):
+        self.id_route = id_route
+        self.person_list = person_list #lista de la clase person
+        self.time_waiting = time_waiting #time_waiting es en minutos
+        self.coordinates = (x_axis, y_axis)
+
+    def __repr__(self):
+        return f"<Stop: Coordinates {self.coordinates} in Route : {self.id_route}>"
+
+    def __str__(self):
+        return f"S({self.coordinates})"
+
+    def increase_wait(self, minutes):
+        self.time_waiting += minutes
+
+    def decrease_wait(self, minutes):
+        self.time_waiting = max(self.time_waiting - minutes, 0)
+
+    def add_person_to_stop(new_person):
+        self.person_list.append(new_person)
+    
+    def delete_person(old_person):
+        self.person_list.remove(old_person)
         
 class Authority:
     """Represents the traffic authorities """
@@ -75,15 +114,23 @@ class Company:
     def __init__(self, id):
         self.id = id
         self.clients=[]
-        self.vehicles=[]
+        self.vehicles=[] #lista de vehiculos q tiene la compañia
+        # una lista de listas de vehiculos. Cada indice representa el cliente y
+        #  los vehiculos q tiene contratado
+        self.assigned_vehicles = [] 
 
-    def add_vehicle(self, new_vehicle):
+    def buy_vehicle(self, new_vehicle):
         self.vehicles.append(new_vehicle)
+    
+    def delete_vehicle(self, old_vehicle):
+        self.vehicles.remove(old_vehicle)
     
     def add_client(self, new_client):
         self.clients.append(new_client)
 
-    
+    def assign_vehicle(self,id_client,id_vehicle):
+        self.assigned_vehicles[id_client].append(id_vehicle)
+        
 class Vehicle:
     """Represents the vehicles of the company"""
 
@@ -108,3 +155,9 @@ class Person:
         self.id = id
         self.stop = stop
         self.client = client
+
+    def __repr__(self):
+        return f"<Person:{self.id}, Stop:{self.stop} , Client:{self.client}>"
+
+    def __str__(self):
+        return f"P({self.id})"
