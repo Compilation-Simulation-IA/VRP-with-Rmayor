@@ -1,0 +1,18 @@
+AGENTS { 
+    func Main {
+        str <- "The big brown fox jumped over the fence";
+    	main() : Object {
+        {
+            out_string("Yay! This is the newest test" );
+        }
+    };
+};
+
+CREATE {
+    vehicle_type big: 35
+    vehicle_type small: 10
+    vehicle_type medium: 18
+}
+(*
+this is a test
+*)
