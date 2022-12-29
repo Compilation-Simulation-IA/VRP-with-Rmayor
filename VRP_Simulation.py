@@ -4,6 +4,7 @@ from agents import *
 import random
 import math
 import networkx as nx
+import time
 
 class VRP_Simulation:
     def __init__(self, graph, company: Company):
@@ -27,7 +28,7 @@ class VRP_Simulation:
                                 next_node = vehicle.route.next_stop(current_location)
                                 cost = self.graph_map.get_edge_data(current_location, next_node)['weight']
                                 vehicle.move(next_node, cost)
-                                vehicle.actual_stop_index = actual_route.stops.index(next_node)
+                                actual_route.actual_stop_index = actual_route.stops.index(next_node)
                             vehicle.total_time_wait = 0
                         vehicle.wait -= 1
                     # Si el nodo actual es un warehouse, significa que el vehículo va a salir del depósito y comenzar su ruta
@@ -44,17 +45,13 @@ class VRP_Simulation:
                         vehicle.wait = vehicle.total_time_wait = on_board # cada persona se demora 3 min en subir al carro
                         vehicle.state = 2
                     # Si el nodo actual es el ultimo de la ruta entonces se bajan los clientes
-                    elif actual_route.actual_stop_index == len(actual_route) - 1 and vehicle.state == 1:
+                    elif actual_route.actual_stop_index == len(actual_route.stops) - 1 and vehicle.state == 1:
                         off = vehicle.drop_off_clients()
                         vehicle.wait = vehicle.total_time_wait = off #tiempo que se demora cada persona en bajar
                         vehicle.state = 3
                     # El vehiculo termino la ruta => comprobar su estado para mandarlo a mantenimiento
                     elif vehicle.state == 3:
-                        vehicle.miles
                         company.check_vehicle(vehicle)
-                        vehicle.state = 4
-                        vehicle.wait = vehicle.total_time_wait = 10 # espera 10 unidades de tiempo
-                        vehicle.total_time_wait = 0
                 else:
                     #El vehiculo esta en mantenimiento y en un warehouse
                     if vehicle.wait - 1 == 0 and vehicle.state == 4:
@@ -64,7 +61,7 @@ class VRP_Simulation:
                     vehicle.wait -= 1
 
             self.global_time +=1
-            time.sleep(5)
+            time.sleep(1)
         
     
     def print_vehicle_locations(self, vehicle: Vehicle):
@@ -74,7 +71,7 @@ class VRP_Simulation:
         else:
             percent_value = (1 - vehicle.wait/vehicle.total_time_wait)* 100
             if vehicle.state == 1: 
-                next_node = vehicle.route.next_stop(current_location)
+                next_node = vehicle.route.next_stop(vehicle.current_location)
                 print(f"El vehículo {vehicle} se está moviendo de {vehicle.current_location} a {next_node}({percent_value}%).")
             elif vehicle.state == 2:
                 print(f"El vehículo {vehicle} está cargando pasajeros en {vehicle.current_location}({percent_value}%).")
@@ -140,7 +137,7 @@ warehouse2 = Warehouse(10, (9, 9))
 warehouse3 = Warehouse(11, (10, 10))
 
 # Crea una lista de tuplas con los nodos y sus atributos
-nodos = [stop1,stop2,stop3,stop4,stop5,stop6,stop7,stop8,warehouse1,warehouse2,warehouse3]
+nodos = [stop1, stop2, stop3, stop4, stop5, stop6, stop7, stop8, warehouse1, warehouse2, warehouse3]
 
 # Añadir nodos
 graph.add_nodes_from(nodos)
@@ -161,14 +158,13 @@ aristas = [
 
 # Añadir aristas
 graph.add_weighted_edges_from(aristas)
-print(list(graph.nodes)[0])
 
 # Crear vehículos y rutas 
 vehicle1 = Vehicle(1,"Ford", nodos[8], True, 8, 0, 50, 5)
 vehicle2 = Vehicle(2,"Lada", nodos[8], True, 8, 0, 30, 5) 
 
 r1 = [nodos[8], nodos[0], nodos[1], nodos[2], nodos[3], nodos[9]]
-r2 = [nodos[8], nodos[4], nodos[4], nodos[6], nodos[7], nodos[10]]
+r2 = [nodos[8], nodos[4], nodos[5], nodos[6], nodos[7], nodos[10]]
 route1 = Route(1, r1)
 route2 = Route(2, r2)
 

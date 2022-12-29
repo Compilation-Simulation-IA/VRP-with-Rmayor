@@ -76,9 +76,8 @@ class Vehicle:
         return result
     
     def drop_off_clients(self) -> int:
-        result = self.clients_on_board
         self.clients_on_board = 0
-        return result
+        return self.clients_on_board
 
 
 class Authority:
@@ -164,14 +163,18 @@ class Company:
                 # El vehículo no necesita mantenimiento todavía o  ya salio del mantenimiento
     
     def check_vehicle(self, vehicle: Vehicle):
-        if vehicle.millas_recorridas >= vehicle.millas_inicial:
+        if vehicle.miles_traveled >= vehicle.initial_miles:
             # El vehículo debe ir al mantenimiento
             select_warehouse = random.randint(0, len(self.warehouses) - 1)
             vehicle.maintenance(self.warehouses[select_warehouse])# al vehiculo se le dara mantenimeinto en el warehouse escogido
+            vehicle.state = 4
+            vehicle.wait = vehicle.total_time_wait = 10 # espera 10 unidades de tiempo
 
             self.in_maintenance.append(vehicle)
         elif vehicle.available and vehicle in self.in_maintenance:
             self.in_maintenance.remove(vehicle)
+        else:
+            vehicle.total_time_wait = 0
 
     def add_clients(self, clients: int, stop: Dict):
         for route in self.routes:
