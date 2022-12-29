@@ -161,6 +161,7 @@ aristas = [
 
 # Añadir aristas
 graph.add_weighted_edges_from(aristas)
+print(list(graph.nodes)[0])
 
 # Crear vehículos y rutas 
 vehicle1 = Vehicle(1,"Ford", nodos[8], True, 8, 0, 50, 5)

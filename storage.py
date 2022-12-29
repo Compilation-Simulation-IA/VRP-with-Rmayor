@@ -19,7 +19,7 @@ class Stop:
         return f"<Stop({self.ID})>"
     
     def __str__(self) -> str:
-        return f"<Stop: ID: {self.id}, Location: {self.location}>"
+        return f"<Stop: ID: {self.ID}, Location: {self.location}>"
 
     def __gt__(self, other_stop):
         return self.index > other_stop.index
