@@ -1,13 +1,13 @@
 import random
-from typing import List, Tuple
-from storage import Route, Warehouse, Node, Edge
+from typing import List, Tuple, Dict
+from storage import Route, Warehouse
 
 class Vehicle:
     wait = 0
     """Representa los vehículos de la compañía"""
     percent_of_deterioration_per_model = {"Lada": 5, "Moskovich": 7,"Ford": 5, "Mercedes Venz":3}
 
-    def __init__(self, ID: int, model: str, current_location: Node, available: bool, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float):
+    def __init__(self, ID: int, model: str, current_location: Dict, available: bool, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float):
         self.ID = ID
         self.model = model # modelo del vehículo
         self.current_location = current_location
@@ -18,24 +18,37 @@ class Vehicle:
         self.std_dev = std_dev   # Desviación estándar inicial del vehículo
         self.spent = 0
         self.route = None
+        self.total_time_wait = 0
         self.clients_on_board = 0
+        self.state = 0 
+        """ los estados son:
+        0 : no hacer nada
+        1 : el vehiculo esta en movimiento
+        2 : el vehiculo esta cargando pasajeros
+        3 : el vehiculo esta descargando pasajeros
+        4 : el vehiculo esta en mantenimiento
+        """
 
     def __repr__(self) -> str:
-        return f"<Vehicle: ID {self.ID}, Model: {self.model}, Capacity: {self.capacity},>" 
+        return f"<Vehicle({self.ID})>" 
+    
+    def __str__(self):
+        return f"<Vehicle: ID {self.ID}, Model: {self.model}>" 
 
-    def move(self, destination: Node):
+    def move(self, destination: Dict, cost: float):
         """Mueve al vehículo a su próximo destino"""
+        self.miles_traveled += cost
         self.current_location = destination
     
-    def maintenance(self, time: int):
+    def maintenance(self, warehouse: Dict):
         """Le proporciona mantenimiento al vehiculo y disminuye el valor de millas_inicial en 
         dependencia del valor que devuelve la Gaussiana. Con esto se simula el deterioro del mismo."""
         self.available = False
+        self.current_location = warehouse
         self.initial_miles -= random.gauss(0, self.std_dev)
         self.miles_traveled = 0
-        #poner un Sleep donde el vehiculo se queda en manteniemiento
         self.spent += 100 # Aumenta el gasto acumulado en mantenimientos del vehículo
-        self.available = True
+        
         #f"Tarea de mantenimiento programada para {time} días. Valor actual de millas inicial: {self.millas_inicial}. Gasto acumulado: {self.gasto}"
         
     def assign_route(self, route: Route) -> bool:
@@ -58,22 +71,26 @@ class Vehicle:
          capacidad disponible en el vehículo"""
         result = min(self.capacity - self.clients_on_board, self.current_location.total_client)
         self.clients_on_board += result
+        self.current_location.remove_client(result)
+        # return result* self.current_location.time_waiting
         return result
     
     def drop_off_clients(self) -> int:
-        result = self.clients_on_board
         self.clients_on_board = 0
-        return result
+        return self.clients_on_board
 
 
 class Authority:
     """Representa la autoridad del trafico """
-    def __init__(self, ID: int, position: Edge, probability: float):
+    def __init__(self, ID: int, position: Dict, probability: float):
         self.ID = ID
         self.position = position
         self.probability = probability  # Probabilidad de que la autoridad para al vehículo
         
     def __repr__(self) -> str:
+        return f"<Authority({self.ID})>"
+    
+    def __str__(self) -> str:
         return f"<Authority: ID {self.ID}, Position: {self.position}>"
     
     def stop_vehicle(self) -> bool:
@@ -94,6 +111,9 @@ class Company:
 
     def __repr__(self) -> str:
         return f"<Company: {self.name}>"
+    
+    def __str__(self) -> str:
+        return f"<Company: {self.name}>"
 
     def add_warehouse(self, warehouse: Warehouse):
         self.warehouses.append(warehouse)
@@ -108,14 +128,14 @@ class Company:
         self.routes.remove(route)
     
     # Añadir una parada a la ruta especificada
-    def insert_stop(self, route: Route, stop: Node): 
+    def insert_stop(self, route: Route, stop: Dict): 
         route.add_stop(stop)
         
-    def relocate_stop(self, stop: Node, from_route: Route, to_route: Route):
+    def relocate_stop(self, stop: Dict, from_route: Route, to_route: Route):
         from_route.remove_stop(stop)
         to_route.add_stop(stop)
     
-    def swap_stops(self, stop1: Node, route1: Route, stop2: Node, route2: Route):
+    def swap_stops(self, stop1: Dict, route1: Route, stop2: Dict, route2: Route):
         route1.stops[route1.stops.index(stop1)] = stop2
         route2.stops[route2.stops.index(stop2)] = stop1
         
@@ -129,15 +149,7 @@ class Company:
     
     def delete_vehicle(self, old_vehicle: Vehicle, cost: int):
         self.vehicles.remove(old_vehicle)
-        self.budget +=cost
-    
-    def assign_vehicles_to_route(self, route: Route, vehicles: List[Vehicle]): #QUITAR
-        for v in vehicles:
-            route.assign_vehicle(v)
-    
-    def unassign_vehicle_from_route(self, route: Route, vehicles: List[Vehicle]):
-        for v in vehicles:
-            route.unassign_vehicle(v)
+        self.budget += cost
 
     def check_vehicules(self): # PROPUESTA: QUE CHEQUEE UN VEHICULO A LA VEZ Y NO TODOS
         """Determina si cada vehículo debe ir al mantenimiento o no."""
@@ -149,22 +161,36 @@ class Company:
             elif vehicle.available:
                 self.in_maintenance.remove(vehicle)
                 # El vehículo no necesita mantenimiento todavía o  ya salio del mantenimiento
+    
+    def check_vehicle(self, vehicle: Vehicle):
+        if vehicle.miles_traveled >= vehicle.initial_miles:
+            # El vehículo debe ir al mantenimiento
+            select_warehouse = random.randint(0, len(self.warehouses) - 1)
+            vehicle.maintenance(self.warehouses[select_warehouse])# al vehiculo se le dara mantenimeinto en el warehouse escogido
+            vehicle.state = 4
+            vehicle.wait = vehicle.total_time_wait = 10 # espera 10 unidades de tiempo
 
-    def add_clients(self, clients: int, stop: Node):
+            self.in_maintenance.append(vehicle)
+        elif vehicle.available and vehicle in self.in_maintenance:
+            self.in_maintenance.remove(vehicle)
+        else:
+            vehicle.total_time_wait = 0
+
+    def add_clients(self, clients: int, stop: Dict):
         for route in self.routes:
             if stop in route.stops:
                 stop.value.add_client(clients)
             return # f"Cliente añadido con exito."
         raise Exception("La parada proporcionada no pertenece a ninguna ruta")
     
-    def remove_clients(self, clients: int, stop: Node):
+    def remove_clients(self, clients: int, stop: Dict):
         for route in self.routes:
             if stop in route.stops:
                 stop.value.remove_client(clients)
             return # f"Cliente añadido con exito."
         raise Exception("La parada proporcionada no pertenece a ninguna ruta")
 
-    def add_authority(self, authority: Authority, edge: Edge): 
+    def add_authority(self, authority: Authority, edge: Dict): 
         """Añade una autoridad que puede parar a los vehículos en una arista del grafo."""
         self.authorities.append(authority)
         edge.authorities.append(authority)
