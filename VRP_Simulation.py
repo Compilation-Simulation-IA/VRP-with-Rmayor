@@ -5,13 +5,12 @@ import random
 import math
 import networkx as nx
 
-
 class VRP_Simulation:
     def __init__(self, graph, company: Company):
         self.graph_map = graph
         self.company = company
         self.global_time = 0
-
+        
     def simulate_routing(self):
         while True:
             print(f"Tiempo: {self.global_time} min")
@@ -26,7 +25,7 @@ class VRP_Simulation:
                         if vehicle.wait - 1 == 0:#ultimo ciclo de espera
                             if vehicle.state == 1:
                                 next_node = vehicle.route.next_stop(current_location)
-                                cost = graph.get_edge(current_location, next_node).cost
+                                cost = self.graph_map.get_edge_data(current_location, next_node)['weight']
                                 vehicle.move(next_node, cost)
                                 vehicle.actual_stop_index = actual_route.stops.index(next_node)
                             vehicle.total_time_wait = 0
@@ -34,13 +33,13 @@ class VRP_Simulation:
                     # Si el nodo actual es un warehouse, significa que el vehículo va a salir del depósito y comenzar su ruta
                     # El vehiculo termino de recoger a los clientes de esa parada y se dispone a ir a la siguiente parada
                     # El vehiculo llega a una parada donde no tiene q recoger a nadie entonces continua (isinstance(current_location, None))
-                    elif (isinstance(current_location.value, Warehouse) and vehicle.state == 0) or (isinstance(current_location.value, Stop) and vehicle.state == 2) or ((not isinstance(current_location.value, Stop) and not isinstance(current_location.value, Warehouse)) and vehicle.state == 1):
+                    elif (isinstance(current_location, Warehouse) and vehicle.state == 0) or (isinstance(current_location, Stop) and vehicle.state == 2) or ((not isinstance(current_location, Stop) and not isinstance(current_location, Warehouse)) and vehicle.state == 1):
                         next_node = vehicle.route.next_stop(current_location)
-                        edge = self.graph_map.get_edge(current_location, next_node)
-                        vehicle.wait = vehicle.total_time_wait = edge.cost
+                        edge = self.graph_map.get_edge_data(current_location, next_node)
+                        vehicle.wait = vehicle.total_time_wait = edge['weight']
                         vehicle.state = 1
                     #Si el nodo actual es una parada de tipo Stop, significa que el vehículo debe recoger a los clientes que se encuentran en esa parada
-                    elif isinstance(current_location.value, Stop) and vehicle.state == 1:
+                    elif isinstance(current_location, Stop) and vehicle.state == 1:
                         on_board = vehicle.pick_up_clients()
                         vehicle.wait = vehicle.total_time_wait = on_board # cada persona se demora 3 min en subir al carro
                         vehicle.state = 2
@@ -140,35 +139,35 @@ warehouse1 = Warehouse(9 , (8, 8))
 warehouse2 = Warehouse(10, (9, 9))
 warehouse3 = Warehouse(11, (10, 10))
 
-nodos = [
-    (stop1, {'ID': stop1.ID, 'total_client': stop1.total_client, 'location': stop1.location, 'time_waiting': stop1.time_waiting}),
-    (stop2, {'ID': stop2.ID, 'total_client': stop2.total_client, 'location': stop2.location, 'time_waiting': stop2.time_waiting}),
-    (stop3, {'ID': stop3.ID, 'total_client': stop3.total_client, 'location': stop3.location, 'time_waiting': stop3.time_waiting}),
-    (stop4, {'ID': stop4.ID, 'total_client': stop4.total_client, 'location': stop4.location, 'time_waiting': stop4.time_waiting}),
-    (stop5, {'ID': stop5.ID, 'total_client': stop5.total_client, 'location': stop5.location, 'time_waiting': stop5.time_waiting}),
-    (stop6, {'ID': stop6.ID, 'total_client': stop6.total_client, 'location': stop6.location, 'time_waiting': stop6.time_waiting}),
-    (stop7, {'ID': stop7.ID, 'total_client': stop7.total_client, 'location': stop7.location, 'time_waiting': stop7.time_waiting}),
-    (stop8, {'ID': stop8.ID, 'total_client': stop8.total_client, 'location': stop8.location, 'time_waiting': stop8.time_waiting}),
-    (warehouse1, {'ID' : warehouse1.ID, 'location' : warehouse1.location}),
-    (warehouse2, {'ID' : warehouse2.ID, 'location' : warehouse2.location}),
-    (warehouse3, {'ID' : warehouse3.ID, 'location' : warehouse3.location})
-]
-
+# Crea una lista de tuplas con los nodos y sus atributos
+nodos = [stop1,stop2,stop3,stop4,stop5,stop6,stop7,stop8,warehouse1,warehouse2,warehouse3]
 
 # Añadir nodos
 graph.add_nodes_from(nodos)
 
+# Crea una lista de tuplas con las aristas y sus atributos
+aristas = [
+    (nodos[8], nodos[0], 1),
+    (nodos[0], nodos[1], 1),
+    (nodos[1], nodos[2], 1),
+    (nodos[2], nodos[3], 1),
+    (nodos[3], nodos[9], 1),
+    (nodos[8], nodos[4], 2),
+    (nodos[4], nodos[5], 2),
+    (nodos[5], nodos[6], 2),
+    (nodos[6], nodos[7], 2),
+    (nodos[7], nodos[10], 2),
+]
 
 # Añadir aristas
-graph.add_weighted_edges_from([(nodos[8], nodos[0], 1), (nodos[0], nodos[1], 1), (nodos[1], nodos[2], 1), (nodos[2], nodos[3], 1), (nodos[3], nodos[9], 1)])
-graph.add_weighted_edges_from([(nodos[8], nodos[4], 2), (nodos[4], nodos[5], 2), (nodos[5], nodos[6], 2), (nodos[6], nodos[7], 2), (nodos[7], nodos[10], 2)])
+graph.add_weighted_edges_from(aristas)
 
 # Crear vehículos y rutas 
-vehicle1 = Vehicle(1,"Ford", warehouse1, True, 8, 0, 50, 5)
-vehicle2 = Vehicle(2,"Lada", warehouse1, True, 8, 0, 30, 5) 
+vehicle1 = Vehicle(1,"Ford", nodos[8], True, 8, 0, 50, 5)
+vehicle2 = Vehicle(2,"Lada", nodos[8], True, 8, 0, 30, 5) 
 
-r1 = [(nodos[8], nodos[0], nodos[1], nodos[2], nodos[3], nodos[9])]
-r2 = [(nodos[8], nodos[4], nodos[4], nodos[6], nodos[7], nodos[10])]
+r1 = [nodos[8], nodos[0], nodos[1], nodos[2], nodos[3], nodos[9]]
+r2 = [nodos[8], nodos[4], nodos[4], nodos[6], nodos[7], nodos[10]]
 route1 = Route(1, r1)
 route2 = Route(2, r2)
 

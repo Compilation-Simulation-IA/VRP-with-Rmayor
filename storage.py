@@ -16,7 +16,7 @@ class Stop:
         self.location = location
 
     def __repr__(self) -> str:
-        return f"<Stop({self.id})>"
+        return f"<Stop({self.ID})>"
     
     def __str__(self) -> str:
         return f"<Stop: ID: {self.id}, Location: {self.location}>"
@@ -55,63 +55,6 @@ class Warehouse:
     def __str__(self) -> str:
         return f"<Warehouse: ID: {self.ID}, Location: {self.location}>"
         
-#class Node:
-#    """Nodos del grafo. La variable value puede ser un Stop, Warehouse o 
-#    simplemente una parada vacia(no tiene que recoger a nadie)"""
-#
-#    def __init__(self, value: Union[None, Stop, Warehouse]):
-#        self.ID = value.ID  # Identificador único del nodo
-#        self.location = value.location  # Tupla con las coordenadas (latitud, longitud) de la ubicación del nodo
-#        self.value = value
-#
-#    def __repr__(self) -> str:
-#        return f"<Node({self.value})>"
-#    
-#    def __str__(self) -> str:
-#        return f"<Node: Value: {self.value}>"
-#
-#class Edge:
-#    def __init__(self, start: Node, end: Node, cost: float):
-#        self.start = start  # Nodo de inicio de la arista
-#        self.end = end  # Nodo de fin de la arista
-#        self.cost = cost  # Costo de recorrer la arista
-#        # Puede estar vacio.
-#    
-#    def __repr__(self) -> str:
-#        return f"<Edge: Start {self.start}, End: {self.end}>"
-#    
-#    def __str__(self) -> str:
-#        return f"<Edge: Start {self.start}, End: {self.end}, Cost: {self.cost}>"
-#
-#
-#class Graph:
-#    def __init__(self):
-#        self.graph = nx.Graph()  # Crear un grafo vacío 
-#
-#    def __repr__(self) -> str:
-#        return f"<Graph: Nodes Number: {len(self.graph.nodes)}, Edges Number: {len(self.graph.edges)}>"
-#    
-#    def __str__(self) -> str:
-#        return f"<Graph: Nodes Number: {len(self.nodes)}, Edges Number: {len(self.edges)}>"
-#    
-#    def get_edge(self, start: Dict, end: Dict) -> Edge:
-#        for edge in self.graph.edges: #self.graph.edges VER SI QUITO LA LISTA DE NODES Y EDGES
-#            if edge.start == start.ID and edge.end == end.ID:
-#                return edge
-#        return None  # Si no se encuentra la arista, devolver None
-#    
-#    def get_neighbors(self, node: Dict) -> List[Dict]:
-#        neighbors = []
-#        for neighbor in self.graph.neighbors(node.ID):  # Obtener vecinos del nodo a través del grafo
-#            neighbors.append(self.get_node_by_ID(neighbor))
-#        return neighbors
-#    
-#    def get_node_by_ID(self, ID: int) -> Dict:
-#        for node in self.nodes:
-#            if node.ID == ID:
-#                return node
-#        return None  # Si no se encuentra el nodo, devolver None
-
 class Distribution_Type: 
     """ Clase para guardar todas las distribuciones que siguen las variables del problema"""
     def __init__(self):
