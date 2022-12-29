@@ -1,4 +1,55 @@
-AGENTS { 
+
+
+
+stops{
+    s1 (address:"")
+
+
+
+
+}
+
+
+clients {
+    
+    c1 (name: 'Coca Cola', )
+    
+
+
+}
+
+
+
+vehicle {
+    
+    vehicle_type small (miles: 40000, capacity: 30),
+    vehicle_type medium (miles: 40000, capacity: 70),
+    
+    small[count] = 6
+    medium[count] = 7
+
+}
+
+ 
+demands {
+    while 
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+(*AGENTS { 
     func Main {
         str <- "The big brown fox jumped over the fence";
     	main() : Object {
@@ -16,3 +67,4 @@ CREATE {
 (*
 this is a test
 *)
+)*
