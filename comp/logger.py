@@ -6,7 +6,7 @@ cwd = os.getcwd()
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename=f"parselog.txt",
+    filename=f"VRP-IVNS/comp/parselog.txt",
     filemode="w",
     format="%(filename)10s:%(lineno)4d:%(message)s"
 )

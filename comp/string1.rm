@@ -1,42 +1,36 @@
-
-
-
-stops{
-    s1 (address:"")
-
-
+map {
+    import ...
 
 
 }
 
+stops{
+    s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+
+}
+
+vehicle_type {
+    
+    small (miles: 40000, capacity: 30),
+    medium (miles: 40000, capacity: 70)
+}
 
 clients {
     
-    c1 (name: 'Coca Cola', )
-    
-
+    c1 (name: "Coca Cola'", stops: (s1,s2,s3) ) (*puede cambiarse por []*)
 
 }
 
-
-
-vehicle {
-    
-    vehicle_type small (miles: 40000, capacity: 30),
-    vehicle_type medium (miles: 40000, capacity: 70),
-    
-    small[count] = 6
-    medium[count] = 7
+company {
+    budget: 1000000
+    vehicle_type small : 5
+    vehicle_type medium : 3
 
 }
 
- 
 demands {
-    while 
-
-
-
-
+    
+    func main
 
 }
 
@@ -67,4 +61,4 @@ CREATE {
 (*
 this is a test
 *)
-)*
+*)
