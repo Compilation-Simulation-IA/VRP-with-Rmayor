@@ -189,10 +189,10 @@ class RmayorLexer:
         self._update_column(t)
         return t
 
-    # def t_arroba(self, t):
-    #     r'@'
-    #     self._update_column(t)
-    #     return t
+    def t_arroba(self, t):
+        r'@'
+        self._update_column(t)
+        return t
 
     def t_rarrow(self, t):
         r'=>'
@@ -324,7 +324,7 @@ class RmayorLexer:
 if __name__ == "__main__":
     lexer = RmayorLexer()
 
-    data = open('comp/string1.rm', encoding='utf-8')
+    data = open('VRP-IVNS/comp/string1.rm', encoding='utf-8')
     data = data.read()
     res = lexer.tokenize_text(data)
     # pprint(res)
