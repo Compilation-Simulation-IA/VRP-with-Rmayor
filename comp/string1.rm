@@ -11,8 +11,8 @@ stops{
 
 vehicle_type {
     
-    small (miles: 40000, capacity: 30),
-    medium (miles: 40000, capacity: 70)
+    small (miles: 40000, capacity: 30);
+    medium (miles: 40000, capacity: 70);
 }
 
 clients {
@@ -22,15 +22,18 @@ clients {
 }
 
 company {
-    budget: 1000000
-    vehicle_type small : 5
-    vehicle_type medium : 3
+    budget: 1000000;
+    vehicle_type small : 5;
+    vehicle_type medium : 3;
 
 }
 
 demands {
     
-    func main
+    func main (): Object 
+    {
+        out_string("Yay! This is the newest test" );
+    }
 
 }
 
@@ -46,7 +49,7 @@ demands {
 (*AGENTS { 
     func Main {
         str <- "The big brown fox jumped over the fence";
-    	main() : Object {
+    	main() : Object
         {
             out_string("Yay! This is the newest test" );
         }

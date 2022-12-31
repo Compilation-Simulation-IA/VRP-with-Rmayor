@@ -1,14 +1,14 @@
 reserved = {
+    'class': 'class',
     'import': 'import',
-    'map': 'map',
     'stop': 'stop',
     'vehicle_type': 'vehicle_type',
     'client': 'client',
     'stops': 'stops',
-    'company': 'company',            
+    'company': 'company',
     'environment': "environment",
     'demands': 'demands',
-    'main': 'main',  
+    'main': 'main',
     'map': "map",
     'miles': 'miles',
     'name': 'name',
@@ -16,7 +16,7 @@ reserved = {
     'capacity': 'capacity',
     'address': 'address',
     'people': 'people',
-    
+
     'create': "create",
     'as': "as",
     'if': "if",
@@ -49,7 +49,7 @@ tokens = [
     'ccur',     # '} '
     'osquare',  # '['
     'csquare',  # ']'
-    
+
     'larrow',   # '<-'
     'rarrow',   # '->'
     'arroba',   # '@'
@@ -69,12 +69,6 @@ tokens = [
 
     'and',          # &
     'or',           # |
-
-
-
-
-    # 'vehicle_type',  # VEHICLE TYPE
-
 
 
     'id',

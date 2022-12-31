@@ -32,38 +32,39 @@ class Parser:
 
 class RmayorParser(Parser):
     def p_program(self, p):
-        'program : class_list'
+        # 'program : class_list'
+        'program : feature_list'
         p[0] = ProgramNode(p[1])
 
     def p_epsilon(self, p):
         'epsilon :'
         pass
 
-    def p_class_list(self, p):
-        '''class_list : def_class class_list 
-                      | def_class'''
-        p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
+    # def p_class_list(self, p):
+    #     '''class_list : def_class class_list 
+    #                   | def_class'''
+    #     p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
 
-    def p_class_list_error(self, p):
-        '''class_list : error class_list'''
-        p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
+    # def p_class_list_error(self, p):
+    #     '''class_list : error class_list'''
+    #     p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
 
-    def p_def_class(self, p):
-        '''def_class : class type ocur feature_list ccur semi 
-                     | class type inherits type ocur feature_list ccur semi'''
-        if len(p) == 7:
-            p[0] = ClassDeclarationNode(p.slice[2], p[4])
-        else:
-            p[0] = ClassDeclarationNode(p.slice[2], p[6], p.slice[4])
+    # def p_def_class(self, p):
+    #     '''def_class : class type ocur feature_list ccur semi 
+    #                  | class type inherits type ocur feature_list ccur semi'''
+    #     if len(p) == 7:
+    #         p[0] = ClassDeclarationNode(p.slice[2], p[4])
+    #     else:
+    #         p[0] = ClassDeclarationNode(p.slice[2], p[6], p.slice[4])
 
-    def p_def_class_error(self, p):
-        '''def_class : class error ocur feature_list ccur semi 
-                     | class type ocur feature_list ccur error   
-                     | class error inherits type ocur feature_list ccur semi
-                     | class error inherits error ocur feature_list ccur semi
-                     | class type inherits error ocur feature_list ccur semi
-                     | class type inherits type ocur feature_list ccur error'''
-        p[0] = ErrorNode()
+    # def p_def_class_error(self, p):
+    #     '''def_class : class error ocur feature_list ccur semi 
+    #                  | class type ocur feature_list ccur error   
+    #                  | class error inherits type ocur feature_list ccur semi
+    #                  | class error inherits error ocur feature_list ccur semi
+    #                  | class type inherits error ocur feature_list ccur semi
+    #                  | class type inherits type ocur feature_list ccur error'''
+    #     p[0] = ErrorNode()
 
     def p_feature_list(self, p):
         '''feature_list : epsilon
@@ -92,14 +93,14 @@ class RmayorParser(Parser):
         p[0] = ErrorNode()
 
     def p_def_func(self, p):
-        'def_func : id opar formals cpar colon type ocur expr ccur'
-        p[0] = FuncDeclarationNode(p.slice[1], p[3], p.slice[6], p[8])
+        'def_func : func id opar formals cpar colon type ocur expr ccur'
+        p[0] = FuncDeclarationNode(p.slice[2], p[4], p.slice[7], p[9])
 
     def p_def_func_error(self, p):
-        '''def_func : error opar formals cpar colon type ocur expr ccur
-                    | id opar error cpar colon type ocur expr ccur
-                    | id opar formals cpar colon error ocur expr ccur
-                    | id opar formals cpar colon type ocur error ccur'''
+        '''def_func : func error opar formals cpar colon type ocur expr ccur
+                    | func id opar error cpar colon type ocur expr ccur
+                    | func id opar formals cpar colon error ocur expr ccur
+                    | func id opar formals cpar colon type ocur error ccur'''
         p[0] = ErrorNode()
 
     def p_formals(self, p):
@@ -114,8 +115,8 @@ class RmayorParser(Parser):
         p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[3]
 
     # def p_param_list_error(self, p):
-    #     '''param_list : error comma param_list'''
-    #     p[0] = [ErrorNode()]
+        # '''param_list : error comma param_list'''
+        # p[0] = [ErrorNode()]
 
     def p_param_list_empty(self, p):
         'param_list_empty : epsilon'
@@ -180,11 +181,11 @@ class RmayorParser(Parser):
         elif p[2] == '=':
             p[0] = EqualNode(p[1], p[3])
 
-    # def p_comp_error(self, p):
-    #     '''comp : comp less error
-    #             | comp lesseq error
-    #             | comp equal error'''
-    #     p[0] = ErrorNode()
+    # # def p_comp_error(self, p):
+    # #     '''comp : comp less error
+    # #             | comp lesseq error
+    # #             | comp equal error'''
+    # #     p[0] = ErrorNode()
 
     def p_op(self, p):
         '''op : op plus term
