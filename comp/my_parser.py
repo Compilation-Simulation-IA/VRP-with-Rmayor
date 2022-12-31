@@ -14,7 +14,7 @@ from tokens import tokens
 class Parser:
     def __init__(self, lexer=None):
         self.lexer = lexer if lexer else RmayorLexer()
-        self.outputdir = 'output_parser/'
+        self.outputdir = 'comp/output_parser/'
         self.tokens = tokens
         self.errors = False
         self.parser = yacc.yacc(start='program',
@@ -41,7 +41,7 @@ class RmayorParser(Parser):
         pass
 
     # def p_class_list(self, p):
-    #     '''class_list : def_class class_list 
+    #     '''class_list : def_class class_list
     #                   | def_class'''
     #     p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
 
@@ -50,7 +50,7 @@ class RmayorParser(Parser):
     #     p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
 
     # def p_def_class(self, p):
-    #     '''def_class : class type ocur feature_list ccur semi 
+    #     '''def_class : class type ocur feature_list ccur semi
     #                  | class type inherits type ocur feature_list ccur semi'''
     #     if len(p) == 7:
     #         p[0] = ClassDeclarationNode(p.slice[2], p[4])
@@ -58,8 +58,8 @@ class RmayorParser(Parser):
     #         p[0] = ClassDeclarationNode(p.slice[2], p[6], p.slice[4])
 
     # def p_def_class_error(self, p):
-    #     '''def_class : class error ocur feature_list ccur semi 
-    #                  | class type ocur feature_list ccur error   
+    #     '''def_class : class error ocur feature_list ccur semi
+    #                  | class type ocur feature_list ccur error
     #                  | class error inherits type ocur feature_list ccur semi
     #                  | class error inherits error ocur feature_list ccur semi
     #                  | class type inherits error ocur feature_list ccur semi
