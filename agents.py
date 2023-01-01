@@ -1,6 +1,12 @@
 import random
 from typing import List, Tuple, Dict
 from storage import Route, Warehouse
+from enum import Enum
+
+class Color(Enum):
+    GREEN = 0,
+    YELLOW = 1,
+    RED = 2
 
 class Vehicle:
     wait = 0
@@ -79,6 +85,27 @@ class Vehicle:
         self.clients_on_board = 0
         return self.clients_on_board
 
+class Semaphore:
+    """Representa los semaforos en el mapa"""
+    def __init__(self, ID: int, location: Tuple[float, float], color_range: [int]):
+        self.ID =ID
+        self.location = location
+        self.state = Color.GREEN
+        self.color_range = color_range
+    
+    def __repr__(self) -> str:
+        return f"<Semaphore({self.ID})>"
+    
+    def __str__(self) -> str:
+        return f"<Semaphore: ID {self.ID}, State: {self.state}, Location: {self.location}>"
+
+    def change_color(self, global_time: int) -> Color:
+        for i in range(0,2):
+            if global_time - self.color_range[i] <=0:
+                self.state = Color(i)
+                return self.state
+            global_time -= self.color_range[i]
+        
 
 class Authority:
     """Representa la autoridad del trafico """
@@ -173,8 +200,6 @@ class Company:
             self.in_maintenance.append(vehicle)
         elif vehicle.available and vehicle in self.in_maintenance:
             self.in_maintenance.remove(vehicle)
-        else:
-            vehicle.total_time_wait = 0
 
     def add_clients(self, clients: int, stop: Dict):
         for route in self.routes:
