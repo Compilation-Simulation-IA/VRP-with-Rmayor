@@ -45,7 +45,7 @@ class Stop:
 
 class Warehouse:
     """Representa un almacén o depósito central."""
-    def __init__(self, ID: int, location: Tuple[float, float] ):
+    def __init__(self, ID: int, location: Tuple[float, float]):
         self.ID = ID
         self.location = location
     
