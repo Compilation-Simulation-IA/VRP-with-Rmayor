@@ -87,7 +87,7 @@ class Vehicle:
 
 class Semaphore:
     """Representa los semaforos en el mapa"""
-    def __init__(self, ID: int, location: Tuple[float, float], color_range: [int]):
+    def __init__(self, ID: int, location: Tuple[float, float], color_range: List[int]): # Cambiado por [int], daba un error
         self.ID =ID
         self.location = location
         self.state = Color.GREEN
