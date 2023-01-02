@@ -1,0 +1,10 @@
+# https://git-scm.com/docs/gitignore
+# https://help.github.com/articles/ignoring-files
+# Example .gitignore files: https://github.com/github/gitignore
+/.vscode/
+.dist/
+__pycache__/
+parserlog.txt
+/__pycache__/
+output_parser/
+parselog.txt

@@ -1,5 +1,5 @@
 from ply.lex import LexToken
-
+from my_types import CustomVehicleType
 
 class Node:
     pass
@@ -9,7 +9,47 @@ class ProgramNode(Node):
     def __init__(self, declarations):
         self.declarations = declarations
 
+class MapNode(Node):
+    def __init__(self, map):
+        self.map = map
+        
+class StopsNode:
+    def __init__(self, stop_declarations):
+        self.stop_declarations = stop_declarations
+        
+    def size(self):
+        return len(self.stop_declarations)
 
+class StopDeclarationNode:
+    def __init__(self, identifier, address, people):
+        self.identifier = identifier
+        self.address = address
+        self.people = people
+
+class VehicleTypeNode:
+    def __init__(self, declarations):
+        self.declarations = declarations
+class VehicleTypeDeclarationNode:
+    def __init__(self, identifier, miles, capacity):
+        self.identifier = identifier
+        self.miles = miles
+        self.capacity = capacity
+        self.type = CustomVehicleType(identifier, miles, capacity, (0, 0))
+
+class ClientsNode:
+    def __init__(self, client_declarations):
+        self.client_declarations = client_declarations
+
+class ClientDeclarationNode:
+    def __init__(self, identifier, name, stops):
+        self.identifier = identifier
+        self.name = name
+        self.stops = stops
+        
+class CompanyBlockNode:
+    def __init__(self, budget, vehicle_declarations):
+        self.budget = budget
+        self.vehicle_declarations = vehicle_declarations
 class DeclarationNode(Node):
     pass
 
@@ -22,18 +62,18 @@ class ErrorNode(Node):
     pass
 
 
-class ClassDeclarationNode(DeclarationNode):
-    def __init__(self, idx: LexToken, features, parent=None):
-        self.id = idx.value
-        self.pos = (idx.lineno, idx.column)
-        if parent:
-            self.parent = parent.value
-            self.parent_pos = (parent.lineno, parent.column)
-        else:
-            self.parent = None
-            self.parent_pos = (0, 0)
-        self.features = features
-        self.token = idx
+# class ClassDeclarationNode(DeclarationNode):
+#     def __init__(self, idx: LexToken, features, parent=None):
+#         self.id = idx.value
+#         self.pos = (idx.lineno, idx.column)
+#         if parent:
+#             self.parent = parent.value
+#             self.parent_pos = (parent.lineno, parent.column)
+#         else:
+#             self.parent = None
+#             self.parent_pos = (0, 0)
+#         self.features = features
+#         self.token = idx
 
 
 class _Param:
