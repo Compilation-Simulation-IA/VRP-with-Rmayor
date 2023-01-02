@@ -1,14 +1,11 @@
 reserved = {
-    'class': 'class',
     'import': 'import',
-    'stop': 'stop',
+    'stops_list': 'stops_list',
     'vehicle_type': 'vehicle_type',
-    'client': 'client',
+    'clients': 'clients',
     'stops': 'stops',
     'company': 'company',
-    'environment': "environment",
     'demands': 'demands',
-    'main': 'main',
     'map': "map",
     'miles': 'miles',
     'name': 'name',
@@ -17,8 +14,7 @@ reserved = {
     'address': 'address',
     'people': 'people',
 
-    'create': "create",
-    'as': "as",
+   # 'as': "as",
     'if': "if",
     'fi': 'fi',
     'then': "then",
@@ -28,14 +24,14 @@ reserved = {
     'pool': 'pool',
     'false': 'false',
     'new': 'new',
-    'of': 'of',
+    #'of': 'of',
     'not': 'not',
     'true': 'true',
     'let': 'let',
     'in': 'in',
     'func': 'func',
     'isvoid': 'isvoid',
-    'inherits': 'inherits',
+    #'inherits': 'inherits',
 }
 
 tokens = [
@@ -47,11 +43,9 @@ tokens = [
     'cpar',     # ') '
     'ocur',     # '{'
     'ccur',     # '} '
-    'osquare',  # '['
-    'csquare',  # ']'
 
     'larrow',   # '<-'
-    'rarrow',   # '->'
+    #'rarrow',   # '->'
     'arroba',   # '@'
     'nox',          # ~
 
@@ -59,16 +53,18 @@ tokens = [
     'minus',        # -
     'star',     # \*
     'div',       # /
-    'mod',       # %
+    #'mod',       # %
     'equal',     # =
     'lesseq',       # <=
+    #'moreeq',     # >=
     'less',         # <
+    #'more',        # >
 
 
 
 
-    'and',          # &
-    'or',           # |
+    #'and',          # &
+    #'or',           # |
 
 
     'id',

@@ -253,8 +253,10 @@ class IntType(Type):
 
 
 class VehicleType(Type):
-    def __init__(self, pos=(0, 0)):
+    def __init__(self, miles, capacity, pos=(0, 0)):
         self.name = 'vehicle_type'
+        self.miles = miles
+        self.capacity = capacity
         self.attributes = {}
         self.methods = {}
         self.parent = None
@@ -275,7 +277,14 @@ class VehicleType(Type):
     def __ne__(self, other):
         return other.name != self.name and not isinstance(other, IntType)
 
-
+class CustomVehicleType(VehicleType):
+    def __init__(self, name, miles, capacity, pos):
+        super().__init__(pos)
+        self.name = name
+        self.miles = miles
+        self.capacity = capacity
+        
+        
 class StringType(Type):
     def __init__(self, pos=(0, 0)):
         self.name = 'String'

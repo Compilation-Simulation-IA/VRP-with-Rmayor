@@ -174,6 +174,16 @@ class RmayorLexer:
         self._update_column(t)
         return t
 
+    def t_osquare(self, t):
+        r'\['
+        self._update_column(t)
+        return t
+
+    def t_csquare(self, t):
+        r'\]'
+        self._update_column(t)
+        return t
+
     def t_ocur(self, t):
         r'\{'
         self._update_column(t)
@@ -195,7 +205,7 @@ class RmayorLexer:
         return t
 
     def t_rarrow(self, t):
-        r'=>'
+        r'->'
         self._update_column(t)
         return t
 
@@ -239,8 +249,18 @@ class RmayorLexer:
         self._update_column(t)
         return t
 
+    def t_moreeq(self, t):
+        r'>='
+        self._update_column(t)
+        return t
+
     def t_less(self, t):
         r'<'
+        self._update_column(t)
+        return t
+
+    def t_more(self, t):
+        r'>'
         self._update_column(t)
         return t
 
@@ -324,7 +344,7 @@ class RmayorLexer:
 if __name__ == "__main__":
     lexer = RmayorLexer()
 
-    data = open('VRP-IVNS/comp/string1.rm', encoding='utf-8')
+    data = open('comp/string1.rm', encoding='utf-8')
     data = data.read()
     res = lexer.tokenize_text(data)
     # pprint(res)

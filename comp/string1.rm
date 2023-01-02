@@ -1,30 +1,28 @@
 map {
-    import ...
-
-
+    import "mapa.txt"
 }
 
-stops{
+stops {
     s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
 
 }
 
 vehicle_type {
     
-    small (miles: 40000, capacity: 30);
-    medium (miles: 40000, capacity: 70);
+    small (miles: 40000, capacity: 30)
+    medium (miles: 40000, capacity: 70)
 }
 
 clients {
     
-    c1 (name: "Coca Cola'", stops: (s1,s2,s3) ) (*puede cambiarse por []*)
+    c1 (name: "Coca Cola", stops_list: (s1,s2,s3) ) (*puede cambiarse por []*)
 
 }
 
 company {
-    budget: 1000000;
-    vehicle_type small : 5;
-    vehicle_type medium : 3;
+    budget: 1000000
+    small v1: 5
+    medium v2: 3
 
 }
 
@@ -32,9 +30,18 @@ demands {
     
     func main (): Object 
     {
-        out_string("Yay! This is the newest test" );
+        out_string("Yay! This is the newest test")
     }
-
+    
+    func suma_client (c1): Object
+    {
+        int i = 0
+        while i < c1.stops.size() {
+            i = i + 1
+        }
+        out_string(i)
+    }
+    
 }
 
 
