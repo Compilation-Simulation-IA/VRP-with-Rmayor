@@ -66,7 +66,7 @@ tokens = [
     #'and',          # &
     #'or',           # |
 
-
+    'end',          # end
     'id',
     'type',
     'num',

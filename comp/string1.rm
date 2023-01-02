@@ -35,13 +35,13 @@ demands {
     
     func suma_client (c1): Object
     {
-        int i = 0
+        num i = 0
         while i < c1.stops.size() {
             i = i + 1
         }
         out_string(i)
     }
-    
+    end
 }
 
 

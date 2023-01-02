@@ -278,6 +278,11 @@ class RmayorLexer:
     #     r'inherits'
     #     self._update_column(t)
     #     return t
+    
+    def t_end(self, t):
+        r'end'
+        self._update_column(t)
+        return t
 
     def t_type(self, t):
         r'[A-Z][a-zA-Z_0-9]*'

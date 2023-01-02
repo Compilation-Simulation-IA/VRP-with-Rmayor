@@ -52,7 +52,7 @@ class RmayorParser(Parser):
         p[0] = StopsNode(p[3])
         
     def p_stop_declarations(self, p):
-        '''stop_declarations : stop_declaration stop_declarations
+        '''stop_declarations : stop_declarations stop_declaration
                          | epsilon'''
         if len(p) == 2:
         # No hay declaraciones de paradas
@@ -97,7 +97,7 @@ class RmayorParser(Parser):
             p[0] = [p[1]]
         else:
         # Múltiples declaraciones de cliente
-            p[0] = p[1] + [p[2]]
+            p[0] = [p[1]] + p[2]
         
     def p_client_declaration(self, p):
         'client_declaration : id opar name colon string comma stops_list colon opar stops_id cpar cpar'
@@ -106,6 +106,7 @@ class RmayorParser(Parser):
     def p_stops_id(self, p):
         '''stops_id : stops_id comma id
                     | id'''
+                    
         if p[3] not in self.stops:
             # Identificador de parada no declarado
             raise Exception("Identificador de parada no declarado: " + p[3])
@@ -118,7 +119,7 @@ class RmayorParser(Parser):
 
     def p_company_block(self, p):
         'company_block : company ocur budget colon num company_declarations ccur'
-        p[0] = CompanyBlockNode(p[4], p[5])
+        p[0] = CompanyBlockNode(p[5], p[6])
 
     
     def p_company_declarations(self, p):
@@ -131,16 +132,16 @@ class RmayorParser(Parser):
             # Identificador de tipo de vehículo declarado
             vehicle_type = self.vehicle_types[p[1]]
             # Crear instancia de VarDeclarationNode
-            node = VarDeclarationNode(p[2], vehicle_type, p[3])
+            node = VarDeclarationNode(p[2], vehicle_type, p[4])
             if len(p) == 4:
                 # Declaración de tipo de vehículo
                 p[0] = [node]
             else:
                 # Múltiples declaraciones
-                p[0] = [node]+p[2]
+                p[0] = p[1]+[node]
           
     def p_demands_block(self, p):
-        '''demands_block : demands ocur feature_list ccur'''
+        '''demands_block : demands ocur feature_list end ccur'''
         p[0] = p[3]
     
 
