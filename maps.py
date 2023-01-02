@@ -50,4 +50,4 @@ for i in range (0,len(df2['Location'])):
     folium.Circle(location=(df2['location_lat'][i], df2['location_long'][i])).add_to(mapa)
 
 # Muestra el mapa en una ventana emergente
-mapa.save('VRP-IVNS/mapa.html')
+mapa.save('mapa.html')
