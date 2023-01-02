@@ -1,4 +1,49 @@
-AGENTS { 
+map {
+    import ...
+
+
+}
+
+stops{
+    s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+
+}
+
+vehicle_type {
+    
+    small (miles: 40000, capacity: 30),
+    medium (miles: 40000, capacity: 70)
+}
+
+clients {
+    
+    c1 (name: "Coca Cola'", stops: (s1,s2,s3) ) (*puede cambiarse por []*)
+
+}
+
+company {
+    budget: 1000000
+    vehicle_type small : 5
+    vehicle_type medium : 3
+
+}
+
+demands {
+    
+    func main
+
+}
+
+
+
+
+
+
+
+
+
+
+(*AGENTS { 
     func Main {
         str <- "The big brown fox jumped over the fence";
     	main() : Object {
@@ -15,4 +60,5 @@ CREATE {
 }
 (*
 this is a test
+*)
 *)
