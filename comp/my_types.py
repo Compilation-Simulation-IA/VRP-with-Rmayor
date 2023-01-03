@@ -253,10 +253,9 @@ class IntType(Type):
 
 
 class VehicleType(Type):
-    def __init__(self, miles, capacity, pos=(0, 0)):
-        self.name = 'vehicle_type'
-        self.miles = miles
-        self.capacity = capacity
+    def __init__(self, pos=(0, 0)):
+        self.name = 'Vehicle_type'
+        self.value = 'Vehicle_type'
         self.attributes = {}
         self.methods = {}
         self.parent = None
@@ -283,6 +282,8 @@ class CustomVehicleType(VehicleType):
         self.name = name
         self.miles = miles
         self.capacity = capacity
+        self.lineno = pos[0]
+        self.column = pos[1]
         
         
 class StringType(Type):

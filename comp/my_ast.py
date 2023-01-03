@@ -6,9 +6,14 @@ class Node:
 
 
 class ProgramNode(Node):
-    def __init__(self, declarations):
-        self.declarations = declarations
-
+    def __init__(self, map_block, stops_block, vehicle_type_block, clients_block, company_block, demands_block):
+        self.map_block = map_block
+        self.stops_block = stops_block
+        self.vehicle_type_block = vehicle_type_block
+        self.clients_block = clients_block
+        self.company_block = company_block
+        self.demands_block = demands_block
+        
 class MapNode(Node):
     def __init__(self, map):
         self.map = map
@@ -50,6 +55,10 @@ class CompanyBlockNode:
     def __init__(self, budget, vehicle_declarations):
         self.budget = budget
         self.vehicle_declarations = vehicle_declarations
+        
+class DemandsNode:
+        def __init__(self, demands):
+            self.demands = demands
 class DeclarationNode(Node):
     pass
 
@@ -59,6 +68,7 @@ class ExpressionNode(Node):
 
 
 class ErrorNode(Node):
+    value = "Error"
     pass
 
 

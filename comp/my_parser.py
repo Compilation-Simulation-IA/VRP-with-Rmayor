@@ -36,9 +36,9 @@ class RmayorParser(Parser):
     client = {}
     def p_program(self, p):
         # 'program : map_block stop_block vehicle_type_block clients_block company_block demands_block'
-        'program : map_block stops_block vehicle_type_block clients_block company_block demands_block'
-        p[0] = ProgramNode(p[1], p[2], p[3], p[4], p[5], p[6])
-
+        'program :  map_block stops_block vehicle_type_block clients_block company_block demands_block'
+        p[0] = ProgramNode(p[1],p[2],p[3],p[4],p[5],p[6])
+        
     def p_epsilon(self, p):
         'epsilon :'
         pass
@@ -52,7 +52,7 @@ class RmayorParser(Parser):
         p[0] = StopsNode(p[3])
         
     def p_stop_declarations(self, p):
-        '''stop_declarations : stop_declarations stop_declaration
+        '''stop_declarations : stop_declaration stop_declarations
                          | epsilon'''
         if len(p) == 2:
         # No hay declaraciones de paradas
@@ -72,18 +72,18 @@ class RmayorParser(Parser):
     
     def p_vehicle_type_declarations(self, p):
         '''vehicle_type_declarations : vehicle_type_declaration
-                                  | vehicle_type_declarations vehicle_type_declaration'''
+                                  | vehicle_type_declaration vehicle_type_declarations'''
         if len(p) == 2:
         # Una sola declaración de tipo de vehículo
             p[0] = [p[1]]
         else:
         # Múltiples declaraciones de tipo de vehículo
-            p[0] = p[1] + [p[2]]
+            p[0] = [p[1]] + p[2]
         
     def p_vehicle_type_declaration(self, p):
         'vehicle_type_declaration : id opar miles colon num comma capacity colon num cpar'
         p[0] = VehicleTypeDeclarationNode(p[1], p[5], p[9])
-        self.vehicle_types[p[1]] = p[0]
+        self.vehicle_types[p[1]] = p[0].type
     
     def p_clients_block(self, p):
         'clients_block : clients ocur client_declarations ccur'
@@ -91,7 +91,7 @@ class RmayorParser(Parser):
     
     def p_client_declarations(self, p):
         '''client_declarations : client_declaration
-                            | client_declarations client_declaration'''
+                            | client_declaration semi client_declarations'''
         if len(p) == 2:
         # Una sola declaración de cliente
             p[0] = [p[1]]
@@ -106,16 +106,23 @@ class RmayorParser(Parser):
     def p_stops_id(self, p):
         '''stops_id : stops_id comma id
                     | id'''
-                    
-        if p[3] not in self.stops:
-            # Identificador de parada no declarado
-            raise Exception("Identificador de parada no declarado: " + p[3])
-        else:
-            stop = self.stops[p[3]]
-            if len(p) == 3:
-                p[0]= [stop]
+        if len(p) < 3:
+            if p[1] not in self.stops:
+                # Identificador de parada no declarado
+                raise Exception("Identificador de parada no declarado: " + p[1])
             else:
-                p[0] = p[1] + [stop]
+                stop = self.stops[p[1]]
+                p[0]= [stop]
+        else:
+            if p[2] not in self.stops:
+                # Identificador de parada no declarado
+                raise Exception("Identificador de parada no declarado: " + p[3])
+            else:
+                stop = self.stops[p[3]]
+                if len(p) == 3:
+                    p[0]= [stop]
+                else:
+                    p[0] = p[1] + [stop]
 
     def p_company_block(self, p):
         'company_block : company ocur budget colon num company_declarations ccur'
@@ -124,7 +131,7 @@ class RmayorParser(Parser):
     
     def p_company_declarations(self, p):
         '''company_declarations : id id colon num
-                                     | company_declarations id id colon num'''
+                                     | id id colon num company_declarations'''
         if p[1] not in self.vehicle_types:
             # Identificador de tipo de vehículo no declarado
             raise Exception("Identificador de tipo de vehículo no declarado: " + p[1])
@@ -132,17 +139,22 @@ class RmayorParser(Parser):
             # Identificador de tipo de vehículo declarado
             vehicle_type = self.vehicle_types[p[1]]
             # Crear instancia de VarDeclarationNode
-            node = VarDeclarationNode(p[2], vehicle_type, p[4])
+            idx = LexToken()
+            idx.value = p[2]
+            idx.type = vehicle_type
+            idx.lineno= p.lineno
+            idx.column=len(p[1])
+            node = VarDeclarationNode(idx, vehicle_type, p[4])
             if len(p) == 4:
                 # Declaración de tipo de vehículo
                 p[0] = [node]
             else:
                 # Múltiples declaraciones
-                p[0] = p[1]+[node]
+                p[0] = [node] +[1]
           
     def p_demands_block(self, p):
-        '''demands_block : demands ocur feature_list end ccur'''
-        p[0] = p[3]
+        'demands_block : demands ocur feature_list ccur'
+        p[0] = DemandsNode(p[3])
     
 
     # def p_class_list(self, p):
@@ -173,9 +185,9 @@ class RmayorParser(Parser):
 
     def p_feature_list(self, p):
         '''feature_list : epsilon
-                        | def_attr semi feature_list
-                        | def_func semi feature_list'''
-        p[0] = [] if len(p) == 2 else [p[1]] + p[3]
+                        | def_attr feature_list
+                        | def_func feature_list'''
+        p[0] = [] if len(p) == 2 else [p[1]] + p[2]
 
     def p_feature_list_error(self, p):
         'feature_list : error feature_list'
@@ -220,8 +232,8 @@ class RmayorParser(Parser):
         p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[3]
 
     # def p_param_list_error(self, p):
-        # '''param_list : error comma param_list'''
-        # p[0] = [ErrorNode()]
+    #     '''param_list : error comma param_list'''
+    #     p[0] = [ErrorNode()]
 
     def p_param_list_empty(self, p):
         'param_list_empty : epsilon'
@@ -364,8 +376,8 @@ class RmayorParser(Parser):
             p[0] = BinaryNotNode(p[2], p.slice[1])
 
     def p_expr_let(self, p):
-        'factor : let let_list in expr'
-        p[0] = LetNode(p[2], p[4], p.slice[1])
+        'factor : let let_list in ocur expr ccur'
+        p[0] = LetNode(p[2], p[5], p.slice[1])
 
     # def p_expr_let_error(self, p):
     #     '''factor : let error in expr
@@ -398,7 +410,7 @@ class RmayorParser(Parser):
     #     p[0] = ErrorNode()
 
     def p_expr_while(self, p):
-        'factor : while expr loop expr pool'
+        'factor : while expr ocur expr ccur'
         p[0] = WhileNode(p[2], p[4], p.slice[1])
 
     # def p_expr_while_error(self, p):
@@ -480,7 +492,7 @@ class RmayorParser(Parser):
         'arg_list_empty : epsilon'
         p[0] = []
 
-    # Error rule for syntax errors
+    #Error rule for syntax errors
     def p_error(self, p):
         self.errors = True
         if p:
@@ -498,8 +510,9 @@ class RmayorParser(Parser):
 
 
 if __name__ == "__main__":
-    s = ''''''
+    with open('comp/string4.rm', 'r') as f:
+        file = f.read()
     # Parser()
     parser = RmayorParser()
-    result = parser.parse(s)
+    result = parser.parse(file)
     # print(result)

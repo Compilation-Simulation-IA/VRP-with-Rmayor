@@ -1,0 +1,57 @@
+(* An assignment has the form <id> <- <expr> *)
+map {
+    import "mapa.txt"
+}
+
+stops {
+    s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+
+}
+
+vehicle_type {
+    
+    small (miles: 40000, capacity: 30)
+    medium (miles: 40000, capacity: 70)
+}
+
+clients {
+    
+    c1 (name: "Coca Cola", stops_list: (s1) ) (*puede cambiarse por []*)
+
+}
+
+company {
+    budget: 1000000
+    small v1: 5
+    medium v2: 3
+
+}
+demands{
+func main(): Object {
+        (new Alpha).print()
+    }
+
+func testing1(): Int {
+        2 + 2
+    }
+
+    test1: Int <- 1
+
+    test3: String <- "1"
+
+func testing2 ( a: Int, b: String ) : Int {
+        2 + 2
+    }
+
+func testing3(): String {
+        "2 + 2"
+    }
+
+func testing4(): String {
+        test1 <- "Hello World" -- Identifiers begin with a lower case letter
+    }
+
+func print() : Object {
+        out_string("reached!!\n")
+    }
+}

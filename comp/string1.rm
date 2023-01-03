@@ -15,7 +15,7 @@ vehicle_type {
 
 clients {
     
-    c1 (name: "Coca Cola", stops_list: (s1,s2,s3) ) (*puede cambiarse por []*)
+    c1 (name: "Coca Cola", stops_list: (s1) ) (*puede cambiarse por []*)
 
 }
 
@@ -28,20 +28,11 @@ company {
 
 demands {
     
-    func main (): Object 
+    func main (): IO
     {
         out_string("Yay! This is the newest test")
     }
-    
-    func suma_client (c1): Object
-    {
-        num i = 0
-        while i < c1.stops.size() {
-            i = i + 1
-        }
-        out_string(i)
-    }
-    end
+   
 }
 
 
