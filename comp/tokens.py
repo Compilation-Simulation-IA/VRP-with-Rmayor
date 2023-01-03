@@ -1,10 +1,20 @@
 reserved = {
-    'class': 'class',
-    'agents': "agents",
-    'environment': "environment",
+    'import': 'import',
+    'stops_list': 'stops_list',
+    'vehicle_type': 'vehicle_type',
+    'clients': 'clients',
+    'stops': 'stops',
+    'company': 'company',
+    'demands': 'demands',
     'map': "map",
-    'create': "create",
-    'as': "as",
+    'miles': 'miles',
+    'name': 'name',
+    'budget': 'budget',
+    'capacity': 'capacity',
+    'address': 'address',
+    'people': 'people',
+
+   # 'as': "as",
     'if': "if",
     'fi': 'fi',
     'then': "then",
@@ -14,22 +24,14 @@ reserved = {
     'pool': 'pool',
     'false': 'false',
     'new': 'new',
-    'of': 'of',
+    #'of': 'of',
     'not': 'not',
     'true': 'true',
     'let': 'let',
     'in': 'in',
     'func': 'func',
     'isvoid': 'isvoid',
-    'inherits': 'inherits',
-
-    'stages': 'stages',
-    'depot': 'depot',         # DEPOT
-    'bus_stop': 'bus_stop',      # BUS_STOP
-    'company': 'company',       # COMPANY
-    'vehicle': 'vehicle',       # VEHICLE
-    'client': 'client',        # CLIENT
-    'firm': 'firm',          # FIRM
+    #'inherits': 'inherits',
 }
 
 tokens = [
@@ -41,8 +43,9 @@ tokens = [
     'cpar',     # ') '
     'ocur',     # '{'
     'ccur',     # '} '
+
     'larrow',   # '<-'
-    'rarrow',   # '->'
+    #'rarrow',   # '->'
     'arroba',   # '@'
     'nox',          # ~
 
@@ -50,24 +53,20 @@ tokens = [
     'minus',        # -
     'star',     # \*
     'div',       # /
-    'mod',       # %
+    #'mod',       # %
     'equal',     # =
     'lesseq',       # <=
+    #'moreeq',     # >=
     'less',         # <
+    #'more',        # >
 
 
 
 
-    'and',          # &
-    'or',           # |
+    #'and',          # &
+    #'or',           # |
 
-
-
-
-    # 'vehicle_type',  # VEHICLE TYPE
-
-
-
+    'end',          # end
     'id',
     'type',
     'num',

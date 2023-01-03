@@ -174,6 +174,16 @@ class RmayorLexer:
         self._update_column(t)
         return t
 
+    def t_osquare(self, t):
+        r'\['
+        self._update_column(t)
+        return t
+
+    def t_csquare(self, t):
+        r'\]'
+        self._update_column(t)
+        return t
+
     def t_ocur(self, t):
         r'\{'
         self._update_column(t)
@@ -189,13 +199,13 @@ class RmayorLexer:
         self._update_column(t)
         return t
 
-    # def t_arroba(self, t):
-    #     r'@'
-    #     self._update_column(t)
-    #     return t
+    def t_arroba(self, t):
+        r'@'
+        self._update_column(t)
+        return t
 
     def t_rarrow(self, t):
-        r'=>'
+        r'->'
         self._update_column(t)
         return t
 
@@ -239,8 +249,18 @@ class RmayorLexer:
         self._update_column(t)
         return t
 
+    def t_moreeq(self, t):
+        r'>='
+        self._update_column(t)
+        return t
+
     def t_less(self, t):
         r'<'
+        self._update_column(t)
+        return t
+
+    def t_more(self, t):
+        r'>'
         self._update_column(t)
         return t
 
@@ -258,6 +278,11 @@ class RmayorLexer:
     #     r'inherits'
     #     self._update_column(t)
     #     return t
+    
+    def t_end(self, t):
+        r'end'
+        self._update_column(t)
+        return t
 
     def t_type(self, t):
         r'[A-Z][a-zA-Z_0-9]*'

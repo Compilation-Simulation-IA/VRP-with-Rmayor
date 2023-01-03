@@ -14,7 +14,7 @@ from tokens import tokens
 class Parser:
     def __init__(self, lexer=None):
         self.lexer = lexer if lexer else RmayorLexer()
-        self.outputdir = 'output_parser/'
+        self.outputdir = 'comp/output_parser/'
         self.tokens = tokens
         self.errors = False
         self.parser = yacc.yacc(start='program',
@@ -24,52 +24,170 @@ class Parser:
                                 debuglog=log,
                                 errorlog=log)
 
-    def parse(self, program, debug=False):
+    def parse(self, program, debug=True):
         self.errors = False
         # tokens = self.lexer.tokenize_text(program)
         return self.parser.parse(program, self.lexer.lexer, debug=log)
 
 
 class RmayorParser(Parser):
+    vehicle_types = {}
+    stops = {}
+    client = {}
     def p_program(self, p):
-        'program : class_list'
-        p[0] = ProgramNode(p[1])
-
+        # 'program : map_block stop_block vehicle_type_block clients_block company_block demands_block'
+        'program :  map_block stops_block vehicle_type_block clients_block company_block demands_block'
+        p[0] = ProgramNode(p[1],p[2],p[3],p[4],p[5],p[6])
+        
     def p_epsilon(self, p):
         'epsilon :'
         pass
-
-    def p_class_list(self, p):
-        '''class_list : def_class class_list 
-                      | def_class'''
-        p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
-
-    def p_class_list_error(self, p):
-        '''class_list : error class_list'''
-        p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
-
-    def p_def_class(self, p):
-        '''def_class : class type ocur feature_list ccur semi 
-                     | class type inherits type ocur feature_list ccur semi'''
-        if len(p) == 7:
-            p[0] = ClassDeclarationNode(p.slice[2], p[4])
+    
+    def p_map_block(self,p):
+        'map_block : map ocur import string ccur'
+        p[0] = MapNode(p[4])
+    
+    def p_stops_block(self, p):
+        'stops_block : stops ocur stop_declarations ccur'
+        p[0] = StopsNode(p[3])
+        
+    def p_stop_declarations(self, p):
+        '''stop_declarations : stop_declaration stop_declarations
+                         | epsilon'''
+        if len(p) == 2:
+        # No hay declaraciones de paradas
+            p[0] = []
         else:
-            p[0] = ClassDeclarationNode(p.slice[2], p[6], p.slice[4])
+        # Una o más declaraciones de paradas
+            p[0] = [p[1]] + p[2]
+    
+    def p_stop_declaration(self, p):
+        'stop_declaration : id opar address colon string comma people colon num cpar'
+        p[0] = StopDeclarationNode(p[1], p[5], p[9])
+        self.stops[p[1]] = p[0]
+    
+    def p_vehicle_type_block(self, p):
+        'vehicle_type_block : vehicle_type ocur vehicle_type_declarations ccur'
+        p[0] = VehicleTypeNode(p[3])
+    
+    def p_vehicle_type_declarations(self, p):
+        '''vehicle_type_declarations : vehicle_type_declaration
+                                  | vehicle_type_declaration vehicle_type_declarations'''
+        if len(p) == 2:
+        # Una sola declaración de tipo de vehículo
+            p[0] = [p[1]]
+        else:
+        # Múltiples declaraciones de tipo de vehículo
+            p[0] = [p[1]] + p[2]
+        
+    def p_vehicle_type_declaration(self, p):
+        'vehicle_type_declaration : id opar miles colon num comma capacity colon num cpar'
+        p[0] = VehicleTypeDeclarationNode(p[1], p[5], p[9])
+        self.vehicle_types[p[1]] = p[0].type
+    
+    def p_clients_block(self, p):
+        'clients_block : clients ocur client_declarations ccur'
+        p[0] = ClientsNode(p[3])
+    
+    def p_client_declarations(self, p):
+        '''client_declarations : client_declaration
+                            | client_declaration semi client_declarations'''
+        if len(p) == 2:
+        # Una sola declaración de cliente
+            p[0] = [p[1]]
+        else:
+        # Múltiples declaraciones de cliente
+            p[0] = [p[1]] + p[2]
+        
+    def p_client_declaration(self, p):
+        'client_declaration : id opar name colon string comma stops_list colon opar stops_id cpar cpar'
+        p[0] = ClientDeclarationNode(p[1], p[5], p[10])
+    
+    def p_stops_id(self, p):
+        '''stops_id : stops_id comma id
+                    | id'''
+        if len(p) < 3:
+            if p[1] not in self.stops:
+                # Identificador de parada no declarado
+                raise Exception("Identificador de parada no declarado: " + p[1])
+            else:
+                stop = self.stops[p[1]]
+                p[0]= [stop]
+        else:
+            if p[2] not in self.stops:
+                # Identificador de parada no declarado
+                raise Exception("Identificador de parada no declarado: " + p[3])
+            else:
+                stop = self.stops[p[3]]
+                if len(p) == 3:
+                    p[0]= [stop]
+                else:
+                    p[0] = p[1] + [stop]
 
-    def p_def_class_error(self, p):
-        '''def_class : class error ocur feature_list ccur semi 
-                     | class type ocur feature_list ccur error   
-                     | class error inherits type ocur feature_list ccur semi
-                     | class error inherits error ocur feature_list ccur semi
-                     | class type inherits error ocur feature_list ccur semi
-                     | class type inherits type ocur feature_list ccur error'''
-        p[0] = ErrorNode()
+    def p_company_block(self, p):
+        'company_block : company ocur budget colon num company_declarations ccur'
+        p[0] = CompanyBlockNode(p[5], p[6])
+
+    
+    def p_company_declarations(self, p):
+        '''company_declarations : id id colon num
+                                     | id id colon num company_declarations'''
+        if p[1] not in self.vehicle_types:
+            # Identificador de tipo de vehículo no declarado
+            raise Exception("Identificador de tipo de vehículo no declarado: " + p[1])
+        else:
+            # Identificador de tipo de vehículo declarado
+            vehicle_type = self.vehicle_types[p[1]]
+            # Crear instancia de VarDeclarationNode
+            idx = LexToken()
+            idx.value = p[2]
+            idx.type = vehicle_type
+            idx.lineno= p.lineno
+            idx.column=len(p[1])
+            node = VarDeclarationNode(idx, vehicle_type, p[4])
+            if len(p) == 4:
+                # Declaración de tipo de vehículo
+                p[0] = [node]
+            else:
+                # Múltiples declaraciones
+                p[0] = [node] +[1]
+          
+    def p_demands_block(self, p):
+        'demands_block : demands ocur feature_list ccur'
+        p[0] = DemandsNode(p[3])
+    
+
+    # def p_class_list(self, p):
+    #     '''class_list : def_class class_list
+    #                   | def_class'''
+    #     p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
+
+    # def p_class_list_error(self, p):
+    #     '''class_list : error class_list'''
+    #     p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
+
+    # def p_def_class(self, p):
+    #     '''def_class : class type ocur feature_list ccur semi
+    #                  | class type inherits type ocur feature_list ccur semi'''
+    #     if len(p) == 7:
+    #         p[0] = ClassDeclarationNode(p.slice[2], p[4])
+    #     else:
+    #         p[0] = ClassDeclarationNode(p.slice[2], p[6], p.slice[4])
+
+    # def p_def_class_error(self, p):
+    #     '''def_class : class error ocur feature_list ccur semi
+    #                  | class type ocur feature_list ccur error
+    #                  | class error inherits type ocur feature_list ccur semi
+    #                  | class error inherits error ocur feature_list ccur semi
+    #                  | class type inherits error ocur feature_list ccur semi
+    #                  | class type inherits type ocur feature_list ccur error'''
+    #     p[0] = ErrorNode()
 
     def p_feature_list(self, p):
         '''feature_list : epsilon
-                        | def_attr semi feature_list
-                        | def_func semi feature_list'''
-        p[0] = [] if len(p) == 2 else [p[1]] + p[3]
+                        | def_attr feature_list
+                        | def_func feature_list'''
+        p[0] = [] if len(p) == 2 else [p[1]] + p[2]
 
     def p_feature_list_error(self, p):
         'feature_list : error feature_list'
@@ -92,14 +210,14 @@ class RmayorParser(Parser):
         p[0] = ErrorNode()
 
     def p_def_func(self, p):
-        'def_func : id opar formals cpar colon type ocur expr ccur'
-        p[0] = FuncDeclarationNode(p.slice[1], p[3], p.slice[6], p[8])
+        'def_func : func id opar formals cpar colon type ocur expr ccur'
+        p[0] = FuncDeclarationNode(p.slice[2], p[4], p.slice[7], p[9])
 
     def p_def_func_error(self, p):
-        '''def_func : error opar formals cpar colon type ocur expr ccur
-                    | id opar error cpar colon type ocur expr ccur
-                    | id opar formals cpar colon error ocur expr ccur
-                    | id opar formals cpar colon type ocur error ccur'''
+        '''def_func : func error opar formals cpar colon type ocur expr ccur
+                    | func id opar error cpar colon type ocur expr ccur
+                    | func id opar formals cpar colon error ocur expr ccur
+                    | func id opar formals cpar colon type ocur error ccur'''
         p[0] = ErrorNode()
 
     def p_formals(self, p):
@@ -143,19 +261,19 @@ class RmayorParser(Parser):
         else:
             p[0] = VarDeclarationNode(p[1][0], p[1][1], p[3])
 
-    def p_cases_list(self, p):
-        '''cases_list : casep semi
-                      | casep semi cases_list'''
-        p[0] = [p[1]] if len(p) == 3 else [p[1]] + p[3]
+    # def p_cases_list(self, p):
+    #     '''cases_list : casep semi
+    #                   | casep semi cases_list'''
+    #     p[0] = [p[1]] if len(p) == 3 else [p[1]] + p[3]
 
-    def p_cases_list_error(self, p):
-        '''cases_list : error cases_list
-                      | error semi'''
-        p[0] = [ErrorNode()]
+    # def p_cases_list_error(self, p):
+    #     '''cases_list : error cases_list
+    #                   | error semi'''
+    #     p[0] = [ErrorNode()]
 
-    def p_case(self, p):
-        'casep : id colon type rarrow expr'
-        p[0] = OptionNode(p.slice[1], p.slice[3], p[5])
+    # def p_case(self, p):
+    #     'casep : id colon type rarrow expr'
+    #     p[0] = OptionNode(p.slice[1], p.slice[3], p[5])
 
     def p_expr(self, p):
         '''expr : id larrow expr
@@ -180,11 +298,11 @@ class RmayorParser(Parser):
         elif p[2] == '=':
             p[0] = EqualNode(p[1], p[3])
 
-    # def p_comp_error(self, p):
-    #     '''comp : comp less error
-    #             | comp lesseq error
-    #             | comp equal error'''
-    #     p[0] = ErrorNode()
+    # # def p_comp_error(self, p):
+    # #     '''comp : comp less error
+    # #             | comp lesseq error
+    # #             | comp equal error'''
+    # #     p[0] = ErrorNode()
 
     def p_op(self, p):
         '''op : op plus term
@@ -258,8 +376,8 @@ class RmayorParser(Parser):
             p[0] = BinaryNotNode(p[2], p.slice[1])
 
     def p_expr_let(self, p):
-        'factor : let let_list in expr'
-        p[0] = LetNode(p[2], p[4], p.slice[1])
+        'factor : let let_list in ocur expr ccur'
+        p[0] = LetNode(p[2], p[5], p.slice[1])
 
     # def p_expr_let_error(self, p):
     #     '''factor : let error in expr
@@ -292,7 +410,7 @@ class RmayorParser(Parser):
     #     p[0] = ErrorNode()
 
     def p_expr_while(self, p):
-        'factor : while expr loop expr pool'
+        'factor : while expr ocur expr ccur'
         p[0] = WhileNode(p[2], p[4], p.slice[1])
 
     # def p_expr_while_error(self, p):
@@ -374,7 +492,7 @@ class RmayorParser(Parser):
         'arg_list_empty : epsilon'
         p[0] = []
 
-    # Error rule for syntax errors
+    #Error rule for syntax errors
     def p_error(self, p):
         self.errors = True
         if p:
@@ -392,8 +510,9 @@ class RmayorParser(Parser):
 
 
 if __name__ == "__main__":
-    s = ''''''
+    with open('comp/string4.rm', 'r') as f:
+        file = f.read()
     # Parser()
     parser = RmayorParser()
-    result = parser.parse(s)
+    result = parser.parse(file)
     # print(result)

@@ -1,5 +1,5 @@
 from typing import List
-from math import sqrt, pi, e
+import math
 from typing import List, Tuple, Optional, Union, Dict
 import numpy as np
 import networkx as nx
@@ -45,7 +45,7 @@ class Stop:
 
 class Warehouse:
     """Representa un almacén o depósito central."""
-    def __init__(self, ID: int, location: Tuple[float, float] ):
+    def __init__(self, ID: int, location: Tuple[float, float]):
         self.ID = ID
         self.location = location
     
