@@ -95,11 +95,11 @@ class Vehicle:
 
 class Semaphore:
     """Representa los semaforos en el mapa"""
-<<<<<<< HEAD
-    def __init__(self, ID: int, location: Tuple[float, float], color_range: List[int]): # Cambiado por [int], daba un error
-=======
-    def __init__(self, ID: int, color_range: [int]): #location: Tuple[float, float],
->>>>>>> origin/roxy_simulate
+#<<<<<<< HEAD
+#    def __init__(self, ID: int, location: Tuple[float, float], color_range: List[int]): # Cambiado por [int], daba un error
+#=======
+    def __init__(self, ID: int, color_range: List[int]): #location: Tuple[float, float],
+#>>>>>>> origin/roxy_simulate
         self.ID =ID
         #self.location = location
         self.state = Color.GREEN
