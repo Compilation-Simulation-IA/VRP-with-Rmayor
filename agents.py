@@ -4,16 +4,15 @@ from storage import Route, Warehouse
 from enum import Enum
 
 class Color(Enum):
-    GREEN = 0,
-    YELLOW = 1,
-    RED = 2
-
+    GREEN = 1
+    YELLOW = 2
+    RED = 3
 class Vehicle:
     wait = 0
     """Representa los vehículos de la compañía"""
     percent_of_deterioration_per_model = {"Lada": 5, "Moskovich": 7,"Ford": 5, "Mercedes Venz":3}
 
-    def __init__(self, ID: int, model: str, current_location: Dict, available: bool, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float):
+    def __init__(self, ID: int, model: str, current_location: Dict, available: bool, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float):
         self.ID = ID
         self.model = model # modelo del vehículo
         self.current_location = current_location
@@ -26,6 +25,8 @@ class Vehicle:
         self.route = None
         self.total_time_wait = 0
         self.clients_on_board = 0
+        self.probability = probability
+        self.pos_traffic_edge = -1
         self.state = 0 
         """ los estados son:
         0 : no hacer nada
@@ -33,6 +34,8 @@ class Vehicle:
         2 : el vehiculo esta cargando pasajeros
         3 : el vehiculo esta descargando pasajeros
         4 : el vehiculo esta en mantenimiento
+        5 : el vehiculo esta detenido por una autoridad del trafico
+        6 : el vehiculo esta volviendo para atras en la arista pq lo paro una autoridad.
         """
 
     def __repr__(self) -> str:
@@ -45,6 +48,11 @@ class Vehicle:
         """Mueve al vehículo a su próximo destino"""
         self.miles_traveled += cost
         self.current_location = destination
+    
+    def pass_red(self) -> bool:
+        """Calcula la probabilidad de que el vehiculo se pase o no la roja del semaforo.
+        Devuelve True o False."""
+        return random.random() < self.probability
     
     def maintenance(self, warehouse: Dict):
         """Le proporciona mantenimiento al vehiculo y disminuye el valor de millas_inicial en 
@@ -87,9 +95,9 @@ class Vehicle:
 
 class Semaphore:
     """Representa los semaforos en el mapa"""
-    def __init__(self, ID: int, location: Tuple[float, float], color_range: List[int]): # Cambiado por [int], daba un error
+    def __init__(self, ID: int, color_range: [int]): #location: Tuple[float, float],
         self.ID =ID
-        self.location = location
+        #self.location = location
         self.state = Color.GREEN
         self.color_range = color_range
     
@@ -97,28 +105,31 @@ class Semaphore:
         return f"<Semaphore({self.ID})>"
     
     def __str__(self) -> str:
-        return f"<Semaphore: ID {self.ID}, State: {self.state}, Location: {self.location}>"
+        return f"<Semaphore: ID {self.ID}, State: {self.state}>"
 
-    def change_color(self, global_time: int) -> Color:
-        for i in range(0,2):
-            if global_time - self.color_range[i] <=0:
-                self.state = Color(i)
-                return self.state
-            global_time -= self.color_range[i]
+    def get_color(self, global_time: int) -> Tuple[Color, int]: #(color, semaphore_time)
+        i = 0
+        diference = global_time
+        while diference > 0:
+            diference -= self.color_range[i % 3]
+            if diference <=0:
+                j = i + 1
+                self.state = Color(j % 3)
+                return (self.state, self.color_range[i % 3] - abs(diference))
+            i += 1
         
 
 class Authority:
     """Representa la autoridad del trafico """
-    def __init__(self, ID: int, position: Dict, probability: float):
+    def __init__(self, ID: int, probability: float):
         self.ID = ID
-        self.position = position
-        self.probability = probability  # Probabilidad de que la autoridad para al vehículo
+        self.probability = probability  # Probabilidad de que la autoridad para al vehículo. Tiene que estar entre 0 y 1e
         
     def __repr__(self) -> str:
         return f"<Authority({self.ID})>"
     
     def __str__(self) -> str:
-        return f"<Authority: ID {self.ID}, Position: {self.position}>"
+        return f"<Authority: ID {self.ID}>"
     
     def stop_vehicle(self) -> bool:
         """Calcula la probabilidad de que la autoridad pare al vehículo y 
