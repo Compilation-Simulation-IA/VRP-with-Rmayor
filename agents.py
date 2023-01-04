@@ -29,6 +29,7 @@ class Vehicle:
         self.probability = probability
         self.pos_traffic_edge = -1
         self.state = 0 
+        self.speed = 0
         """ los estados son:
         0 : no hacer nada
         1 : el vehiculo esta en movimiento
@@ -49,6 +50,9 @@ class Vehicle:
         """Mueve al vehículo a su próximo destino"""
         self.miles_traveled += cost
         self.current_location = destination
+    
+    def speed_up(self, count: int):
+        pass
     
     def pass_red(self) -> bool:
         """Calcula la probabilidad de que el vehiculo se pase o no la roja del semaforo.
@@ -116,7 +120,7 @@ class Semaphore:
         return f"<Semaphore({self.ID})>"
     
     def __str__(self) -> str:
-        return f"<Semaphore: ID {self.ID}, State: {self.state}>"
+        return f"<Semaphore: ID {self.ID}, State: {self.state.name}>"
 
     def get_color(self, global_time: int) -> Tuple[Color, int]: #(color, semaphore_time)
         i = 0
@@ -159,10 +163,12 @@ class Authority:
         graph[start][end]['weight']['traffic_authorities'].append(self) #añadir +1 al costo de la arista por añadir una autoridad
         
     def stop_vehicle(self) -> bool:
-        """Calcula la probabilidad de que la autoridad pare al vehículo y 
-        devuelve True o False."""
+        
         return random.random() < self.probability  # Devuelve True si el número aleatorio generado es menor que la probabilidad
 
+    def turn_around_vehicle(self, vehicle: Vehicle) -> bool:
+        """Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino."""
+        pass
 class Company:
     """Representa la compañia de transporte"""
     def __init__(self, name: str, budget: float):
