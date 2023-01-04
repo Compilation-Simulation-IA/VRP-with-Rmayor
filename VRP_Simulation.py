@@ -11,13 +11,15 @@ class VRP_Simulation:
         self.graph_map = graph
         self.company = company
         self.global_time = 0
+        self.go_back = False
         
     def simulate_routing(self):
         while True:
+            end = 0
             print(f"Tiempo: {self.global_time} min")
             # Iterar sobre cada uno de los vehículos de la compañía
             for vehicle in self.company.vehicles:
-                if vehicle.available: #obtiene la ruta asignada al vehículo y el nodo actual en el que se encuentra.
+                if vehicle.days_off == 0: #obtiene la ruta asignada al vehículo y el nodo actual en el que se encuentra.
                     actual_route = vehicle.route
                     current_location = vehicle.current_location
                     self.print_vehicle_locations(vehicle)
@@ -28,8 +30,8 @@ class VRP_Simulation:
                     if vehicle.wait > 0:
                         #en la arista donde se esta moviendo el vehiculo hay una autoridad o semaforo:
                         if vehicle.state == 1:
-                            if vehicle.pos_traffic_edge >= 0 and len(edge['weight']['traffic_authoroties']) > vehicle.pos_traffic_edge:
-                                traffic_a = edge['weight']['traffic_authoroties'][vehicle.pos_traffic_edge]
+                            if vehicle.pos_traffic_edge >= 0 and len(edge['weight']['traffic_authorities']) > vehicle.pos_traffic_edge:
+                                traffic_a = edge['weight']['traffic_authorities'][vehicle.pos_traffic_edge]
                                 if isinstance(traffic_a, Authority):
                                     decision = traffic_a.stop_vehicle()
                                     if decision:
@@ -41,7 +43,7 @@ class VRP_Simulation:
                                         print(f"El {vehicle} paso la {traffic_a} y no lo pararon.")
                                 else: # isinstance(i, Semaphore)
                                     color, semaphore_time = traffic_a.get_color(self.global_time)
-                                    if color ==Color.YELLOW:
+                                    if color == Color.YELLOW:
                                         if vehicle.pass_red():#no hace nada
                                             print(f"El {vehicle} NO paró en la luz amarilla del {traffic_a}.")
                                         else:
@@ -52,12 +54,11 @@ class VRP_Simulation:
 
                                     elif color == Color.RED:
                                         vehicle.wait += semaphore_time
-                                        print(f"El {vehicle} le cogio la luz roja en el {traffic_a}. Tiempo de espera: {new_wait}.")
+                                        print(f"El {vehicle} le cogio la luz roja en el {traffic_a}. Tiempo de espera: {semaphore_time}.")
                                         vehicle.state = 5  
 
-                                vehicle.pos_traffic_edge += 1 
                         elif vehicle.state == 5:
-                            traffic_a = edge['weight']['traffic_authoroties'][vehicle.pos_traffic_edge]
+                            traffic_a = edge['weight']['traffic_authorities'][vehicle.pos_traffic_edge]
                             color, semaphore_time = traffic_a.get_color(self.global_time)
                             if color == Color.GREEN:
                                 vehicle.state = 1
@@ -69,40 +70,60 @@ class VRP_Simulation:
                                 vehicle.move(next_node, cost)
                                 actual_route.actual_stop_index = actual_route.stops.index(next_node)
                                 vehicle.pos_traffic_edge = 0
+                            elif vehicle.state == 5:
+                                vehicle.state = 1
+                                vehicle.pos_traffic_edge += 1
                             elif vehicle.state == 6:
                                 print(f"Recalculando ruta...")
                                 vehicle.state = 1
+                                vehicle.pos_traffic_edge += 1
                             vehicle.total_time_wait = 0
                         vehicle.wait -= 1
                     # Si el nodo actual es un warehouse, significa que el vehículo va a salir del depósito y comenzar su ruta
                     # El vehiculo termino de recoger a los clientes de esa parada y se dispone a ir a la siguiente parada
+                    #  El vehiculo esta volviendo y termino de dejar a los clientes de esa parada y se dispone a ir a la siguiente parada
                     # El vehiculo llega a una parada donde no tiene q recoger a nadie entonces continua (isinstance(current_location, None))
-                    elif (isinstance(current_location, Warehouse) and vehicle.state == 0) or (isinstance(current_location, Stop) and vehicle.state == 2) or ((not isinstance(current_location, Stop) and not isinstance(current_location, Warehouse)) and vehicle.state == 1):
+                    elif (isinstance(current_location, Warehouse) and vehicle.state == 0) or (isinstance(current_location, Stop) and (vehicle.state == 2 or vehicle.state == 3)) or ((not isinstance(current_location, Stop) and not isinstance(current_location, Warehouse)) and vehicle.state == 1):
                         next_node = vehicle.route.next_stop(current_location)
                         edge = self.graph_map.get_edge_data(current_location, next_node)
                         vehicle.wait = vehicle.total_time_wait = edge['weight']['weight']
                         vehicle.state = 1
                     #Si el nodo actual es una parada de tipo Stop, significa que el vehículo debe recoger a los clientes que se encuentran en esa parada
                     elif isinstance(current_location, Stop) and vehicle.state == 1:
-                        on_board = vehicle.pick_up_clients()
-                        vehicle.wait = vehicle.total_time_wait = on_board # cada persona se demora 3 min en subir al carro
-                        vehicle.state = 2
+                        if self.go_back:
+                            off = vehicle.drop_off_clients()
+                            vehicle.wait = vehicle.total_time_wait = off #tiempo que se demora cada persona en bajar
+                            vehicle.state = 3
+                        else:
+                            on_board = vehicle.pick_up_clients()
+                            vehicle.wait = vehicle.total_time_wait = on_board # cada persona se demora 3 min en subir al carro
+                            vehicle.state = 2
                     # Si el nodo actual es el ultimo de la ruta entonces se bajan los clientes
-                    elif actual_route.actual_stop_index == len(actual_route.stops) - 1 and vehicle.state == 1:
+                    # O si esta volviendo el vehiculo, va dejando a los clientes en sus respectivas paradas
+                    elif actual_route.actual_stop_index == len(actual_route.stops) - 1 and vehicle.state == 1 and not self.go_back:  
                         off = vehicle.drop_off_clients()
                         vehicle.wait = vehicle.total_time_wait = off #tiempo que se demora cada persona en bajar
                         vehicle.state = 3
                     # El vehiculo termino la ruta => comprobar su estado para mandarlo a mantenimiento
-                    elif vehicle.state == 3:
+                    elif end != len(self.company.vehicles) and ((vehicle.state == 3 and not self.go_back) or (vehicle.state == 1 and self.go_back) ):
                         company.check_vehicle(vehicle)
+                        end += 1
+
                 else:
                     #El vehiculo esta en mantenimiento y en un warehouse
                     if vehicle.wait - 1 == 0 and vehicle.state == 4:
-                        vehicle.available = True
+                        vehicle.days_off = 0
                         company.check_vehicle(vehicle)
                         vehicle.total_time_wait = vehicle.state = 0
                     vehicle.wait -= 1
 
+            if end == len(self.company.vehicles):
+                print(f"Todos los vehiculos concluyeron sus respectivas rutas.")
+                print(f"Pasando el tiempo...")
+                time.sleep(5)
+                self.reorder_rutes()
+                self.go_back = True
+                end = 0
             self.global_time +=1
             time.sleep(1)
         
@@ -110,6 +131,31 @@ class VRP_Simulation:
     # se la pasa al vehiculo, y lo pone en state = 1 en el proximo cambio de tiempo
     def recalculate_route(self):
         pass
+    
+    def generate_vehicle(self):
+        vehicle3 = Vehicle(3,"Lada", nodos[8], 8, 0, 30, 5, 0.8)
+        pass
+    def reorder_rutes(self):
+        """Este metodo ordena todas las rutas de atras para alante. La ultima parada sera la 1ra ahora,
+         la penultima sera la 2da y asi..."""
+        for vehicle in self.company.vehicles:
+            vehicle.state = 0
+            vehicle.route.stops.reverse()
+            # Por cada vehiculo en mantenimiento se busca un sustituto
+            if vehicle.days_off > 0:# pq esta en mantenimiento
+                for v in self.company.vehicles:
+                    if v.days_off == 0 and v.route == []:
+                        v.assign_route(vehicle.route)
+                        vehicle.unassign_route()
+                        break
+                # No se pudo asignar la ruta a algun vehiculo.
+                if vehicle.route != []: 
+                    new_vehicle = self.generate_vehicle()
+                    self.company.buy_vehicle(new_vehicle, 100)
+            on_board = 0
+            for stop in vehicle.route:
+                on_board += stop.total_client
+            vehicle.clients_on_board = on_board
 
     def print_vehicle_locations(self, vehicle: Vehicle):
         print("Vehicle Location:")
@@ -129,39 +175,12 @@ class VRP_Simulation:
             elif vehicle.state == 5 or vehicle.state == 6:
                 next_node = vehicle.route.next_stop(vehicle.current_location)
                 edge = self.graph_map.get_edge_data(vehicle.current_location, next_node)
-                traffic_a = edge['weight']['traffic_authoroties'][vehicle.pos_traffic_edge - 1]
+                traffic_a = edge['weight']['traffic_authorities'][vehicle.pos_traffic_edge - 1]
                 if vehicle.state == 5:
                     print(f"El {vehicle} está parado en un {traffic_a}.")
                 else:
                     print(f"El {vehicle} está volviendo para la parada anterior debido a {traffic_a} ({percent_value}%).")
         print()
-        
-
-    # Que comience la simulacion del vehiculo id_vehicle en la ruta id_routes
-    #def start(self, id_vehicle, id_route):
-    #    Actual_State = self.graph_map.currents[id_route]
-    #    Arrival = self.graph_map.target[id_route]
-    #    local_time = 0
-    #    
-    #    while Actual_State != Arrival:
-    #        print(f"Time: {self.global_time}")
-    #        print(Actual_State)
-    #        Actual_State, local_time = self.drive_next_stop(Actual_State, id_vehicle, id_route,local_time)
-    #        self.global_time +=local_time
-    #    print(f"El vehiculo llego al final de la ruta. Parada {Arrival}")
-#
-    #def drive_next_stop(self,Actual_State, id_vehicle, id_route, local_time):
-    #    """ Moves to the next stop until Arrived at the end """
-    #    next_stop = self.graph_map.routes[id_route].stops[Actual_State.id + 1]
-    #    distance = self.get_distance(Actual_State.coordinates,next_stop.coordinates )
-    #    embark_time = self.get_embark_time(len(next_stop.person_list)) #tiempo mientras se van montando las personas al carro
-    #    local_time += distance + embark_time
-#
-    #    print(f"El vehiculo {id_vehicle} de la ruta {id_route} se movio a la siguiente parada.")
-    #    self.graph_map.currents[id_route] = next_stop
-    #    print(f"El vehiculo {id_vehicle} llego a la parada {next_stop.id}.")
-#
-    #    return next_stop, local_time
     
     #Distancia de Manhattan: start =(x1,y1) , end = (x2,y2)
     def get_distance(self, start, end):
@@ -207,24 +226,24 @@ traffic_authoroties_2 = [
 # Crea una lista de tuplas con las aristas y sus atributos
 # El len(traffic_authoroties) <=  weight - 1. Maximo una autoridad por cada tiempo
 aristas = [
-    (nodos[8], nodos[0], {'weight': 1, 'traffic_authoroties': []}),
-    (nodos[0], nodos[1], {'weight': 1, 'traffic_authoroties': []}),
-    (nodos[1], nodos[2], {'weight': 1, 'traffic_authoroties': []}),
-    (nodos[2], nodos[3], {'weight': 1, 'traffic_authoroties': []}),
-    (nodos[3], nodos[9], {'weight': 1, 'traffic_authoroties': []}),
-    (nodos[8], nodos[4], {'weight': 2, 'traffic_authoroties': []}),
-    (nodos[4], nodos[5], {'weight': 2, 'traffic_authoroties': traffic_authoroties_1}),
-    (nodos[5], nodos[6], {'weight': 2, 'traffic_authoroties': traffic_authoroties_2}),
-    (nodos[6], nodos[7], {'weight': 2, 'traffic_authoroties': []}),
-    (nodos[7], nodos[10], {'weight': 2, 'traffic_authoroties': []}),
+    (nodos[8], nodos[0], {'weight': 1, 'traffic_authorities': []}),
+    (nodos[0], nodos[1], {'weight': 1, 'traffic_authorities': []}),
+    (nodos[1], nodos[2], {'weight': 1, 'traffic_authorities': []}),
+    (nodos[2], nodos[3], {'weight': 1, 'traffic_authorities': []}),
+    (nodos[3], nodos[9], {'weight': 1, 'traffic_authorities': []}),
+    (nodos[8], nodos[4], {'weight': 2, 'traffic_authorities': []}),
+    (nodos[4], nodos[5], {'weight': 2, 'traffic_authorities': traffic_authoroties_1}),
+    (nodos[5], nodos[6], {'weight': 2, 'traffic_authorities': traffic_authoroties_2}),
+    (nodos[6], nodos[7], {'weight': 2, 'traffic_authorities': []}),
+    (nodos[7], nodos[10], {'weight': 2, 'traffic_authorities': []}),
 ]
 
 # Añadir aristas
 graph.add_weighted_edges_from(aristas)
 
 # Crear vehículos y rutas 
-vehicle1 = Vehicle(1,"Ford", nodos[8], True, 8, 0, 50, 5, 0.5)
-vehicle2 = Vehicle(2,"Lada", nodos[8], True, 8, 0, 30, 5, 0.8) 
+vehicle1 = Vehicle(1,"Ford", nodos[8], 8, 0, 50, 5, 0.5)
+vehicle2 = Vehicle(2,"Lada", nodos[8], 8, 0, 30, 5, 0.8) 
 
 r1 = [nodos[8], nodos[0], nodos[1], nodos[2], nodos[3], nodos[9]]
 r2 = [nodos[8], nodos[4], nodos[5], nodos[6], nodos[7], nodos[10]]
@@ -252,7 +271,7 @@ company.add_route(route2)
 
 vrp = VRP_Simulation(graph, company)
 vrp.simulate_routing()
-print(result)
+print("exito")
 
 
 
