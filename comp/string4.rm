@@ -1,4 +1,4 @@
- (* An assignment has the form let in*)
+ (* An assignment has the form while*)
 map {
     import "mapa.txt"
 }
@@ -31,12 +31,11 @@ demands
     func testing6(a: Int): IO 
     {
         while pow < 4
-            {
-                count <- count + 1;
-                pow <- pow * 2;
-            };
-            out_string("El logaritmo en base 2 de ").out_int(a).out_string(" es ").out_int(count);
-    
-    };
+        {
+                count <- count + 1
+                pow <- pow * 2
+        }
+         out_string("El logaritmo en base 2 de ").out_int(a).out_string(" es ").out_int(count)
+    }
 }
  

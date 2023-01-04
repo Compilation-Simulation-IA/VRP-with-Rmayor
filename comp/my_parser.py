@@ -210,13 +210,13 @@ class RmayorParser(Parser):
         p[0] = ErrorNode()
 
     def p_def_func(self, p):
-        'def_func : func id opar formals cpar colon type ocur expr ccur'
+        'def_func : func id opar formals cpar colon type ocur multiexpr ccur'
         p[0] = FuncDeclarationNode(p.slice[2], p[4], p.slice[7], p[9])
 
     def p_def_func_error(self, p):
-        '''def_func : func error opar formals cpar colon type ocur expr ccur
-                    | func id opar error cpar colon type ocur expr ccur
-                    | func id opar formals cpar colon error ocur expr ccur
+        '''def_func : func error opar formals cpar colon type ocur multiexpr ccur
+                    | func id opar error cpar colon type ocur multiexpr ccur
+                    | func id opar formals cpar colon error ocur multiexpr ccur
                     | func id opar formals cpar colon type ocur error ccur'''
         p[0] = ErrorNode()
 
@@ -275,10 +275,20 @@ class RmayorParser(Parser):
     #     'casep : id colon type rarrow expr'
     #     p[0] = OptionNode(p.slice[1], p.slice[3], p[5])
 
+    def p_multiexpr(self,p):
+        '''multiexpr : multiexpr expr
+              | expr
+              | epsilon'''
+        if len(p) == 1:
+            p[0] = p[1]
+        elif len(p) == 3:
+            p[0] = p[1] + [p[2]]
+        else:
+            p[0] = []
+
     def p_expr(self, p):
         '''expr : id larrow expr
-                 | comp
-        '''
+                 | comp'''
         if len(p) == 4:
             p[0] = AssignNode(p.slice[1], p[3])
         else:
@@ -410,9 +420,9 @@ class RmayorParser(Parser):
     #     p[0] = ErrorNode()
 
     def p_expr_while(self, p):
-        'factor : while expr ocur expr ccur'
+        'factor : while expr ocur multiexpr ccur'
         p[0] = WhileNode(p[2], p[4], p.slice[1])
-
+        
     # def p_expr_while_error(self, p):
     #     '''factor : while error loop expr pool
     #             | while expr loop error pool
@@ -452,13 +462,13 @@ class RmayorParser(Parser):
         p[0] = ConstantStrNode(p.slice[1])
 
     def p_block(self, p):
-        '''block : expr semi
-                 | expr semi block'''
-        p[0] = [p[1]] if len(p) == 3 else [p[1]] + p[3]
+        '''block : expr
+                 | expr block'''
+        p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[2]
 
     def p_block_error(self, p):
         '''block : error block
-                 | error semi'''
+                 | error'''
         p[0] = [ErrorNode()]
 
     def p_func_call(self, p):
