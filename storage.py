@@ -12,6 +12,7 @@ class Stop:
     def __init__(self, ID: int, total_client: int, location: Tuple[float, float], time_waiting: int):
         self.ID = ID
         self.total_client = total_client
+        self.current_clients_in_stop = total_client #la cantidad de clientes que hay en la parada en ese momento. Tiene que ser menor que el total_client
         self.time_waiting = time_waiting #time_waiting es en minutos
         self.location = location
 
@@ -30,18 +31,32 @@ class Stop:
     def decrease_wait(self, minutes):
         self.time_waiting = max(self.time_waiting - minutes, 0)
 
-    def add_client(self, client: Optional[int] = None):
+    def add_client(self, drop: bool, client: Optional[int] = None):
+        """Si pick=True es que el vehiculo recoge a los clientes. Disminuye la cantidad de personas en la
+        parada, pero se mantiene igual el total que habian aqui. Este valor se usara cuando el vehuiculo
+        tenga que dejar a los clientes en sus paradas, saber cuantos soltar por cada una."""
         if client is None:
-            self.total_client += 1
+            if drop:  
+                self.current_clients_in_stop += 1
+            else: 
+                self.total_client += 1
         else:
-            self.total_client += client
+            if drop:
+                self.current_clients_in_stop += client
+            else: 
+                self.total_client += client
     
-    def remove_client(self, client: Optional[int] = None):
+    def remove_client(self, pick: bool, client: Optional[int] = None):
         if client is None:
-            self.total_client -= 1
+            if pick: 
+                self.current_clients_in_stop -= 1
+            else:
+                self.total_client -= 1
         else:
-            self.total_client = min(0, self.total_client - client)
-
+            if pick:
+                self.current_clients_in_stop = min(0, self.current_clients_in_stop - client)
+            else:
+                self.total_client = min(0, self.total_client - client)
 
 class Warehouse:
     """Representa un almacén o depósito central."""
