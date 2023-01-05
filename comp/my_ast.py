@@ -55,7 +55,11 @@ class CompanyBlockNode:
     def __init__(self, budget, vehicle_declarations):
         self.budget = budget
         self.vehicle_declarations = vehicle_declarations
-        
+
+class CompanyDeclarationNode:
+    def __init__(self, identifier, vehicle_declarations):
+        self.identifier = identifier
+        self.vehicle_declarations = vehicle_declarations
 class DemandsNode:
         def __init__(self, demands):
             self.demands = demands
