@@ -1,7 +1,8 @@
 import random
 from typing import List, Tuple, Dict
-from storage import Route, Warehouse
+from storage import Route, Warehouse, Stop
 from enum import Enum
+import networkx as nx
 
 class Color(Enum):
     GREEN = 1
@@ -12,11 +13,11 @@ class Vehicle:
     """Representa los vehículos de la compañía"""
     percent_of_deterioration_per_model = {"Lada": 5, "Moskovich": 7,"Ford": 5, "Mercedes Venz":3}
 
-    def __init__(self, ID: int, model: str, current_location: Dict, available: bool, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float):
+    def __init__(self, ID: int, model: str, current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float):
         self.ID = ID
         self.model = model # modelo del vehículo
         self.current_location = current_location
-        self.available = available
+        self.days_off = 0 #disponibilidad del vehiculo. Si es > 0 representa los dias que no se usara
         self.capacity = capacity
         self.initial_miles = initial_miles
         self.miles_traveled = 0
@@ -28,6 +29,7 @@ class Vehicle:
         self.probability = probability
         self.pos_traffic_edge = -1
         self.state = 0 
+        self.speed = 0
         """ los estados son:
         0 : no hacer nada
         1 : el vehiculo esta en movimiento
@@ -49,6 +51,9 @@ class Vehicle:
         self.miles_traveled += cost
         self.current_location = destination
     
+    def speed_up(self, count: int):
+        pass
+    
     def pass_red(self) -> bool:
         """Calcula la probabilidad de que el vehiculo se pase o no la roja del semaforo.
         Devuelve True o False."""
@@ -57,7 +62,7 @@ class Vehicle:
     def maintenance(self, warehouse: Dict):
         """Le proporciona mantenimiento al vehiculo y disminuye el valor de millas_inicial en 
         dependencia del valor que devuelve la Gaussiana. Con esto se simula el deterioro del mismo."""
-        self.available = False
+        self.days_off = 2
         self.current_location = warehouse
         self.initial_miles -= random.gauss(0, self.std_dev)
         self.miles_traveled = 0
@@ -72,26 +77,28 @@ class Vehicle:
             return True
         return False
         
-    def unassign_route(self, route: Route) -> bool:
+    def unassign_route(self):
         """Elimina un vehiculo de la ruta"""
-        if self.route is not None:
-            self.route = None
-            return True
-        return False
+        self.route = None
     
     # Devuelve la cantidad de clientes que pudo recoger en esa parada
     def pick_up_clients(self) -> int:
         """Modifica la cantidad de clientes que quedan en la parada y la
          capacidad disponible en el vehículo"""
-        result = min(self.capacity - self.clients_on_board, self.current_location.total_client)
+        result = min(self.capacity - self.clients_on_board, self.current_location.current_clients_in_stop)
         self.clients_on_board += result
-        self.current_location.remove_client(result)
+        self.current_location.remove_client(True, result)
         # return result* self.current_location.time_waiting
         return result
     
     def drop_off_clients(self) -> int:
-        self.clients_on_board = 0
-        return self.clients_on_board
+        result = 0
+        if isinstance(self.current_location, Warehouse): 
+            self.clients_on_board = result = 0
+        elif isinstance(self.current_location, Stop):
+            self.clients_on_board -= self.current_location.total_client
+            result = self.current_location.current_clients_in_stop = self.current_location.total_client
+        return result
 
 class Semaphore:
     """Representa los semaforos en el mapa"""
@@ -109,7 +116,7 @@ class Semaphore:
         return f"<Semaphore({self.ID})>"
     
     def __str__(self) -> str:
-        return f"<Semaphore: ID {self.ID}, State: {self.state}>"
+        return f"<Semaphore: ID {self.ID}, State: {self.state.name}>"
 
     def get_color(self, global_time: int) -> Tuple[Color, int]: #(color, semaphore_time)
         i = 0
@@ -118,7 +125,7 @@ class Semaphore:
             diference -= self.color_range[i % 3]
             if diference <=0:
                 j = i + 1
-                self.state = Color(j % 3)
+                self.state = Color((i % 3) + 1)
                 return (self.state, self.color_range[i % 3] - abs(diference))
             i += 1
         
@@ -135,11 +142,29 @@ class Authority:
     def __str__(self) -> str:
         return f"<Authority: ID {self.ID}>"
     
+    def __eq__(self, o) -> bool:
+        return self.ID == o.ID
+    
+    def change_place(self, graph):
+        edges = graph.edges
+        for place in list(edges.data('weight')):
+            traffic_list = place[2]['traffic_authorities']
+            if self in traffic_list:
+                place[2]['traffic_authorities'].remove(self)
+                break
+
+        # Obtener los nodos de inicio y fin de la arista elegida
+        start, end = list(edges)[random.randint(0, len(edges)-1)]
+        # Añadir la autoridad a la arista elegida aleatoriamente
+        graph[start][end]['weight']['traffic_authorities'].append(self) #añadir +1 al costo de la arista por añadir una autoridad
+        
     def stop_vehicle(self) -> bool:
-        """Calcula la probabilidad de que la autoridad pare al vehículo y 
-        devuelve True o False."""
+        
         return random.random() < self.probability  # Devuelve True si el número aleatorio generado es menor que la probabilidad
 
+    def turn_around_vehicle(self, vehicle: Vehicle) -> bool:
+        """Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino."""
+        pass
 class Company:
     """Representa la compañia de transporte"""
     def __init__(self, name: str, budget: float):
@@ -199,8 +224,9 @@ class Company:
             if vehicle.millas_recorridas >= vehicle.millas_inicial:
                 # El vehículo debe ir al mantenimiento
                 vehicle.maintenance()
+                vehicle.days_off = 2
                 self.in_maintenance.append(vehicle)
-            elif vehicle.available:
+            elif vehicle.days_off == 0:
                 self.in_maintenance.remove(vehicle)
                 # El vehículo no necesita mantenimiento todavía o  ya salio del mantenimiento
     
@@ -213,7 +239,7 @@ class Company:
             vehicle.wait = vehicle.total_time_wait = 10 # espera 10 unidades de tiempo
 
             self.in_maintenance.append(vehicle)
-        elif vehicle.available and vehicle in self.in_maintenance:
+        elif vehicle.days_off == 0 and vehicle in self.in_maintenance:
             self.in_maintenance.remove(vehicle)
 
     def add_clients(self, clients: int, stop: Dict):
