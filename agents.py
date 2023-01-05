@@ -13,9 +13,8 @@ class Vehicle:
     """Representa los vehículos de la compañía"""
     percent_of_deterioration_per_model = {"Lada": 5, "Moskovich": 7,"Ford": 5, "Mercedes Venz":3}
 
-    def __init__(self, ID: int, model: str, current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float):
+    def __init__(self, ID: int, current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float):
         self.ID = ID
-        self.model = model # modelo del vehículo
         self.current_location = current_location
         self.days_off = 0 #disponibilidad del vehiculo. Si es > 0 representa los dias que no se usara
         self.capacity = capacity
@@ -29,7 +28,8 @@ class Vehicle:
         self.probability = probability
         self.pos_traffic_edge = -1
         self.state = 0 
-        self.speed = 0
+        self.speed = 0 #Representa los km/h
+        self.taxes = 0
         """ los estados son:
         0 : no hacer nada
         1 : el vehiculo esta en movimiento
@@ -50,9 +50,11 @@ class Vehicle:
         """Mueve al vehículo a su próximo destino"""
         self.miles_traveled += cost
         self.current_location = destination
+        self.chage_speed()
     
-    def speed_up(self, count: int):
-        pass
+    def chage_speed(self):
+        self.speed = int(random.gauss(45, 10))
+        
     
     def pass_red(self) -> bool:
         """Calcula la probabilidad de que el vehiculo se pase o no la roja del semaforo.
@@ -162,13 +164,17 @@ class Authority:
         # Añadir la autoridad a la arista elegida aleatoriamente
         graph[start][end]['weight']['traffic_authorities'].append(self) #añadir +1 al costo de la arista por añadir una autoridad
         
-    def stop_vehicle(self) -> bool:
-        
-        return random.random() < self.probability  # Devuelve True si el número aleatorio generado es menor que la probabilidad
+    def stop_vehicle(self, vehicle: Vehicle) -> int:
+        """Detiene al vehiculo para ponerle una multa si excede la velocidad. El vehiculo continua su ruta."""
+        if vehicle.speed > 60:
+            vehicle.taxes += 50 # pone multa y continua
+            return 1
+        elif random.random() < self.probability: # Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino
+            return 2 #devia el vehicle
+        else:
+            return 0 # no hace nada
+            
 
-    def turn_around_vehicle(self, vehicle: Vehicle) -> bool:
-        """Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino."""
-        pass
 class Company:
     """Representa la compañia de transporte"""
     def __init__(self, name: str, budget: float):
@@ -221,6 +227,15 @@ class Company:
     def delete_vehicle(self, old_vehicle: Vehicle, cost: int):
         self.vehicles.remove(old_vehicle)
         self.budget += cost
+
+    def pay_taxes(self) -> int:
+        result = 0
+        for v in self.vehicles:
+            result += v.taxes
+            v.taxes = 0
+        self.budget -= result
+        return result
+
 
     def check_vehicules(self): # PROPUESTA: QUE CHEQUEE UN VEHICULO A LA VEZ Y NO TODOS
         """Determina si cada vehículo debe ir al mantenimiento o no."""

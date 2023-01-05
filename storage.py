@@ -3,6 +3,7 @@ import math
 from typing import List, Tuple, Optional, Union, Dict
 import numpy as np
 import networkx as nx
+from agents import Authority
 import random
 
 """ Map Structures """
@@ -58,6 +59,7 @@ class Stop:
             else:
                 self.total_client = min(0, self.total_client - client)
 
+
 class Warehouse:
     """Representa un almacén o depósito central."""
     def __init__(self, ID: int, location: Tuple[float, float]):
@@ -69,6 +71,13 @@ class Warehouse:
 
     def __str__(self) -> str:
         return f"<Warehouse: ID: {self.ID}, Location: {self.location}>"
+
+class Node:
+    def __init__(self, ID: int, value: Union[Stop, Warehouse]):
+        self.ID =ID
+        self.value = value
+        self.authority = self.semaphore = None
+
         
 class Distribution_Type: 
     """ Clase para guardar todas las distribuciones que siguen las variables del problema"""

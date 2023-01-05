@@ -50,10 +50,13 @@ class VRP_Simulation:
                                 if vehicle.pos_traffic_edge >= 0 and len(edge['weight']['traffic_authorities']) > vehicle.pos_traffic_edge:
                                     traffic_a = edge['weight']['traffic_authorities'][vehicle.pos_traffic_edge]
                                     if isinstance(traffic_a, Authority):
-                                        decision = traffic_a.stop_vehicle()
-                                        if decision:
-                                            print(f"El {vehicle} fue parado por la {traffic_a}.")
-                                            self.recalculate_route()
+                                        decision = traffic_a.stop_vehicle(vehicle)
+                                        if decision in [1,2]:
+                                            if decision == 2:
+                                                print(f"El {vehicle} fue parado por la {traffic_a}.")
+                                                self.recalculate_route()
+                                            else:
+                                                print(f"El {vehicle} fue detenido por exceso de velocidad por {traffic_a}.") #entre 10 y 15 min
                                             vehicle.wait = vehicle.pos_traffic_edge + 2 #simula el tiempo q se demoro el vehiculo en encontrarse con la autoridad en la arista. Es el tiempo volviendo para atras
                                             vehicle.state = 6
                                         else:
@@ -84,7 +87,7 @@ class VRP_Simulation:
                             if vehicle.wait - 1 == 0:#ultimo ciclo de espera
                                 if vehicle.state == 1:
                                     next_node = vehicle.route.next_stop(current_location)
-                                    cost = self.graph_map.get_edge_data(current_location, next_node)['weight']['weight']
+                                    cost = self.graph_map.get_edge_data(current_location, next_node)['weight']
                                     vehicle.move(next_node, cost)
                                     actual_route.actual_stop_index = actual_route.stops.index(next_node)
                                     vehicle.pos_traffic_edge = 0
@@ -101,11 +104,20 @@ class VRP_Simulation:
                         # El vehiculo termino de recoger a los clientes de esa parada y se dispone a ir a la siguiente parada
                         #  El vehiculo esta volviendo y termino de dejar a los clientes de esa parada y se dispone a ir a la siguiente parada
                         # El vehiculo llega a una parada donde no tiene q recoger a nadie entonces continua (isinstance(current_location, None))
-                        elif (isinstance(current_location, Warehouse) and vehicle.state == 0) or (isinstance(current_location, Stop) and (vehicle.state == 2 or vehicle.state == 3)) or ((not isinstance(current_location, Stop) and not isinstance(current_location, Warehouse)) and vehicle.state == 1):
+                        elif (isinstance(current_location, Warehouse) and vehicle.state == 0) or (isinstance(current_location, Stop) and (vehicle.state == 2 or vehicle.state == 3)) or ((isinstance(current_location, Stop) and current_location.total_client == 0) and vehicle.state == 1):
                             next_node = vehicle.route.next_stop(current_location)
                             edge = self.graph_map.get_edge_data(current_location, next_node)
-                            vehicle.wait = vehicle.total_time_wait = edge['weight']['weight']
+                            vehicle.wait = vehicle.total_time_wait = edge['weight']
                             vehicle.state = 1
+                        elif current_location.authority != None:
+                            pass
+                        
+
+                        elif current_location.semaphore != None:
+                            pass
+
+
+
                         #Si el nodo actual es una parada de tipo Stop, significa que el vehículo debe recoger a los clientes que se encuentran en esa parada
                         elif isinstance(current_location, Stop) and vehicle.state == 1:
                             if self.go_back:
@@ -142,7 +154,9 @@ class VRP_Simulation:
                         time.sleep(5)
                         self.reorder_rutes()
                         self.go_back = True
+                        taxes = self.company.pay_taxes()
                         end = 0
+                        print(f"{self.company} pagó {taxes} pesos en multas.")
                 self.global_time +=1
                 time.sleep(1)
                 if self.go_back and end == len(self.company.vehicles): #Termino la ruta de vuelta
@@ -182,6 +196,8 @@ class VRP_Simulation:
                 if isinstance(stop, Stop):
                     on_board += stop.total_client
             vehicle.clients_on_board = on_board
+    def time_per_block(self, speed: int, weight: int) -> int:
+        """Calcula el tiempo que se demora entre los nodos"""
 
     def print_vehicle_locations(self, vehicle: Vehicle):
         print("Vehicle Location:")
@@ -212,60 +228,56 @@ class VRP_Simulation:
     def get_distance(self, start, end):
         """Return distance between current and next position in the route"""
         return abs(start[0] - end[0]) + abs(start[1] - end[1])
-    
-    def get_embark_time(self, person_count):
-        a = max(3,person_count - 3)
-        b = person_count + 3
-        return generateUniform(a,b)
 
 
 # Crear grafo y nodos
 graph = nx.Graph()
 
 # Crear paradas
-stop1 = Stop(1, 2, (0, 0), 3)
-stop2 = Stop(2, 2, (1, 1), 3)
-stop3 = Stop(3, 1, (2, 2), 3)
-stop4 = Stop(4, 0, (3, 3), 3)
-stop5 = Stop(5, 1, (4, 4), 3)
-stop6 = Stop(6, 2, (5, 5), 3)
-stop7 = Stop(7, 1, (6, 6), 3)
-stop8 = Stop(8, 2, (7, 7), 3)
+stop1 = Node(1, Stop(1, 2, (0, 0), 3))
+stop2 = Node(2, Stop(2, 2, (1, 1), 3))
+stop3 = Node(3, Stop(3, 1, (2, 2), 3))
+stop4 = Node(4, Stop(4, 0, (3, 3), 3))
+stop5 = Node(5, Stop(5, 1, (4, 4), 3))
+stop6 = Node(6, Stop(6, 2, (5, 5), 3))
+stop7 = Node(7, Stop(7, 1, (6, 6), 3))
+stop8 = Node(8, Stop(8, 2, (7, 7), 3))
+none1 = Node(9, Stop(12, 0, (7, 7), 3)) #Los nodos que no tengan clientes para recoger se consideran paradas vacias
+none2 = Node(10, Stop(13, 0, (7, 7), 3))
 
-warehouse1 = Warehouse(9 , (8, 8))
-warehouse2 = Warehouse(10, (9, 9))
-warehouse3 = Warehouse(11, (10, 10))
+# Setear los valores de las autoridades y los semaforos en los nodos
+stop6.authority = Authority(1, 0.5)
+stop7.semaphore = Semaphore(1, [3, 1, 2])
+
+warehouse1 = Node(Warehouse(9 , (8, 8)))
+warehouse2 = Node(Warehouse(10, (9, 9)))
+warehouse3 = Node(Warehouse(11, (10, 10)))
 
 # Crea una lista de tuplas con los nodos y sus atributos
-nodos = [stop1, stop2, stop3, stop4, stop5, stop6, stop7, stop8, warehouse1, warehouse2, warehouse3]
+nodos = [stop1, stop2, stop3, stop4, stop5, stop6, stop7, stop8, warehouse1, warehouse2, warehouse3, none1, none2]
 
 # Añadir nodos
 graph.add_nodes_from(nodos)
-# Las autoridades del trafico son tanto oficiales como semaforos. Cada arista tendra una lista de estas,
-# cuyo orden representa el orden en qeu el vehiculo se topara con ellas.
-traffic_authoroties_1 =[
-    Authority(1, 0.5)
-] 
-traffic_authoroties_2 = [
-    Semaphore(1, [3, 1, 2])
-]
+
 # Crea una lista de tuplas con las aristas y sus atributos
-# El len(traffic_authoroties) <=  weight - 1. Maximo una autoridad por cada tiempo
 aristas = [
-    (nodos[8], nodos[0], {'weight': 1, 'traffic_authorities': []}),
-    (nodos[0], nodos[1], {'weight': 1, 'traffic_authorities': []}),
-    (nodos[1], nodos[2], {'weight': 1, 'traffic_authorities': []}),
-    (nodos[2], nodos[3], {'weight': 1, 'traffic_authorities': []}),
-    (nodos[3], nodos[9], {'weight': 1, 'traffic_authorities': []}),
-    (nodos[8], nodos[4], {'weight': 2, 'traffic_authorities': []}),
-    (nodos[4], nodos[5], {'weight': 2, 'traffic_authorities': traffic_authoroties_1}),
-    (nodos[5], nodos[6], {'weight': 2, 'traffic_authorities': traffic_authoroties_2}),
-    (nodos[6], nodos[7], {'weight': 2, 'traffic_authorities': []}),
-    (nodos[7], nodos[10], {'weight': 2, 'traffic_authorities': []}),
+    (nodos[8],  nodos[0] , 1), 
+    (nodos[0],  nodos[1] , 1), 
+    (nodos[1],  nodos[2] , 1), 
+    (nodos[2],  nodos[3] , 1), 
+    (nodos[3],  nodos[11], 1),
+    (nodos[11], nodos[9] , 1),
+    (nodos[8],  nodos[4] , 2), 
+    (nodos[4],  nodos[5] , 2),
+    (nodos[5],  nodos[6] , 2),
+    (nodos[6],  nodos[12], 2),
+    (nodos[12], nodos[7] , 2),
+    (nodos[7],  nodos[10], 2)
 ]
 
 # Añadir aristas
 graph.add_weighted_edges_from(aristas)
+print(graph.nodes())
 
 # Crear vehículos y rutas 
 vehicle1 = Vehicle(1,"Ford", nodos[8], 8, 0, 50, 5, 0.5)
