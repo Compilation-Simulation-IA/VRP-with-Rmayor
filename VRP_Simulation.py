@@ -233,6 +233,7 @@ class VRP_Simulation:
 # Crear grafo y nodos
 graph = nx.Graph()
 
+
 # Crear paradas
 stop1 = Node(1, Stop(1, 2, (0, 0), 3))
 stop2 = Node(2, Stop(2, 2, (1, 1), 3))
