@@ -1,10 +1,12 @@
 import itertools
 import numpy as np
-import search
-from utils import *
-from logic import *
-from search import *
-from planning import *
+import ia.search
+from ia.utils import *
+from ia.logic import *
+from ia.search import *
+from ia.planning import *
+from agents import Vehicle, Authority, Semaphore, Company
+from storage import MapNode
 
 
 def get_solution(problem):
@@ -38,7 +40,8 @@ def VehicleActions():
                                     
 
                             ],
-                            domain='Block(A) & Block(B) & Block(C) & Block(D) & Block(E) & Block(F) & Block(G) & Block(H) & Block(I) & Block(J) & Block(F) &  Block(G) & Block(Deposit) & Vehicle(V)  & Stop(E) & Stop(C) & End(G) & Semaphore(B) & Semaphore(D) & Semaphore(C) & Authority(B) & Authority(F)')
+                            domain='Block(A) & Block(B) & Block(C) & Block(D) & Block(E) & Block(F) & Block(G) & Block(H) & Block(I) & Block(J) & Block(F) &  Block(G) & Block(Deposit) & Vehicle(V)  & Stop(E) & Stop(C) & End(G) & Semaphore(B) & Semaphore(D) & Semaphore(C) & Authority(B) & Authority(F)',
+                            )
 
 def CompanyActions():
     return PlanningProblem(initial='~Done(V1,R1) & ~Checked(V1) & ~Payed(V1)',
@@ -60,4 +63,33 @@ def CompanyActions():
 
                             ],
                             domain='Vehicle(V1) & Route(R1)')
+
+n1 = MapNode('(0,0)', 0)
+n2 = MapNode('(0,1)', 0)
+#n3= MapNode('(0,2)', 0, Authority('(0,2)'), Semaphore("(0,2)"))
+#n4 = MapNode('(0,3)', 3)
+n5 = MapNode('D', 0, semaphore=Semaphore('D'))
+#n6 = MapNode('E', 2)
+#n7 = MapNode('F', 0, authority=Authority('F'))
+#n8 = MapNode('G', 0)
+route = [n1,n2]
+vehicle = Vehicle('V',0,0,0.1)
+vehicle.route = route
+#plan = vehicle.plan()
+company = Company('C',200)
+#plan = company.plan([('V1','R1')])
+#get_solution(plan[0])
+
+li  =[vehicle,'A','B']
+dic = Vehicle.__dict__
+dic['move'](*li)
+#plan =vehicle.plan()
+#get_solution(plan)
+s = Semaphore((0,0))
+node = MapNode((0,0),0,semaphore=s)
+s.time_color=15
+print(s.color_range)
+s.update_color()
+print(vehicle.at_semaphore(node))
+
 

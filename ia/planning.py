@@ -5,10 +5,11 @@ from functools import reduce as _reduce
 
 import numpy as np
 
-import search
-from logic import FolKB, conjuncts, unify_mm, associate
-from search import Node
-from utils import Expr, expr, first
+#import search
+from .logic import FolKB, conjuncts, unify_mm, associate
+from .search import Node, Problem
+from .utils import Expr, expr, first
+
 
 
 class PlanningProblem:
@@ -18,11 +19,13 @@ class PlanningProblem:
     The conjunction of these logical statements completely defines a state.
     """
 
-    def __init__(self, initial, goals, actions, domain=None):
+    def __init__(self, initial, goals, actions, agent, domain=None):
         self.initial = self.convert(initial) if domain is None else self.convert(initial) + self.convert(domain)
         self.goals = self.convert(goals)
         self.actions = actions
-        self.domain = domain        
+        self.domain = domain
+        self.agent = agent
+        
 
     def convert(self, clauses):
         """Converts strings into exprs"""
@@ -152,9 +155,29 @@ class PlanningProblem:
         Performs the action given as argument.
         Note that action is an Expr like expr('Remove(Glass, Table)') or expr('Eat(Sandwich)')
         """
+
+        print('in act')
         action_name = action.op
+        print('op ' + action_name)
         args = action.args
+        print('args ' + str(args))
         list_action = first(a for a in self.actions if a.name == action_name)
+        
+        try:
+            object = self.agent.__class__
+            dic = object.__dict__
+            l = []
+            l.append(self.agent)
+            for i in range(1,len(args)):
+                l.append(args[i])
+            print(l)
+            dic[action_name](*l)
+
+            
+
+        except Exception as ex:
+            print(ex)
+        print('List_action: ' + str(list_action))
         if list_action is None:
             raise Exception("Action '{}' not found".format(action_name))
         if not list_action.check_precond(self.initial, args):
@@ -271,7 +294,7 @@ def goal_test(goals, state):
     return all(kb.ask(q) is not False for q in goals)
 
 
-class ForwardPlan(search.Problem):
+class ForwardPlan(Problem):
     """
     [Section 10.2.1]
     Forward state-space search
@@ -308,8 +331,12 @@ class ForwardPlan(search.Problem):
         except:
             return np.inf
 
+    def act(self,action):
+        self.planning_problem.act(action)
 
-class BackwardPlan(search.Problem):
+
+
+class BackwardPlan(Problem):
     """
     [Section 10.2.2]
     Backward relevant-states search

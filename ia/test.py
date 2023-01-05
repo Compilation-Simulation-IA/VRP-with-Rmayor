@@ -319,13 +319,44 @@ def spare_tire():
 
                             ],
                             domain= 'Tire(Flat) & Tire(Spare)'                     
-                            )                       
+                            )     
+
+def VehicleActions():
+    return PlanningProblem(initial='At(V,Deposit) & Adj(Deposit,A) & Adj(A,B) & Adj(B,C) & Adj(C,D) & Adj(D,E) & Adj(E,F) & Adj(F,G) & Empty(Deposit) & Empty(A) & Empty(F) &  Empty(G) & Empty(B) & ~Empty(C) & Empty(D) & ~Empty(E) & FreePass(Deposit) & FreePass(A) & FreePass(F) &  FreePass(G) & ~FreePass(B) & ~FreePass(C) & ~FreePass(D) & FreePass(E) & FreePassA(Deposit) & FreePassA(A) & ~FreePassA(F) &  FreePassA(G) & ~FreePassA(B) & FreePassA(C) & FreePassA(D) & FreePassA(E)',
+                            goals='~Empty(G)',
+                            actions=[Action('Move(v,x,y)',
+                                            precond='Adj(x,y) & At(v,x) & Empty(x) & FreePass(x) & FreePassA(x)',
+                                            effect='~At(v,x) & At(v,y)',
+                                            domain='Vehicle(v) & Block(x) & Block(y)'),
+                                    Action('Load(v,x)',
+                                            precond='At(v,x) & ~Empty(x)',
+                                            effect='Empty(x)',
+                                            domain='Stop(x) & Vehicle(v)'),
+                                    Action('Unload(v,x)',
+                                            precond = 'At(v,x) & Empty(x)',
+                                            effect = '~Empty(x)',
+                                            domain= 'Vehicle(v) & End(x)'),
+                                    Action('WithAuthority(v,x)',
+                                            precond='At(v,x) & Empty(x) & ~FreePassA(x)',
+                                            effect= 'FreePassA(x)',
+                                            domain='Vehicle(v) & Authority(x)'),
+                                    Action('AtSemaphore(v,x)',
+                                            precond='At(v,x) & Empty(x) & ~FreePass(x) & FreePassA(x)',
+                                            effect= 'FreePass(x)',
+                                            domain='Vehicle(v) & Semaphore(x)'),
+                                    
+
+                            ],
+                            domain='Block(A) & Block(B) & Block(C) & Block(D) & Block(E) & Block(F) & Block(G) & Block(H) & Block(I) & Block(J) & Block(F) &  Block(G) & Block(Deposit) & Vehicle(V)  & Stop(E) & Stop(C) & End(G) & Semaphore(B) & Semaphore(D) & Semaphore(C) & Authority(B) & Authority(F)')
+                                              
 
 
 def get_solution(problem):
     solution = uniform_cost_search(ForwardPlan(problem)).solution()
     solution = list(map(lambda action: Expr(action.name, *action.args), solution))
     return solution
+
+get_solution(VehicleActions())
 
 import random as rn
 import numpy as np
@@ -495,7 +526,7 @@ distances = np.array([[np.inf, 2, 2, 5, 7],
                       [7, 2, 3, 2, np.inf]])
 
 sa = SimulatedAnnealing(distances, 100)
-sa.run()
+#sa.run()
 
 #ant_colony = AntColony(distances, 1, 100, 0.95, alpha=1, beta=1)
 #shortest_path = ant_colony.run()

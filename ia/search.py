@@ -1,7 +1,6 @@
 import sys
 from collections import deque
-
-from utils import *
+from .utils import *
 
 
 class Problem:
@@ -261,6 +260,9 @@ def best_first_graph_search(problem, f, display=False):
     while frontier:
         node = frontier.pop()
         action = problem.actions(node.state)
+        if len(action) > 0:
+            problem.act(expr(str(action[0])))
+        print('action:' + str(action))
         print('Node Frontier: ' + str(node))
         if problem.goal_test(node.state):
             if display:
