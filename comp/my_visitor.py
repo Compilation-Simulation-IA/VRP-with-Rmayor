@@ -19,7 +19,7 @@ class Visitor:
         pass
     
     @visitor.when(ProgramNode)
-    def visit(self, node:ProgramNode,scope:Scope=None):
+    def visit(self, node:ProgramNode,scope:Scope=Scope()):
         #self.context = Context()
         self.context.types['String'] = StringType()
         self.context.types['Int'] = IntType()

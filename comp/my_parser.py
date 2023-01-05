@@ -140,17 +140,18 @@ class RmayorParser(Parser):
             vehicle_type = self.vehicle_types[p[1]]
             # Crear instancia de VarDeclarationNode
             idx = LexToken()
+            idx.id = p[2]
             idx.value = p[2]
             idx.type = vehicle_type
             idx.lineno= p.lineno
             idx.column=len(p[1])
             node = VarDeclarationNode(idx, vehicle_type, p[4])
-            if len(p) == 4:
+            if len(p) == 5:
                 # Declaración de tipo de vehículo
-                p[0] = [node]
+                p[0] = CompanyDeclarationNode(p[1],[node])
             else:
                 # Múltiples declaraciones
-                p[0] = [node] +[1]
+                p[0] = [CompanyDeclarationNode(p[1],[node]), p[5]]
           
     def p_demands_block(self, p):
         'demands_block : demands ocur feature_list ccur'
