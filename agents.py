@@ -59,7 +59,7 @@ class Vehicle:
         #self.miles_traveled += cost
         self.chage_speed()
         self.count_moves += 1
-        self.current_location = self.route[self.count_moves]
+        self.current_location = self.route.stop[self.count_moves]
 
         return speed
 
@@ -265,8 +265,9 @@ class Company:
         self.stops = {} # diccionario de paradas por clientes. Para despues formar las rutas
         self.routes = {} #a cada vehiculo se le asigna una ruta
         self.budget = budget # presupuesto disponible
-        self.vehicles=[] #lista de vehiculos q tiene la compañia
+        self.vehicles=[] # lista de vehiculos q tiene la compañia
         #self.authorities = []  # Lista de autoridades que pueden parar a los vehículos
+        self.assignations = []
 
     def __repr__(self) -> str:
         return f"<Company: {self.name}>"
@@ -280,7 +281,14 @@ class Company:
     def assign_routes_to_vehicles(self):
         pass
 
-    def start_route(self,vehicle, route):
+    def get_vehicle_from_id(self, vehicle_id):
+        """Devuelve el objeto vehiculo a partir de su id"""
+        for a in self.assignations:
+            if list(a.keys())[0] == str(vehicle_id):
+                return list(a.values())[0]
+
+    def start_route(self, vehicle_id, route_id):
+        vehicle = self.get_vehicle_from_id(vehicle_id)
         return vehicle.plan()
         
     def calculate_optimal_routes(self):
@@ -313,27 +321,18 @@ class Company:
     #    self.budget += cost
 
     def pay_taxes(self) -> int:
+        """Paga las multas de los vehiculos en esa ruta si hubo y tambien cobra al cliente por haber
+        pedido el servicio de taxis."""
         result = 0
         for v in self.vehicles:
             result += v.taxes
             v.taxes = 0
+            self.budget += 10*v.capacity * len(v.route) # El pago por los servicios
         self.budget -= result
         return result
 
-
-    #def check_vehicules(self): # PROPUESTA: QUE CHEQUEE UN VEHICULO A LA VEZ Y NO TODOS
-    #    """Determina si cada vehículo debe ir al mantenimiento o no."""
-    #    for vehicle in self.vehicles:
-    #        if vehicle.millas_recorridas >= vehicle.millas_inicial:
-    #            # El vehículo debe ir al mantenimiento
-    #            vehicle.maintenance()
-    #            vehicle.days_off = 2
-    #            self.in_maintenance.append(vehicle)
-    #        elif vehicle.days_off == 0:
-    #            self.in_maintenance.remove(vehicle)
-    #            # El vehículo no necesita mantenimiento todavía o  ya salio del mantenimiento
-    
-    def check_vehicle(self, vehicle: Vehicle):
+    def check_vehicle(self, vehicle_id):
+        vehicle = self.get_vehicle_from_id(vehicle_id)
         if vehicle.miles_traveled >= vehicle.initial_miles:
             # El vehículo debe ir al mantenimiento
             vehicle.days_off = random.randint(1,3)
@@ -353,30 +352,32 @@ class Company:
             # ...
             pass
 
-    def plan(self, assignations):
+    def plan(self):
 
         plans=[]
 
-        for v,r in assignations:
+        for a in self.assignations:            
+            v,r = a.keys()
+
 
             new_plan = PlanningProblem(initial = f'~Done({v},{r}) & ~Checked({v}) & ~Payed({v})',
                                         goals = f'Checked({v})',
-                                        actions = [Action('start_route(v,r)',
+                                        actions = [Action('start_route(c,v,r)',
                                                             precond='~Done(v,r) & ~Checked(v) & ~Payed(v)',
                                                             effect='Done(v,r) & EndRoute(v)',
-                                                            domain='Vehicle(v) & Route(r)'),
-                                                    Action('check_vehicle(v)',
+                                                            domain='Vehicle(v) & Route(r) & Company(c)'),
+                                                    Action('check_vehicle(c,v)',
                                                             precond='EndRoute(v) & Payed(v) & ~Checked(v)',
                                                             effect='Checked(v)',
-                                                            domain='Vehicle(v)'),
-                                                    Action('pay_taxes(v)',
+                                                            domain='Vehicle(v) & Company(c)'),
+                                                    Action('pay_taxes(c,v)',
                                                             precond='~Checked(v) & EndRoute(v) & ~Payed(v)',
                                                             effect='Payed(v)',
-                                                            domain='Vehicle(v)')
+                                                            domain='Vehicle(v) & Company(c)')
 
                                                     ],
                                         agent=self,
-                                        domain=f'Vehicle({v}) & Route({r})')
+                                        domain=f'Vehicle({v}) & Route({r}) & Company({self.name})')
             plans.append(new_plan)
 
         return plans

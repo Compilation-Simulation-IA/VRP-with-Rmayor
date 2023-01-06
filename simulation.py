@@ -94,6 +94,54 @@ class VRP_Simulation:
                 wait_time -=1
 
         return None
+    
+    def simulation_Company(self, problem, index: int, display=False):
+        f = memoize(lambda node: node.path_cost, 'f')
+        node = Node(problem.initial) # problem.initial is Node state
+        frontier = PriorityQueue('min', f)
+        frontier.append(node)
+        explored = set()
+        response = None
+        
+        while frontier:
+                
+            current_vehicle = list(problem.planning_problem.agent.routes.keys())[index]
+            current_route = list(problem.planning_problem.agent.routes.values())[index]
+            node = frontier.pop()
+            action = problem.actions(node.state)       
+            
+            if len(action) > 0:
+                action_name = action[0].name
+                print(action_name)
+                action_args = action[0].args
+                print(action_args)
+                response = problem.act(expr(str(action[0])))
+                if action_name == 'start_route':
+                    forward_problem_vehicle = ForwardPlan(response)
+                    sim.simulation_vehicle(forward_problem_vehicle)
+                elif action_name == 'check_vehicle':
+                    pass
+                else: #  action_name == 'pay_taxes':
+                    pass
+
+            print('action:' + str(action))
+            print('Node Frontier: ' + str(node))
+            if problem.goal_test(node.state):
+                if display:
+                    print(len(explored), "paths have been expanded and", len(frontier), "paths remain in the frontier")
+                return node
+            explored.add(node.state)
+            for child in node.expand(problem):
+                print('Frontier Child: ' + str(child))
+                if child.state not in explored and child not in frontier:
+                    frontier.append(child)
+                elif child in frontier:
+                    if f(child) < frontier[child]:
+                        del frontier[child]
+                        frontier.append(child)
+
+
+        return None
 
     def cost_move(self, speed, distance): 
 
@@ -125,7 +173,6 @@ class VRP_Simulation:
     def relocate_route(self):
         pass
 
-        
 graph = nx.Graph()
 
 n1 = MapNode('(0,0)', 0)
@@ -159,12 +206,23 @@ graph.add_edges_from([((0,0),(0,1),{'weight':100}),
 route = [n1,n2,n3,n4,n5,n6,n7,n8]
 vehicle = Vehicle('V1', 20, 100, 0.4)
 vehicle.route = route
-plan = vehicle.plan()
 
 company = Company('C1', 100)
-forward_problem = ForwardPlan(plan)
+company.vehicles.append(vehicle)
+company.routes[vehicle] =  route
+company.assignations.append({'V1':vehicle, 'R1':route})
+
+#plan_vehicle = vehicle.plan()
+#forward_problem_vehicle = ForwardPlan(plan_vehicle)
+#sim.simulation_vehicle(forward_problem_vehicle)
+
+plan_company = company.plan()
 sim = VRP_Simulation(graph,company, 3)
-sim.simulation_vehicle(forward_problem)
+for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
+    forward_problem_company = ForwardPlan(p)
+    sim.simulation_Company(forward_problem_company, i)
+
+
 
 
 
