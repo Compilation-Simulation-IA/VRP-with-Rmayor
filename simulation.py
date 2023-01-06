@@ -40,8 +40,6 @@ class VRP_Simulation:
         wait_time = 0
         
         while frontier:
-            
-
             if wait_time == 0:
                 
                 current_pos = problem.planning_problem.agent.current_location
@@ -218,8 +216,8 @@ class VRP_Simulation:
 graph = nx.Graph()
 
 n1 = MapNode('(2,0)', 0)
-#n2 = MapNode('(2,1)', 0)
-#n3= MapNode('(2,2)', 0, semaphore= Semaphore('(2,2)'))
+n2 = MapNode('(2,1)', 0)
+n3= MapNode('(2,2)', 0, semaphore= Semaphore('(2,2)'))
 n4 = MapNode('(2,3)', 3, authority= Authority('(2,3)', map =graph, probability = 1))
 n5 = MapNode('(2,4)', 0, semaphore=Semaphore('(2,4)'))
 n6 = MapNode('(2,5)', 2)
@@ -233,8 +231,8 @@ n13 = MapNode('(3,5)', 0)
 
 
 graph.add_node((2,0), value=n1)
-#graph.add_node((2,1), value=n2)
-#graph.add_node((2,2), value=n3)
+graph.add_node((2,1), value=n2)
+graph.add_node((2,2), value=n3)
 graph.add_node((2,3), value=n4)
 graph.add_node((2,4), value=n5)
 graph.add_node((2,5), value=n6)
@@ -249,8 +247,8 @@ graph.add_node((3,5), value=n13)
 
 
 graph.add_edges_from([((2,0),(2,3),{'weight':100}),
-                      #((2,1),(2,2),{'weight':120}),
-                      #((2,2),(2,3),{'weight':90}),
+                      ((2,1),(2,2),{'weight':120}),
+                      ((2,2),(2,3),{'weight':90}),
                       ((2,3),(2,4),{'weight':100}),
                       ((2,4),(2,5),{'weight':110}),
                       ((2,5),(2,6),{'weight':130}),
@@ -284,10 +282,3 @@ for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
     forward_problem_company = ForwardPlan(p)
     sim.simulation_Company(forward_problem_company, i)
 
-
-
-#print(nx.shortest_path(graph,(2,3),(2,5), weight='weight'))
-#print(list(graph.neighbors((2,3))))
-#print(graph[(2,3)][(2,4)]['weight'])
-
-print(ast.literal_eval(route[0].id) == (2,0))

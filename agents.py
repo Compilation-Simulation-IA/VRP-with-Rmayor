@@ -313,9 +313,17 @@ class Company:
 
     def assign_routes_to_vehicles(self):
         pass
+    
+    def get_vehicle_from_id(self, vehicle_id):
+        """Devuelve el objeto vehiculo a partir de su id"""
+        for a in self.assignations:
+            if list(a.keys())[0] == str(vehicle_id):
+                return list(a.values())[0]
 
-    def start_route(self,vehicle, route):
+    def start_route(self, vehicle_id, route_id):
+        vehicle = self.get_vehicle_from_id(vehicle_id)
         return vehicle.plan()
+
         
     def calculate_optimal_routes(self):
         """Este metodo llama a la IA para q me de la organizacion de los vehiculos por clientes y sus rutas"""
