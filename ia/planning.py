@@ -162,7 +162,7 @@ class PlanningProblem:
         args = action.args
         print('args ' + str(args))
         list_action = first(a for a in self.actions if a.name == action_name)
-        
+        response = None
         try:
             object = self.agent.__class__
             dic = object.__dict__
@@ -171,7 +171,7 @@ class PlanningProblem:
             for i in range(1,len(args)):
                 l.append(args[i])
             print(l)
-            dic[action_name](*l)
+            response = dic[action_name](*l)
 
             
 
@@ -183,6 +183,8 @@ class PlanningProblem:
         if not list_action.check_precond(self.initial, args):
             raise Exception("Action '{}' pre-conditions not satisfied".format(action))
         self.initial = list_action(self.initial, args).clauses
+
+        return response
 
 
 class Action:
@@ -304,7 +306,7 @@ class ForwardPlan(Problem):
         super().__init__(associate('&', planning_problem.initial), associate('&', planning_problem.goals))
         self.planning_problem = planning_problem
         self.expanded_actions = self.planning_problem.expand_actions()
-
+        
     def actions(self, state):
         a = [action for action in self.expanded_actions if all(pre in conjuncts(state) for pre in action.precond)]
         print('Actions:' + str(a))
@@ -332,7 +334,7 @@ class ForwardPlan(Problem):
             return np.inf
 
     def act(self,action):
-        self.planning_problem.act(action)
+        return self.planning_problem.act(action)
 
 
 
