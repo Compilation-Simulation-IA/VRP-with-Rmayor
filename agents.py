@@ -184,9 +184,9 @@ class Vehicle:
 
             
 
-        print('initial:' + initial)
-        print('goals:' + goals)
-        print('domain:' + domain)
+        #print('initial:' + initial)
+        #print('goals:' + goals)
+        #print('domain:' + domain)
 
         return PlanningProblem(initial=initial, goals=goals, actions=actions, agent=self, domain=domain)
 
