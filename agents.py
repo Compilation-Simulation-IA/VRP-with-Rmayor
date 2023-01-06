@@ -30,6 +30,8 @@ class Vehicle:
         #self.state = 0 
         self.speed = 0 #Representa los km/h
         #self.taxes = 0
+        self.chage_speed()
+        self.count_moves =0 
         
 
         """ los estados son:
@@ -53,9 +55,15 @@ class Vehicle:
         print('origin ' + str(origin))
         print('dest ' + str(destination))
 
+        speed = self.speed
         #self.miles_traveled += cost
-        self.current_location = destination
         self.chage_speed()
+        self.count_moves += 1
+        self.current_location = self.route[self.count_moves]
+
+        return speed
+
+        
     
     def chage_speed(self):
         self.speed = int(random.gauss(45, 10))        
@@ -91,19 +99,25 @@ class Vehicle:
     def load(self, current_pos):
         """Modifica la cantidad de clientes que quedan en la parada y la
          capacidad disponible en el vehículo"""
-
-        self.people_on_board += self.current_location.people
+        people = self.current_location.people
+        self.people_on_board += people
         self.current_location.people = 0
+        
+        return people
+
         
     
     def unload(self, current_pos):
         '''Descarga a los pasajeros en la posicion current_stop'''
 
-        self.clients_on_board = 0
+        people = self.people_on_board
+        self.people_on_board = 0
 
-    def at_semaphore(self, current_pos: MapNode):
+        return people
+
+    def at_semaphore(self, current_pos):
         wait = 0
-        semaphore = current_pos.semaphore
+        semaphore = self.current_location.semaphore
         color = semaphore.state
             
         semaphore_time_left = sum(semaphore.color_range) - semaphore.time_color
@@ -151,7 +165,7 @@ class Vehicle:
             if i < (len(self.route) - 1):
                 initial += f' & Adj({self.route[i].id},{self.route[i+1].id})'
 
-            if self.route[i].value > 0:
+            if self.route[i].people > 0:
                 initial += f' & ~Empty({self.route[i].id})'
                 domain += f' & Stop({self.route[i].id}) & Node({self.route[i].id})'
             else:

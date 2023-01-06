@@ -10,7 +10,7 @@ from storage import MapNode
 
 
 def get_solution(problem):
-    solution = uniform_cost_search(ForwardPlan(problem)).solution()
+    solution = uniform_cost_search(ForwardPlan(problem)).solution() # devuelve el nodo solucion
     solution = list(map(lambda action: Expr(action.name, *action.args), solution))
     return solution
 

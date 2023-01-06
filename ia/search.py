@@ -121,44 +121,6 @@ class Node:
 
 
 # ______________________________________________________________________________
-
-
-class SimpleProblemSolvingAgentProgram:
-    """
-    Abstract framework for a problem-solving agent.
-    """
-
-    def __init__(self, initial_state=None):
-        """State is an abstract representation of the state
-        of the world, and seq is the list of actions required
-        to get to a particular state from the initial state(root)."""
-        self.state = initial_state
-        self.seq = []
-
-    def __call__(self, percept):
-        self.state = self.update_state(self.state, percept)
-        if not self.seq:
-            goal = self.formulate_goal(self.state)
-            problem = self.formulate_problem(self.state, goal)
-            self.seq = self.search(problem)
-            if not self.seq:
-                return None
-        return self.seq.pop(0)
-
-    def update_state(self, state, percept):
-        raise NotImplementedError
-
-    def formulate_goal(self, state):
-        raise NotImplementedError
-
-    def formulate_problem(self, state, goal):
-        raise NotImplementedError
-
-    def search(self, problem):
-        raise NotImplementedError
-
-
-# ______________________________________________________________________________
 # Uninformed Search algorithms
 
 
@@ -245,6 +207,7 @@ def breadth_first_graph_search(problem):
 
 
 def best_first_graph_search(problem, f, display=False):
+
     """Search the nodes with the lowest f scores first.
     You specify the function f(node) that you want to minimize; for example,
     if f is a heuristic estimate to the goal, then we have greedy best
@@ -252,8 +215,9 @@ def best_first_graph_search(problem, f, display=False):
     There is a subtlety: the line "f = memoize(f, 'f')" means that the f
     values will be cached on the nodes as they are computed. So after doing
     a best first search you can examine the f values of the path returned."""
+
     f = memoize(f, 'f')
-    node = Node(problem.initial)
+    node = Node(problem.initial) # problem.initial is Node state
     frontier = PriorityQueue('min', f)
     frontier.append(node)
     explored = set()
