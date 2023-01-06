@@ -54,50 +54,58 @@ para ser procesada por LALR(1) sin errores.
 
 Para realizar los recorridos en el árbol de derivación se hace uso del patrón visitor. Este patrón nos permite abstraer el concepto de procesamiento de un nodo. Cada elemento del nodo se procesa y se envia a la simulacion para ejecutarla
 
-Un ejemplo de la estructura que debe tener el programa es la siguiente:
-(* An assignment has the form <id> <- <expr> *)
-map {
-    import "mapa.txt"
-}
+Un ejemplo de la estructura que debe tener el programa es la siguiente. En mapa el usuario carga el mapa a simular, en stops se definen las paradas, en vehicle_type los tipos de vehiculos que se usan, en clients, cada una de las empresas clientes que van a simularse, en company se inicializa el presupuesto, la cantidad de vehiculos y el deposito y en demandas se definen funciones, variables y se Simula el proceso de la aplicacion
 
-stops {
-    s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+{
+	
+	map 
+	{
+		import "mapa.txt"
+	}
 
-}
+	stops 
+	{
+    		s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+	}
 
-vehicle_type {
+	vehicle_type 
+	{
+    		small (miles: 40000, capacity: 30)
+    		medium (miles: 40000, capacity: 70)
+	}
+
+	clients 
+	{
+    		c1 (name: "Coca Cola", stops_list: (s1),depot:s1 ) (*puede cambiarse por []*)
+	}
+	
+	company 
+	{
+    		budget: 1000000
+    		depot (address:"156A, #107, Playa, La Habana, Cuba")
+    		small v1: 5
+    		medium v2: 3
+	}
+	
+	demands
+	{
+		func print() : IO 
+		{
+			out_string("reached!!\n")
+	        }
+
+		func main(): Object 
+		{
+        		print()
+		}
+
+    		test1<- 1
+
+    		test3<- "1"
     
-    small (miles: 40000, capacity: 30)
-    medium (miles: 40000, capacity: 70)
-}
+		Simulate
+	}
 
-clients {
-    
-    c1 (name: "Coca Cola", stops_list: (s1),depot:s1 ) (*puede cambiarse por []*)
-
-}
-
-company {
-    budget: 1000000
-    depot (address:"156A, #107, Playa, La Habana, Cuba")
-    small v1: 5
-    medium v2: 3
-
-}
-demands{
-
-func print() : IO {
-        out_string("reached!!\n")
-    }
-func main(): Object {
-        print()
-    }
-
-    test1<- 1
-
-    test3<- "1"
-Simulate
-}
 
 Se provee al ususario una simple interfaz para escribir el codigo y ver el resultado de la simulacion
 # Simulación
