@@ -246,7 +246,7 @@ graph.add_node((3,5), value=n13)
 
 
 
-graph.add_edges_from([((2,0),(2,3),{'weight':100}),
+graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                       ((2,1),(2,2),{'weight':120}),
                       ((2,2),(2,3),{'weight':90}),
                       ((2,3),(2,4),{'weight':100}),
@@ -263,7 +263,7 @@ graph.add_edges_from([((2,0),(2,3),{'weight':100}),
                                          
                        ])
 
-route = [n1,n4,n5,n6,n7,n8]
+route = [n1,n2,n3,n4,n5,n6,n7,n8]
 vehicle = Vehicle('V1', 20, 100, 0.4)
 vehicle.route = route
 

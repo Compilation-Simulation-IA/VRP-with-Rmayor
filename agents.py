@@ -20,7 +20,7 @@ class Vehicle:
         self.days_off = 0 #disponibilidad del vehiculo. Si es > 0 representa los dias que no se usara
         self.capacity = capacity
         self.initial_miles = initial_miles
-        #self.miles_traveled = 0
+        self.miles_traveled = 0
         #self.std_dev = std_dev   # Desviación estándar inicial del vehículo
         #self.spent = 0
         self.route = None
@@ -30,7 +30,7 @@ class Vehicle:
         #self.pos_traffic_edge = -1
         #self.state = 0 
         self.speed = 0 #Representa los km/h
-        #self.taxes = 0
+        self.taxes = 0
         self.chage_speed()
         self.count_moves =0 
         
@@ -314,6 +314,18 @@ class Company:
     def assign_routes_to_vehicles(self):
         pass
     
+    def get_complete_route(self, stops, map):
+
+        path = []
+        nodes = nx.get_node_attributes(map,'value')
+
+        for i in range(len(stops)-1):
+            shortest_path = nx.shortest_path(map,stops[i],stops[i+1],weight='weight')
+            for j in range(1,len(shortest_path)):
+                path.append(nodes[shortest_path[j]])
+
+        return path
+
     def get_vehicle_from_id(self, vehicle_id):
         """Devuelve el objeto vehiculo a partir de su id"""
         for a in self.assignations:
@@ -354,14 +366,13 @@ class Company:
     #    self.vehicles.remove(old_vehicle)
     #    self.budget += cost
 
-    def pay_taxes(self) -> int:
+    def pay_taxes(self, vehicle_id) -> int: #ARREGLAR Q PAGUE LA MULTA DE UN VEHICULO
         """Paga las multas de los vehiculos en esa ruta si hubo y tambien cobra al cliente por haber
         pedido el servicio de taxis."""
-        result = 0
-        for v in self.vehicles:
-            result += v.taxes
-            v.taxes = 0
-            self.budget += 10*v.capacity * len(v.route) # El pago por los servicios
+        vehicle = self.get_vehicle_from_id(vehicle_id)
+        result = vehicle.taxes
+        vehicle.taxes = 0
+        self.budget += 10 * vehicle.capacity * len(vehicle.route) # El pago por los servicios
         self.budget -= result
         return result
 
