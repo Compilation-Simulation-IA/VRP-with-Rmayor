@@ -4,6 +4,7 @@ from storage import Route, MapNode
 from enum import Enum
 import networkx as nx
 from ia.planning import Action,PlanningProblem
+import ast
 
 class Color(Enum):
     GREEN = 1
@@ -137,6 +138,9 @@ class Vehicle:
     def plan(self):
         '''Crea el problema de planificacion del vehiculo para la simulacion'''
 
+        if self.current_location == None:
+            self.current_location = self.route[0]
+
         actions = [Action('move(v,x,y)',
                         precond='Adj(x,y) & At(v,x) & Empty(x) & FreePass(x)',
                         effect='~At(v,x) & At(v,y)',
@@ -157,7 +161,7 @@ class Vehicle:
                 ]
 
         goals = f'~Empty({self.route[len(self.route)-1].id})'
-        initial =f'At({self.id},{self.route[0].id})'
+        initial =f'At({self.id},{self.current_location.id})'
         domain = f'Vehicle({self.id}) & End({self.route[len(self.route)-1].id})'
 
         for i in range(len(self.route)):
@@ -220,10 +224,11 @@ class Semaphore:
 
 class Authority:
     """Representa la autoridad del trafico """
-    def __init__(self, ID, probability = 0):
+    def __init__(self, ID , map, probability = 0.5):
         self.id = ID
         self.probability = probability  # Probabilidad de que la autoridad para al vehículo. Tiene que estar entre 0 y 1e
-        
+        self.map = map
+
     def __repr__(self) -> str:
         return f"<Authority({self.id})>"
     
@@ -231,6 +236,8 @@ class Authority:
         return f"<Authority: ID {self.id}>"
     
     def __eq__(self, o) -> bool:
+        if o == None:
+            return False
         return self.id == o.id
     
     def change_place(self, graph):
@@ -248,18 +255,43 @@ class Authority:
         
     def stop_vehicle(self, vehicle: Vehicle) -> int:
         """Detiene al vehiculo para ponerle una multa si excede la velocidad. El vehiculo continua su ruta."""
+        result = 0
         if vehicle.speed > 60:
             vehicle.taxes += 50 # pone multa y continua
-            return 1
+            result = 1
+
         elif random.random() < self.probability: # Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino
-            return 2 #devia el vehicle
-        else:
-            return 0 # no hace nada
+            route = vehicle.route
+            next_stop = None
+            start = len(route)
+            path = None
+
+            for i in range(len(route)):
+                if self.id == route[i].id:
+                    start = i
+                if i > start and route[i].people > 0 or i == (len(route)-1):
+                    next_stop = route[i].id
+                    break
+            
+            origin = ast.literal_eval(self.id)
+            dest =ast.literal_eval(next_stop)            
+
+            if dest != ast.literal_eval(route[start+1].id):
+                weight = self.map[origin][ast.literal_eval(route[start+1].id)]['weight']
+                self.map.remove_edge(origin,ast.literal_eval(route[start+1].id))
+                path = nx.shortest_path(self.map,origin,dest, weight='weight')
+                self.map.add_edge(origin,ast.literal_eval(route[start+1].id),weight=weight)
+
+            if path != None:
+                result = 2 #devia el vehicle
+
+        
+        return result
             
 
 class Company:
     """Representa la compañia de transporte"""
-    def __init__(self, name: str, budget: float):
+    def __init__(self, name: str, budget: float, map):
         self.name = name
         #self.warehouses = []  #lista de almacenes
         self.stops = {} # diccionario de paradas por clientes. Para despues formar las rutas
@@ -267,6 +299,7 @@ class Company:
         self.budget = budget # presupuesto disponible
         self.vehicles=[] # lista de vehiculos q tiene la compañia
         #self.authorities = []  # Lista de autoridades que pueden parar a los vehículos
+        self.map = map
         self.assignations = []
 
     def __repr__(self) -> str:
@@ -281,14 +314,7 @@ class Company:
     def assign_routes_to_vehicles(self):
         pass
 
-    def get_vehicle_from_id(self, vehicle_id):
-        """Devuelve el objeto vehiculo a partir de su id"""
-        for a in self.assignations:
-            if list(a.keys())[0] == str(vehicle_id):
-                return list(a.values())[0]
-
-    def start_route(self, vehicle_id, route_id):
-        vehicle = self.get_vehicle_from_id(vehicle_id)
+    def start_route(self,vehicle, route):
         return vehicle.plan()
         
     def calculate_optimal_routes(self):
