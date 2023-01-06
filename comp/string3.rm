@@ -16,12 +16,13 @@ vehicle_type {
 
 clients {
     
-    c1 (name: "Coca Cola", stops_list: (s1) ) (*puede cambiarse por []*)
+    c1 (name: "Coca Cola", stops_list: (s1),depot:s1 ) (*puede cambiarse por []*)
 
 }
 
 company {
     budget: 1000000
+    depot (address:"156A, #107, Playa, La Habana, Cuba")
     small v1: 5
     medium v2: 3
 

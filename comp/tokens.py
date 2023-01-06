@@ -13,7 +13,8 @@ reserved = {
     'capacity': 'capacity',
     'address': 'address',
     'people': 'people',
-
+    'depot': 'depot',
+    
    # 'as': "as",
     'if': "if",
     'fi': 'fi',
