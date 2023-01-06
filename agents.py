@@ -60,7 +60,7 @@ class Vehicle:
         #self.miles_traveled += cost
         self.chage_speed()
         self.count_moves += 1
-        self.current_location = self.route.stop[self.count_moves]
+        self.current_location = self.route[self.count_moves]
 
         return speed
 
