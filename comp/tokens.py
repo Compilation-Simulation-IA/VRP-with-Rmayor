@@ -14,7 +14,7 @@ reserved = {
     'address': 'address',
     'people': 'people',
     'depot': 'depot',
-    
+    'Simulate': 'Simulate',
    # 'as': "as",
     'if': "if",
     'fi': 'fi',

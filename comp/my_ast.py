@@ -63,8 +63,9 @@ class CompanyDeclarationNode:
         self.identifier = identifier
         self.vehicle_declarations = vehicle_declarations
 class DemandsNode:
-        def __init__(self, demands):
+        def __init__(self, demands,simulate):
             self.demands = demands
+            self.simulate = simulate
 class DeclarationNode(Node):
     pass
 

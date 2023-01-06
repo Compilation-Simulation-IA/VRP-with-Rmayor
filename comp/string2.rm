@@ -36,10 +36,6 @@ func main(): Object {
         print()
     }
 
-func testing1(): Int {
-        2 + 2
-    }
-
     test1<- 1
 
     test3<- "1"

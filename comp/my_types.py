@@ -352,7 +352,7 @@ class IOType(Type):
         self.methods = {}
         self.parent = ObjectType(pos)
         self.pos = pos
-        self.init_methods()
+        #self.init_methods()
 
     def out_string(self,string):
             print(string)
