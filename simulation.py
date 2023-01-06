@@ -7,6 +7,8 @@ import time
 from ia.planning import *
 from collections import deque
 from ia.utils import *
+from heapq import heappush, heappop
+import ast
 
 class WeekDays(Enum):
     Lunes = 1
@@ -38,20 +40,25 @@ class VRP_Simulation:
         wait_time = 0
         
         while frontier:
-            
-
             if wait_time == 0:
                 
                 current_pos = problem.planning_problem.agent.current_location
 
                 if current_pos.authority != None:
                     decision = current_pos.authority.stop_vehicle(problem.planning_problem.agent)
-                    wait_time += self.cost_with_authority
                     if decision == 2:
-                        new_route = self.relocate_route()
+                        new_route = self.relocate_route(current_pos.id, problem.planning_problem.agent.route)
+                        problem.planning_problem.agent.route = new_route
+                        problem = ForwardPlan(problem.planning_problem.agent.plan())
+                        frontier = PriorityQueue('min', f)
+                        frontier.append(Node(problem.initial)) 
+                        current_pos.authority = None
+                    wait_time += self.cost_with_authority(decision)
+
+                        
 
                 node = frontier.pop()
-                action = problem.actions(node.state)       
+                action = problem.actions(node.state)
                 
 
                 if len(action) > 0:
@@ -94,6 +101,54 @@ class VRP_Simulation:
                 wait_time -=1
 
         return None
+    
+    def simulation_Company(self, problem, index: int, display=False):
+        f = memoize(lambda node: node.path_cost, 'f')
+        node = Node(problem.initial) # problem.initial is Node state
+        frontier = PriorityQueue('min', f)
+        frontier.append(node)
+        explored = set()
+        response = None
+        
+        while frontier:
+                
+            current_vehicle = list(problem.planning_problem.agent.routes.keys())[index]
+            current_route = list(problem.planning_problem.agent.routes.values())[index]
+            node = frontier.pop()
+            action = problem.actions(node.state)       
+            
+            if len(action) > 0:
+                action_name = action[0].name
+                print(action_name)
+                action_args = action[0].args
+                print(action_args)
+                response = problem.act(expr(str(action[0])))
+                if action_name == 'start_route':
+                    forward_problem_vehicle = ForwardPlan(response)
+                    sim.simulation_vehicle(forward_problem_vehicle)
+                elif action_name == 'check_vehicle':
+                    pass
+                else: #  action_name == 'pay_taxes':
+                    pass
+
+            print('action:' + str(action))
+            print('Node Frontier: ' + str(node))
+            if problem.goal_test(node.state):
+                if display:
+                    print(len(explored), "paths have been expanded and", len(frontier), "paths remain in the frontier")
+                return node
+            explored.add(node.state)
+            for child in node.expand(problem):
+                print('Frontier Child: ' + str(child))
+                if child.state not in explored and child not in frontier:
+                    frontier.append(child)
+                elif child in frontier:
+                    if f(child) < frontier[child]:
+                        del frontier[child]
+                        frontier.append(child)
+
+
+        return None
 
     def cost_move(self, speed, distance): 
 
@@ -111,8 +166,7 @@ class VRP_Simulation:
         """Calcula el tiempo de un vehiculo en una parada. El tiempo se da en segundos.
         Utilizamis logaritmo porque mientras mayor cantidad de personas, el tiempo no debe aumentar mucho."""
 
-        return int(math.log(people + 1, 1.6) * 60)     
-        
+        return int(math.log(people + 1, 1.6) * 60)        
    
 
     def cost_with_authority(self, decision: int):
@@ -122,50 +176,109 @@ class VRP_Simulation:
             return random.randint(3,5)
         return 0
 
-    def relocate_route(self):
-        pass
+    def heuristic(self,a, b):
+        """distancia Manhatan"""
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+    def relocate_route(self, origin, routes):
+       
+        start = len(routes)
+        stops = []              
+             
+
+        for i in range(len(routes)):
+            if routes[i].id == origin:
+                start = i
+                print(start)
+                stops.append(ast.literal_eval(routes[i].id))
+
+            if i > start and routes[i].people > 0:
+                stops.append(ast.literal_eval(routes[i].id))
+
+        stops.append(ast.literal_eval(routes[len(routes)-1].id)) 
+
+        origin= ast.literal_eval(origin)
+        not_available = ast.literal_eval(routes[start+1].id)
+
+        temp = self.graph_map[origin][not_available]['weight']
+        self.graph_map[origin][not_available]['weight'] = float('inf')             
 
         
+        path = self.company.get_complete_route(stops,self.graph_map)
+
+        path = routes[0:start+1] + path   
+
+        self.graph_map[origin][not_available]['weight']=temp
+
+        return path
+
+
 graph = nx.Graph()
 
-n1 = MapNode('(0,0)', 0)
-n2 = MapNode('(0,1)', 0)
-n3= MapNode('(0,2)', 0, Authority('(0,2)'), Semaphore("(0,2)"))
-n4 = MapNode('(0,3)', 3)
-n5 = MapNode('(0,4)', 0, semaphore=Semaphore('D'))
-n6 = MapNode('(0,5)', 2)
-n7 = MapNode('(0,6)', 0, authority=Authority('F'))
-n8 = MapNode('(0,7)', 0)
-
-graph.add_node((0,0), value=n1)
-graph.add_node((0,1), value=n1)
-graph.add_node((0,2), value=n3)
-graph.add_node((0,3), value=n4)
-graph.add_node((0,4), value=n5)
-graph.add_node((0,5), value=n6)
-graph.add_node((0,6), value=n7)
-graph.add_node((0,7), value=n8)
+n1 = MapNode('(2,0)', 0)
+n2 = MapNode('(2,1)', 0)
+n3= MapNode('(2,2)', 0, semaphore= Semaphore('(2,2)'))
+n4 = MapNode('(2,3)', 3, authority= Authority('(2,3)', map =graph, probability = 1))
+n5 = MapNode('(2,4)', 0, semaphore=Semaphore('(2,4)'))
+n6 = MapNode('(2,5)', 2)
+n7 = MapNode('(2,6)', 0, authority=Authority('(2,6)', map=graph))
+n8 = MapNode('(2,7)', 0)
+n9 = MapNode('(1,3)', 0)
+n10 = MapNode('(0,4)', 0)
+n11 = MapNode('(1,5)', 0)
+n12 = MapNode('(3,4)', 0)
+n13 = MapNode('(3,5)', 0)
 
 
-graph.add_edges_from([((0,0),(0,1),{'weight':100}),
-                      ((0,1),(0,2),{'weight':120}),
-                      ((0,2),(0,3),{'weight':90}),
-                      ((0,3),(0,4),{'weight':100}),
-                      ((0,4),(0,5),{'weight':110}),
-                      ((0,5),(0,6),{'weight':130}),
-                      ((0,6),(0,7),{'weight':80}),                      
+graph.add_node((2,0), value=n1)
+graph.add_node((2,1), value=n2)
+graph.add_node((2,2), value=n3)
+graph.add_node((2,3), value=n4)
+graph.add_node((2,4), value=n5)
+graph.add_node((2,5), value=n6)
+graph.add_node((2,6), value=n7)
+graph.add_node((2,7), value=n8)
+graph.add_node((1,3), value=n9)
+graph.add_node((0,4), value=n10)
+graph.add_node((1,5), value=n11)
+graph.add_node((3,4), value=n12)
+graph.add_node((3,5), value=n13)
+
+
+
+graph.add_edges_from([((2,0),(2,1),{'weight':100}),
+                      ((2,1),(2,2),{'weight':120}),
+                      ((2,2),(2,3),{'weight':90}),
+                      ((2,3),(2,4),{'weight':100}),
+                      ((2,4),(2,5),{'weight':110}),
+                      ((2,5),(2,6),{'weight':130}),
+                      ((2,6),(2,7),{'weight':80}), 
+                      ((2,3),(1,3),{'weight':80}),
+                      ((0,4),(1,3),{'weight':80}),
+                      ((1,5),(0,4),{'weight':80}),
+                      ((1,5),(2,5),{'weight':80}),
+                      ((2,3),(3,4),{'weight':80}),
+                      ((3,5),(3,4),{'weight':80}),
+                      ((3,5),(2,5),{'weight':80}),
+                                         
                        ])
 
 route = [n1,n2,n3,n4,n5,n6,n7,n8]
 vehicle = Vehicle('V1', 20, 100, 0.4)
 vehicle.route = route
-plan = vehicle.plan()
 
-company = Company('C1', 100)
-forward_problem = ForwardPlan(plan)
+company = Company('C1', 100,graph)
+company.vehicles.append(vehicle)
+company.routes[vehicle] =  route
+company.assignations.append({'V1':vehicle, 'R1':route})
+
+#plan_vehicle = vehicle.plan()
+#forward_problem_vehicle = ForwardPlan(plan_vehicle)
+#sim.simulation_vehicle(forward_problem_vehicle)
+
+plan_company = company.plan()
 sim = VRP_Simulation(graph,company, 3)
-sim.simulation_vehicle(forward_problem)
-
-
-
+for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
+    forward_problem_company = ForwardPlan(p)
+    sim.simulation_Company(forward_problem_company, i)
 
