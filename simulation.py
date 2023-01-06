@@ -28,7 +28,7 @@ class VRP_Simulation:
         self.week_day = WeekDays.Lunes.name
         
     def simulation_vehicle(self,problem, display=False):
-
+        
         f = memoize(lambda node: node.path_cost, 'f')
         node = Node(problem.initial) # problem.initial is Node state
         frontier = PriorityQueue('min', f)
@@ -36,10 +36,20 @@ class VRP_Simulation:
         explored = set()
         response = None
         wait_time = 0
-
+        
         while frontier:
+            
 
             if wait_time == 0:
+                
+                current_pos = problem.planning_problem.agent.current_location
+
+                if current_pos.authority != None:
+                    decision = current_pos.authority.stop_vehicle(problem.planning_problem.agent)
+                    wait_time += self.cost_with_authority
+                    if decision == 2:
+                        new_route = self.relocate_route()
+
                 node = frontier.pop()
                 action = problem.actions(node.state)       
                 
@@ -105,11 +115,15 @@ class VRP_Simulation:
         
    
 
-    def cost_with_authority(self):
+    def cost_with_authority(self, decision: int):
+        if decision == 1: #se le puso una multa
+            return random.randint(3,10)
+        elif decision == 2: #desvia el vehiculo
+            return random.randint(3,5)
+        return 0
+
+    def relocate_route(self):
         pass
-
-
-        
 
         
 graph = nx.Graph()
