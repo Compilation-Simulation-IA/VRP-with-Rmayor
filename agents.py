@@ -256,14 +256,14 @@ class Authority:
 class Company:
     """Representa la compañia de transporte"""
 
-    def __init__(self, name: str, budget: float, map, stops, vehicles, logger):
+    def __init__(self, name: str, budget: float, map, logger):#stops, vehicles
         self.name = name
         self.stops = [] # diccionario de paradas por clientes. Para despues formar las rutas
         #self.warehouses = []  #lista de almacenes
-        self.stops = stops # lista de diccionarios de la forma {client_name:[MapNode]}
+        #self.stops = stops # lista de diccionarios de la forma {client_name:[MapNode]}
         self.routes = {} #a cada vehiculo se le asigna una ruta
         self.budget = budget # presupuesto disponible
-        self.vehicles=[] # lista de vehiculos q tiene la compañia
+        self.vehicles = [] # lista de vehiculos q tiene la compañia
         #self.authorities = []  # Lista de autoridades que pueden parar a los vehículos
         self.map = map
         self.assignations = []
