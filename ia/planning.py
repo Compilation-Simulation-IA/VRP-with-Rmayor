@@ -154,13 +154,9 @@ class PlanningProblem:
         """
         Performs the action given as argument.
         Note that action is an Expr like expr('Remove(Glass, Table)') or expr('Eat(Sandwich)')
-        """
-
-        print('in act')
+        """ 
         action_name = action.op
-        print('op ' + action_name)
         args = action.args
-        print('args ' + str(args))
         list_action = first(a for a in self.actions if a.name == action_name)
         response = None
         try:
@@ -170,14 +166,14 @@ class PlanningProblem:
             l.append(self.agent)
             for i in range(1,len(args)):
                 l.append(args[i])
-            print(l)
+            #print(l)
             response = dic[action_name](*l)
 
             
 
         except Exception as ex:
             print(ex)
-        print('List_action: ' + str(list_action))
+        #print('List_action: ' + str(list_action))
         if list_action is None:
             raise Exception("Action '{}' not found".format(action_name))
         if not list_action.check_precond(self.initial, args):

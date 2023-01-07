@@ -5,6 +5,7 @@ from enum import Enum
 import networkx as nx
 from ia.planning import Action,PlanningProblem
 import ast
+from ia.simplex import simplex
 
 class Color(Enum):
     GREEN = 1
@@ -63,7 +64,6 @@ class Vehicle:
         self.current_location = self.route[self.count_moves]
 
         return speed
-
         
     
     def chage_speed(self):
@@ -74,27 +74,6 @@ class Vehicle:
         Devuelve True o False."""
         return random.random() < self.risk_probability
     
-    #def maintenance(self, warehouse: Dict):
-    #    """Le proporciona mantenimiento al vehiculo y disminuye el valor de millas_inicial en 
-    #    dependencia del valor que devuelve la Gaussiana. Con esto se simula el deterioro del mismo."""
-    #    self.days_off = 2
-    #    self.current_location = warehouse
-    #    self.initial_miles -= random.gauss(0, self.std_dev)
-    #    self.miles_traveled = 0
-    #    self.spent += 100 # Aumenta el gasto acumulado en mantenimientos del vehículo
-    #    
-    #    #f"Tarea de mantenimiento programada para {time} días. Valor actual de millas inicial: {self.millas_inicial}. Gasto acumulado: {self.gasto}"
-        
-    #def assign_route(self, route: Route) -> bool: #esto debe ir en compania
-    #    """Asigna un vehiculo a la ruta"""
-    #    if self.route is None:
-    #        self.route = route
-    #        return True
-    #    return False
-        
-    #def unassign_route(self):
-    #    """Elimina un vehiculo de la ruta"""
-    #    self.route = None
     
     # Devuelve la cantidad de clientes que pudo recoger en esa parada
     def load(self, current_pos):
@@ -105,7 +84,6 @@ class Vehicle:
         self.current_location.people = 0
         
         return people
-
         
     
     def unload(self, current_pos):
@@ -184,9 +162,9 @@ class Vehicle:
 
             
 
-        print('initial:' + initial)
-        print('goals:' + goals)
-        print('domain:' + domain)
+        #print('initial:' + initial)
+        #print('goals:' + goals)
+        #print('domain:' + domain)
 
         return PlanningProblem(initial=initial, goals=goals, actions=actions, agent=self, domain=domain)
 
@@ -219,9 +197,6 @@ class Semaphore:
         else:
             self.state = Color.RED
             
-
-        
-
 class Authority:
     """Representa la autoridad del trafico """
     def __init__(self, ID , map, probability = 0.5):
@@ -291,16 +266,20 @@ class Authority:
 
 class Company:
     """Representa la compañia de transporte"""
-    def __init__(self, name: str, budget: float, map):
+
+    def __init__(self, name: str, budget: float, map, stops, vehicles):
         self.name = name
         #self.warehouses = []  #lista de almacenes
-        self.stops = {} # diccionario de paradas por clientes. Para despues formar las rutas
+        self.stops = stops # lista de diccionarios de la forma {client_name:[MapNode]}
         self.routes = {} #a cada vehiculo se le asigna una ruta
         self.budget = budget # presupuesto disponible
-        self.vehicles=[] # lista de vehiculos q tiene la compañia
+        self.vehicles=vehicles #lista de vehiculos q tiene la compañia
         #self.authorities = []  # Lista de autoridades que pueden parar a los vehículos
         self.map = map
         self.assignations = []
+        self.vehicle_client = {}
+        self.assign_vehicle_to_client()
+        
 
     def __repr__(self) -> str:
         return f"<Company: {self.name}>"
@@ -309,7 +288,58 @@ class Company:
         return f"<Company: {self.name}>"
 
     def assign_vehicle_to_client(self):
-        pass
+        """Asigna a cada cliente los vehiculos 
+        necesarios para recoger a todas las personas en las paradas"""
+
+        n = len(self.vehicles) * len(self.stops)
+        c = []
+        A = [[0 for i in range(n)] for i in range(2*len(self.stops))]
+        b = []
+
+        # f.o
+        for v in self.vehicles:
+            for i in range(len(self.stops)):
+                c.append(v.capacity)
+
+        # s.a         
+        
+        capacity = [-v.capacity for v in self.vehicles]    
+        ones = [-1 for i in range(len(self.vehicles))]
+
+
+        for i in range(len(self.stops)):
+            A[i][i*len(self.vehicles):((i+1)*len(self.vehicles))]=capacity
+            A[i + len(self.stops)][i*len(self.vehicles):((i+1)*len(self.vehicles))]= ones
+            
+
+        A.append([1 for i in range(n)])
+        A.append([-1 for i in range(n)])
+
+        for value in self.stops.values():
+            b.append(-sum(map(lambda x:x.people,value)))
+
+        for i in range(len(self.stops)):
+            b.append(-1)
+
+        b.append(len(self.vehicles))
+        b.append(0)
+
+        assignations = simplex(c,A,b)
+
+        for i in range(len(assignations)):
+            if assignations[i] == 1:
+                vehicle = self.vehicles[int(i/len(self.stops))]
+                client = list(self.stops.keys())[i%len(self.stops)]
+                
+                if client in self.vehicle_client.keys():
+                    self.vehicle_client[client].append(vehicle)
+                else:
+                    self.vehicle_client.update({client:[vehicle]})
+
+        print(self.vehicle_client)
+
+
+
 
     def assign_routes_to_vehicles(self):
         pass
