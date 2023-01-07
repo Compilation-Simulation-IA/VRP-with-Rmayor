@@ -34,7 +34,7 @@ class Vehicle(threading.Thread):
 # Creamos 3 hilos para 3 vehículos que se mueven a distintas velocidades y destinos
 vehiculo1 = Vehicle(1, 50, 100)
 vehiculo2 = Vehicle(2, 40, 100)
-vehiculo3 = Vehicle(3, 30, 100)
+vehiculo3 = Vehicle(3, 5, 100)
 
 # Iniciamos los hilos
 vehiculo1.start()

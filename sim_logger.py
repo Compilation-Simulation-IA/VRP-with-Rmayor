@@ -1,4 +1,4 @@
-class Logger:
+class Sim_Logger:
     def __init__(self):
         self.logs = []
         
