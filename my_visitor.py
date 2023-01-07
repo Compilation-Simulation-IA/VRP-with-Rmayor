@@ -11,10 +11,13 @@ from agents import *
 definiciones = {}
 
 graph=None
-Company=None
-days=1
-my_simulation= VRP_Simulation()
+mapa=""
+budget=0
+name=""
 
+days=1
+
+simulate=False
 class Visitor:
     def __init__(self, context:Context, errors=[]):
         self.context:Context = context
@@ -34,6 +37,8 @@ class Visitor:
         self.context.types['Bool'] = BoolType()
         self.context.types['SELF_TYPE'] = SelfType()
         self.context.types['IO'] = IOType()
+        days=node.days
+        simulate=node.simulate
         self.visit(node.map_block,scope.create_child())
         self.visit(node.stops_block,scope.create_child())
         self.visit(node.vehicle_type_block,scope.create_child())
@@ -54,7 +59,7 @@ class Visitor:
     
     @visitor.when(MapNode)
     def visit(self, node:MapNode,scope:Scope):
-        #simulation.Map = node.map
+        mapa = node.map
         self.visit(node.map)
     
     @visitor.when(StopsNode)
@@ -89,7 +94,7 @@ class Visitor:
         
     @visitor.when(CompanyBlockNode)
     def visit(self, node:CompanyBlockNode,scope:Scope):
-        #simulation.set_budget(node.budget)
+        budget=node.budget
         #simulation.direction_depot(node.depot)
         for dec in node.vehicle_declarations:
             self.visit(dec,scope)
@@ -108,6 +113,9 @@ class Visitor:
     def visit(self, node:DemandsNode,scope:Scope):
         for dec in node.demands:
             self.visit(dec,scope)
+        if simulate:
+            company=Company(name,budget,mapa)
+            VRP_Simulation(graph,Company,days)
     
     
     def add_function(id, params, return_type, body):
