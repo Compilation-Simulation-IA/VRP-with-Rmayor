@@ -36,8 +36,13 @@ class RmayorParser(Parser):
     client = {}
     def p_program(self, p):
         # 'program : map_block stop_block vehicle_type_block clients_block company_block demands_block'
-        'program :  map_block stops_block vehicle_type_block clients_block company_block demands_block'
-        p[0] = ProgramNode(p[1],p[2],p[3],p[4],p[5],p[6])
+        '''program :  type num map_block stops_block vehicle_type_block clients_block company_block demands_block
+                | map_block stops_block vehicle_type_block clients_block company_block demands_block'''
+
+        if p[1] == 'Simulate':
+            p[0] = ProgramNode(True,p[2],p[3],p[4],p[5],p[6],p[7],p[8])
+        else:
+            p[0] = ProgramNode(False,0,p[1],p[2],p[3],p[4],p[5],p[6])
         
     def p_epsilon(self, p):
         'epsilon :'
@@ -100,12 +105,21 @@ class RmayorParser(Parser):
             p[0] = [p[1]] + p[2]
         
     def p_client_declaration(self, p):
-        'client_declaration : id opar name colon string comma stops_list colon opar stops_id cpar comma depot colon id cpar'
+        '''client_declaration : id opar name colon string comma stops_list colon opar stops_id cpar comma depot colon id cpar
+                            | id plus id'''
+        if len(p) == 4:
+            if p[1] not in self.client:
+                raise Exception("Identificador de parada no declarado: " + p[1])
+            if p[3] not in self.client:
+                raise Exception("Identificador de parada no declarado: " + p[3])
+            else: 
+                p[0] = ClientDeclarationNode(self.client[p[1]][0], self.client[p[1]][1], self.client[p[1]][2].append(self.client[p[3]][2]),self.client[p[1]][3])
         if p[15] not in self.stops:
                 # Identificador de parada no declarado
             raise Exception("Identificador de parada no declarado: " + p[1])
         else:
             stop = self.stops[p[15]]
+            self.client[p[1]]=[p[1],p[5],p[10],stop]
         p[0] = ClientDeclarationNode(p[1], p[5], p[10],stop)
     
     def p_stops_id(self, p):
@@ -159,7 +173,7 @@ class RmayorParser(Parser):
                 p[0] = [CompanyDeclarationNode(p[1],[node]), p[5]]
           
     def p_demands_block(self, p):
-        'demands_block : demands ocur feature_list ccur'
+        '''demands_block : demands ocur feature_list ccur'''
         p[0] = DemandsNode(p[3])
     
 
@@ -526,7 +540,7 @@ class RmayorParser(Parser):
 
 
 if __name__ == "__main__":
-    with open('comp/string2.rm', 'r') as f:
+    with open('string4.rm', 'r') as f:
         file = f.read()
     # Parser()
     parser = RmayorParser()

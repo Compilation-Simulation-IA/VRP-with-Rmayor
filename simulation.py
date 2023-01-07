@@ -231,6 +231,26 @@ class VRP_Simulation:
         self.graph_map[origin][not_available]['weight']=temp
 
         return path
+    
+    def generate_random_graph(stop_list, lim, cant_semaphores, cant_authorities):
+        G = networkx.Graph()
+        for stop in stop_list:
+            G.add_node(eval(stop.location), value=stop)
+        for x in range(lim[0]):
+            for y in range(lim[1]):
+                if (x,y) not in G:
+                    G.add_node((x,y), value=MapNode(str((x,y), 0)))
+        for x in range(lim[0]):
+            for y in range(lim[1]):
+                if x+1<=lim[0]:
+                    G.add_edge((x,y), (x+1,y), weight=random.randint(1,100))
+                if y+1<=lim[1]:
+                    G.add_edge((x,y), (x,y+1), weight=random.randint(1,100))
+            for i in range(cant_semaphores):
+                random.choice(G.get_node(value=None)).value = MapNode(semaphore=True)
+            for i in range(cant_semaphores):
+                random.choice(G.get_node(value=None)).value = MapNode(semaphore=True)
+        return G
 
 
 graph = nx.Graph()

@@ -30,17 +30,84 @@ Planificación: como mencioné anteriormente, la planificación puede ser utiliz
 # Compilación
 
 Un lenguaje de dominio específico (DSL, por sus siglas en inglés) es un lenguaje de programación diseñado para resolver problemas específicos de un dominio particular. En el caso del Problema de Enrutamiento de Vehículos, se puede crear un DSL para codificar los problemas y facilita la tarea de resolverlos utilizando algoritmos de optimización.
-
-La compilación consiste en convertir el código escrito en un DSL en un lenguaje de programación más general, que puede ser ejecutado por una computadora. Esto permite que los problemas de enrutamiento de vehículos sean resueltos de manera eficiente utilizando algoritmos de optimización.
-
 El lenguaje de dominio específico (DSL) creado para codificar problemas de enrutamiento de vehículos se puede conectar a la simulación para evaluar las soluciones propuestas y determinar cuál es la más adecuada. Esto permite que los problemas sean resueltos de manera más eficiente y permite predecir el comportamiento del sistema en diferentes escenarios.
 
-Incluye sentencias de iteración para recorrer las diferentes rutas propuestas y compararlas entre sí. Esto permite evaluar las soluciones propuestas y determinar cuál es la más adecuada.
+Este lenguaje esta desarrollado en python, con una gramatica LALR. Para el desarrollo del compilador se usó PLY, que es una implementación de Python pura del
+constructor de compilación lex/yacc. Incluye soporte al parser LALR(1) así como herramientas
+para el análisis léxico de validación de entrada y para el reporte de errores. El análisis sintáctico se divide en 2 fases: en una se realiza el análisis léxico, con la construcción
+de un lexer, y en la otra se realiza el proceso de parsing, definiendo la gramática e implementando un parser para la construcción del Árbol de Sintaxis Abstracta (AST).
+El programa fuente se procesa de izquierda a derecha y se agrupan en componentes
+léxicos (tokens) que son secuencias de caracteres que tienen un significado. Todos los espacios
+en blanco, comentarios y demás información innecesaria se elimina del programa fuente. El
+lexer, por lo tanto, convierte una secuencia de caracteres (strings) en una secuencia de tokens.
 
-Además, el DSL compara múltiples parámetros, como el tiempo o el rendimiento de diferentes empresas que ofrecen servicios de enrutamiento de vehículos, etc.
+El parser también se implementó mediante PLY, especificando la gramática y las acciones para
+cada producción. Para cada regla gramatical hay una función cuyo nombre empieza con p_. El
+docstring de la función contiene la forma de la producción, escrita en EBNF. PLY usa los dos puntos (:) para separar la parte izquierda y la derecha de la producción gramatical. El símbolo del lado izquierdo de la primera función es considerado el símbolo
+inicial. El cuerpo de esa función contiene código que realiza la acción de esa producción.
+En cada producción se construye un nodo del árbol de sintaxis abstracta.
 
-En general, la creación de un DSL para codificar problemas de enrutamiento de vehículos puede ser beneficiosa porque permite que los problemas sean expresados de manera más clara y concisa, lo que facilita su resolución y permite a los usuarios trabajar con ellos de manera más eficiente. La conexión entre el DSL y la simulación  permite evaluar las soluciones propuestas de manera más precisa y predecir el comportamiento del sistema en distintas condiciones. Esto puede ser útil para tomar decisiones y optimizar el funcionamiento del sistema de enrutamiento de vehículos.
+El procesador de parser de PLY procesa la gramática y genera un parser que usa el algoritmo de
+shift-reduce LALR(1), que es uno de los más usados en la actualidad. Aunque LALR(1) no puede
+manejar todas las gramáticas libres de contexto, la gramática usada fue refactorizada
+para ser procesada por LALR(1) sin errores.
 
+Para realizar los recorridos en el árbol de derivación se hace uso del patrón visitor. Este patrón nos permite abstraer el concepto de procesamiento de un nodo. Cada elemento del nodo se procesa y se envia a la simulacion para ejecutarla
+
+Un ejemplo de la estructura que debe tener el programa es la siguiente. En mapa el usuario carga el mapa a simular, en stops se definen las paradas, en vehicle_type los tipos de vehiculos que se usan, en clients, cada una de las empresas clientes que van a simularse, en company se inicializa el presupuesto, la cantidad de vehiculos y el deposito y en demandas se definen funciones, variables y se Simula el proceso de la aplicacion
+
+{
+	
+	map 
+	{
+		import "mapa.txt"
+	}
+
+	stops 
+	{
+    		s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+	}
+
+	vehicle_type 
+	{
+    		small (miles: 40000, capacity: 30)
+    		medium (miles: 40000, capacity: 70)
+	}
+
+	clients 
+	{
+    		c1 (name: "Coca Cola", stops_list: (s1),depot:s1 ) (*puede cambiarse por []*)
+	}
+	
+	company 
+	{
+    		budget: 1000000
+    		depot (address:"156A, #107, Playa, La Habana, Cuba")
+    		small v1: 5
+    		medium v2: 3
+	}
+	
+	demands
+	{
+		func print() : IO 
+		{
+			out_string("reached!!\n")
+	        }
+
+		func main(): Object 
+		{
+        		print()
+		}
+
+    		test1<- 1
+
+    		test3<- "1"
+    
+		Simulate
+	}
+
+
+Se provee al ususario una simple interfaz para escribir el codigo y ver el resultado de la simulacion
 # Simulación
 
 Se quiere simular el problema anterior pero asociado al transporte de una empresa para sus trabajadores.

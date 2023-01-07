@@ -1,6 +1,3 @@
-# Editor de texto
-# Requisitos:
-#   - appjar: http://appjar.info/
 import sys
 import time
 from appJar import gui

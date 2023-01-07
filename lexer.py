@@ -349,7 +349,7 @@ class RmayorLexer:
 if __name__ == "__main__":
     lexer = RmayorLexer()
 
-    data = open('comp/string1.rm', encoding='utf-8')
+    data = open('string2.rm', encoding='utf-8')
     data = data.read()
     res = lexer.tokenize_text(data)
     # pprint(res)
