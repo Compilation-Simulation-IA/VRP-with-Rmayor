@@ -1,8 +1,10 @@
 from storage import *
 from agents import *
+
 import random
 import math
 import networkx as nx
+import time
 from ia.planning import *
 from collections import deque
 from ia.utils import *
@@ -10,8 +12,12 @@ from heapq import heappush, heappop
 import ast
 import threading
 import time
+<<<<<<< Updated upstream
 from simulation_logger import Logger
 import matplotlib.pyplot as plt
+=======
+from my_logger import Logger
+>>>>>>> Stashed changes
 
 #global_time = 0  # Inicializamos la variable global en 0
 
@@ -334,6 +340,7 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                       ((3,5),(2,5),{'weight':80}),
                                          
                        ])
+logger = Logger()
 
 stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1)]
 G, nodes_color = generate_random_graph(stop_list, (3,3))
@@ -356,6 +363,7 @@ plt.show()
 #company.vehicles.append(vehicle1)
 #company.vehicles.append(vehicle2)
 #
+<<<<<<< Updated upstream
 #company.routes[vehicle1] =  route1
 #company.routes[vehicle2] =  route2
 #
@@ -376,3 +384,38 @@ plt.show()
 #
 #print("FIN 2.0")
 #
+=======
+company = Company('C1', 100,graph, list_stops, list_vehicles)
+
+company = Company('C1', 100,graph)
+company.vehicles.append(vehicle1)
+company.vehicles.append(vehicle2)
+
+company.routes[vehicle1] =  route
+company.routes[vehicle2] =  route
+
+company.assignations.append({'V1':vehicle1, 'R1':route})
+company.assignations.append({'V2':vehicle2, 'R1':route})
+
+plan_company = company.plan()
+sim = VRP_Simulation(graph,company, 3)
+simulate_threads = []
+
+for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
+    forward_problem_company = ForwardPlan(p)
+    thread = threading.Thread(target= sim.simulation_Company, args= (forward_problem_company, i) )
+    simulate_threads.append(thread)
+    print(thread.getName())
+    thread.start() # Iniciamos los hilos
+
+for t in simulate_threads: # Esperamos a que todos los hilos terminen
+    t.join()
+
+# Una vez que todos los hilos han terminado, podemos mostrar el tiempo total transcurrido
+print(f"El tiempo total transcurrido fue de {tiempo_global} segundos")
+print("FIN")
+
+
+
+
+>>>>>>> Stashed changes
