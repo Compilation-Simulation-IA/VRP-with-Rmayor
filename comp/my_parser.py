@@ -100,8 +100,13 @@ class RmayorParser(Parser):
             p[0] = [p[1]] + p[2]
         
     def p_client_declaration(self, p):
-        'client_declaration : id opar name colon string comma stops_list colon opar stops_id cpar cpar'
-        p[0] = ClientDeclarationNode(p[1], p[5], p[10])
+        'client_declaration : id opar name colon string comma stops_list colon opar stops_id cpar comma depot colon id cpar'
+        if p[15] not in self.stops:
+                # Identificador de parada no declarado
+            raise Exception("Identificador de parada no declarado: " + p[1])
+        else:
+            stop = self.stops[p[15]]
+        p[0] = ClientDeclarationNode(p[1], p[5], p[10],stop)
     
     def p_stops_id(self, p):
         '''stops_id : stops_id comma id
@@ -125,8 +130,8 @@ class RmayorParser(Parser):
                     p[0] = p[1] + [stop]
 
     def p_company_block(self, p):
-        'company_block : company ocur budget colon num company_declarations ccur'
-        p[0] = CompanyBlockNode(p[5], p[6])
+        'company_block : company ocur budget colon num depot opar address colon string cpar company_declarations ccur'
+        p[0] = CompanyBlockNode(p[5],p[8], p[10])
 
     
     def p_company_declarations(self, p):
@@ -186,7 +191,7 @@ class RmayorParser(Parser):
 
     def p_feature_list(self, p):
         '''feature_list : epsilon
-                        | def_attr feature_list
+                        | multiexpr feature_list
                         | def_func feature_list'''
         p[0] = [] if len(p) == 2 else [p[1]] + p[2]
 
@@ -194,21 +199,21 @@ class RmayorParser(Parser):
         'feature_list : error feature_list'
         p[0] = [p[1]] + p[2]
 
-    def p_def_attr(self, p):
-        '''def_attr : id colon type
-                    | id colon type larrow expr'''
-        if len(p) == 4:
-            p[0] = AttrDeclarationNode(p.slice[1], p.slice[3])
-        else:
-            p[0] = AttrDeclarationNode(p.slice[1], p.slice[3], p[5])
+    # def p_def_attr(self, p):
+    #     '''def_attr : id colon type
+    #                 | id colon type larrow expr'''
+    #     if len(p) == 4:
+    #         p[0] = AttrDeclarationNode(p.slice[1], p.slice[3])
+    #     else:
+    #         p[0] = AttrDeclarationNode(p.slice[1], p.slice[3], p[5])
 
-    def p_def_attr_error(self, p):
-        '''def_attr : error colon type
-                    | id colon error
-                    | error colon type larrow expr
-                    | id colon error larrow expr
-                    | id colon type larrow error'''
-        p[0] = ErrorNode()
+    # def p_def_attr_error(self, p):
+    #     '''def_attr : error colon type
+    #                 | id colon error
+    #                 | error colon type larrow expr
+    #                 | id colon error larrow expr
+    #                 | id colon type larrow error'''
+    #     p[0] = ErrorNode()
 
     def p_def_func(self, p):
         'def_func : func id opar formals cpar colon type ocur multiexpr ccur'
@@ -280,13 +285,13 @@ class RmayorParser(Parser):
         '''multiexpr : multiexpr expr
               | expr
               | epsilon'''
-        if len(p) == 1:
+        if len(p) == 2:
             p[0] = p[1]
-        elif len(p) == 3:
-            p[0] = p[1] + [p[2]]
+        elif len(p) == 0:
+                p[0] = []
         else:
-            p[0] = []
-
+            p[0] = [p[1]] + [p[2]]
+       
     def p_expr(self, p):
         '''expr : id larrow expr
                  | comp'''
@@ -521,7 +526,7 @@ class RmayorParser(Parser):
 
 
 if __name__ == "__main__":
-    with open('comp/string4.rm', 'r') as f:
+    with open('comp/string2.rm', 'r') as f:
         file = f.read()
     # Parser()
     parser = RmayorParser()

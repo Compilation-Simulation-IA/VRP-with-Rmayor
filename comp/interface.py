@@ -1,10 +1,7 @@
-import sys
-sys.path.append("G:/3ro/Semestre_2/Compilacion/Proyecto/github_clone/VRP-with-Rmayor/comp")
-
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.font import Font
-from comp.my_parser import parser
+import init
 def open_file():
     """Open a file for editing."""
     filepath = askopenfilename(
@@ -38,8 +35,6 @@ def run():
 def stop():
     pass
 
-
-
 window = Tk()
 window.title("Simple Text Editor")
 window.geometry('1000x1000')
@@ -52,8 +47,8 @@ window.columnconfigure(1, minsize=50, weight=1)
 
 def run():
     try:
-        _input = text_input
-        parser(_input)
+        _input = txt_code.get(1.0, END)
+        init.start_visitor(_input)
     except ValueError:
         pass
 txt_code = Text(window, borderwidth=3)
@@ -62,7 +57,6 @@ frm_buttons = Frame(window, relief=RAISED, bd=2, bg='white')
 btn_run = Button(frm_buttons, text="Run", command=run, bg='green', font=myFont)
 btn_stop = Button(frm_buttons, text="Stop", command=stop, bg='red', font=myFont)
 
-text_input=Entry(frm_buttons,width=10, textvariable=txt_code)
 
 btn_run.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 btn_stop.grid(row=2, column=0, sticky="ew", padx=5)

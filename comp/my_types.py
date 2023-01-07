@@ -354,14 +354,25 @@ class IOType(Type):
         self.pos = pos
         self.init_methods()
 
-    def init_methods(self):
-        self.define_method('out_string', ['x'], [StringType()], SelfType())
-        self.define_method('out_int', ['x'], [IntType()], SelfType())
-        self.define_method('in_string', [], [], StringType())
-        self.define_method('in_int', [], [], IntType())
+    def out_string(self,string):
+            print(string)
+            
+    def out_int(self,int):
+            number = IntType(int)
+            print(number)
 
-    def __eq__(self, other):
-        return other.name == self.name or isinstance(other, IOType)
+    # def init_methods(self):
+    #     #self.define_method('out_string', ['x'], [StringType()], SelfType())
+        
+        
+        
+    #     self.methods['out_int'] = out_int
+    #     #self.define_method('out_int', ['x'], [IntType()], SelfType())
+    #     self.define_method('in_string', [], [], StringType())
+    #     self.define_method('in_int', [], [], IntType())
 
-    def __ne__(self, other):
-        return other.name != self.name and not isinstance(other, IOType)
+    # def __eq__(self, other):
+    #     return other.name == self.name or isinstance(other, IOType)
+
+    # def __ne__(self, other):
+    #     return other.name != self.name and not isinstance(other, IOType)

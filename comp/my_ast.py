@@ -1,5 +1,5 @@
 from ply.lex import LexToken
-from my_types import CustomVehicleType
+from my_types import *
 
 class Node:
     pass
@@ -46,14 +46,16 @@ class ClientsNode:
         self.client_declarations = client_declarations
 
 class ClientDeclarationNode:
-    def __init__(self, identifier, name, stops):
+    def __init__(self, identifier, name, stops,depot):
         self.identifier = identifier
         self.name = name
         self.stops = stops
+        self.depot = depot
         
 class CompanyBlockNode:
-    def __init__(self, budget, vehicle_declarations):
+    def __init__(self, budget, depot, vehicle_declarations):
         self.budget = budget
+        self.depot = depot
         self.vehicle_declarations = vehicle_declarations
 
 class CompanyDeclarationNode:
@@ -101,7 +103,26 @@ class FuncDeclarationNode(DeclarationNode):
         self.id = idx.value
         self.pos = (idx.lineno, idx.column)
         self.params = [(pname.value, _Param(ptype)) for pname, ptype in params]
-        self.type = return_type.value
+        if return_type.value == 'IO':
+            self.type = IOType(self.pos)
+        elif return_type.value == 'SELF_TYPE':
+            self.type = SelfType(self.pos)
+        elif return_type.value == 'Int':
+            self.type = IntType(self.pos)
+        elif return_type.value == 'Bool':
+            self.type = BoolType(self.pos)
+        elif return_type.value == 'String':
+            self.type = StringType(self.pos)
+        elif return_type.value == 'Object':
+            self.type = ObjectType(self.pos)
+        elif return_type.value == 'Void':
+            self.type = VoidType(self.pos)
+        elif return_type.value == 'Auto':
+            self.type = AutoType(self.pos)
+        elif return_type.value == 'Vehicle':
+            self.type = VehicleType(self.pos)
+        elif return_type.value == 'CustomVehicle':
+            self.type = CustomVehicleType(self.pos)
         self.type_pos = (return_type.lineno, return_type.column)
         self.body = body
 

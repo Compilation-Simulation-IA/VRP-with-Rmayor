@@ -3,12 +3,16 @@ from agents import *
 import random
 import math
 import networkx as nx
-import time
 from ia.planning import *
 from collections import deque
 from ia.utils import *
 from heapq import heappush, heappop
 import ast
+import threading
+import time
+from logger import Logger
+
+tiempo_global = 0  # Inicializamos la variable global en 0
 
 class WeekDays(Enum):
     Lunes = 1
@@ -23,14 +27,14 @@ class VRP_Simulation:
     def __init__(self, graph, company: Company, days: int):
         self.graph_map = graph
         self.company = company
-        self.global_time = 0
         self.go_back = False
         self.current_date = 1
         self.days = days
         self.week_day = WeekDays.Lunes.name
         
-    def simulation_vehicle(self,problem, display=False):
-        
+    def simulation_vehicle(self,problem):
+        global tiempo_global 
+
         f = memoize(lambda node: node.path_cost, 'f')
         node = Node(problem.initial) # problem.initial is Node state
         frontier = PriorityQueue('min', f)
@@ -40,15 +44,15 @@ class VRP_Simulation:
         wait_time = 0
         
         while frontier:
-            
-
             if wait_time == 0:
                 
                 current_pos = problem.planning_problem.agent.current_location
 
                 if current_pos.authority != None:
+                    print("ENTRO AL AUTHORITY " )
                     decision = current_pos.authority.stop_vehicle(problem.planning_problem.agent)
                     if decision == 2:
+                        print("ENTRO AL AUTHORITY CAMBIAR RUTA " )
                         new_route = self.relocate_route(current_pos.id, problem.planning_problem.agent.route)
                         problem.planning_problem.agent.route = new_route
                         problem = ForwardPlan(problem.planning_problem.agent.plan())
@@ -65,33 +69,31 @@ class VRP_Simulation:
 
                 if len(action) > 0:
                     action_name = action[0].name
-                    print(action_name)
+                    #print(action_name)
                     action_args = action[0].args
-                    print(action_args)
+                    #print(action_args)
                     response = problem.act(expr(str(action[0])))
 
                     if action_name == 'move':
+                        print("ENTRO AL MOVE " )
                         x = action_args[1]
                         y = action_args[2]
                         edge = graph.get_edge_data(x,y)
                         wait_time += self.cost_move(response, edge['weight'])
                     elif action_name == 'load' or action_name=='unload':
+                        print("ENTRO AL LOAD Y UNLOAD " )
                         wait_time += self.cost_load_and_unload(response)
                     elif action_name == 'at_semaphore':
+                        print("ENTRO AL AT SEMAPHORE " )
                         wait_time += response
                     else:
                         pass
-
-
-                print('action:' + str(action))
-                print('Node Frontier: ' + str(node))
+               
                 if problem.goal_test(node.state):
-                    if display:
-                        print(len(explored), "paths have been expanded and", len(frontier), "paths remain in the frontier")
                     return node
                 explored.add(node.state)
                 for child in node.expand(problem):
-                    print('Frontier Child: ' + str(child))
+                    #print('Frontier Child: ' + str(child))
                     if child.state not in explored and child not in frontier:
                         frontier.append(child)
                     elif child in frontier:
@@ -101,7 +103,69 @@ class VRP_Simulation:
 
             else:
                 wait_time -=1
+            
+            # Actualizamos el tiempo global
+            tiempo_global += 1
 
+        return None
+    
+    def simulation_Company(self, problem, index: int):
+        global tiempo_global # Declaramos que vamos a usar la variable global
+
+        f = memoize(lambda node: node.path_cost, 'f')
+        node = Node(problem.initial) # problem.initial is Node state
+        frontier = PriorityQueue('min', f)
+        frontier.append(node)
+        explored = set()
+        response = None
+        print("ENTRO AL SIMULATION_COMPANY")
+        while frontier:
+                
+            current_vehicle = list(problem.planning_problem.agent.routes.keys())[index]
+            current_route = list(problem.planning_problem.agent.routes.values())[index]
+            node = frontier.pop()
+            action = problem.actions(node.state)       
+            
+            if len(action) > 0:
+                action_name = action[0].name
+                #print(action_name)
+                #action_args = action[0].args
+                #print(action_args)
+                response = problem.act(expr(str(action[0])))
+                if action_name == 'start_route':
+                    print("ENTRO AL START ROUTE " )
+                    forward_problem_vehicle = ForwardPlan(response)
+                    sim.simulation_vehicle(forward_problem_vehicle)
+                    
+                    tiempo_global += 1
+                    time.sleep(1)
+
+                elif action_name == 'check_vehicle':
+                    print("ENTRO AL CHECK VEHICLE " )
+  
+                    tiempo_global += 1
+                    time.sleep(1)
+                
+                else: #  action_name == 'pay_taxes':
+                    print("ENTRO AL PAY TAXES " )
+                    
+                    tiempo_global += 1
+                    time.sleep(1)
+                    
+            if problem.goal_test(node.state):
+                print(f"El vehiculo {self.company.vehicles[index]} ha llegado a su destino en {tiempo_global} segundos")
+                return node
+            explored.add(node.state)
+            for child in node.expand(problem):
+                #print('Frontier Child: ' + str(child))
+                if child.state not in explored and child not in frontier:
+                    frontier.append(child)
+                elif child in frontier:
+                    if f(child) < frontier[child]:
+                        del frontier[child]
+                        frontier.append(child)
+
+        
         return None
 
     def cost_move(self, speed, distance): 
@@ -170,9 +234,9 @@ class VRP_Simulation:
 graph = nx.Graph()
 
 n1 = MapNode('(2,0)', 0)
-#n2 = MapNode('(2,1)', 0)
-#n3= MapNode('(2,2)', 0, semaphore= Semaphore('(2,2)'))
-n4 = MapNode('(2,3)', 3, authority= Authority('(2,3)', map =graph, probability = 1))
+n2 = MapNode('(2,1)', 0)
+n3= MapNode('(2,2)', 0, semaphore= Semaphore('(2,2)'))
+n4 = MapNode('(2,3)', 3, authority= Authority('(2,3)', map =graph, probability = 0))
 n5 = MapNode('(2,4)', 0, semaphore=Semaphore('(2,4)'))
 n6 = MapNode('(2,5)', 2)
 n7 = MapNode('(2,6)', 0, authority=Authority('(2,6)', map=graph))
@@ -185,8 +249,8 @@ n13 = MapNode('(3,5)', 0)
 
 
 graph.add_node((2,0), value=n1)
-#graph.add_node((2,1), value=n2)
-#graph.add_node((2,2), value=n3)
+graph.add_node((2,1), value=n2)
+graph.add_node((2,2), value=n3)
 graph.add_node((2,3), value=n4)
 graph.add_node((2,4), value=n5)
 graph.add_node((2,5), value=n6)
@@ -200,9 +264,9 @@ graph.add_node((3,5), value=n13)
 
 
 
-graph.add_edges_from([((2,0),(2,3),{'weight':100}),
-                      #((2,1),(2,2),{'weight':120}),
-                      #((2,2),(2,3),{'weight':90}),
+graph.add_edges_from([((2,0),(2,1),{'weight':100}),
+                      ((2,1),(2,2),{'weight':120}),
+                      ((2,2),(2,3),{'weight':90}),
                       ((2,3),(2,4),{'weight':100}),
                       ((2,4),(2,5),{'weight':110}),
                       ((2,5),(2,6),{'weight':130}),
@@ -230,17 +294,34 @@ list_stops = {'C1':[MapNode(1,1),MapNode(2,6)],'C2':[MapNode(3,8)], 'C3':[MapNod
 #
 company = Company('C1', 100,graph, list_stops, list_vehicles)
 
-#forward_problem = ForwardPlan(plan)
-#sim = VRP_Simulation(graph,company, 3)
-#sim.simulation_vehicle(forward_problem)
-#path = sim.relocate_route('(2,3)',route)
-#for p in path:
-#    print(p.id)
-#node = nx.get_node_attributes(graph,'value')
+company = Company('C1', 100,graph)
+company.vehicles.append(vehicle1)
+company.vehicles.append(vehicle2)
 
-#print(nx.shortest_path(graph,(2,3),(2,5), weight='weight'))
-#print(list(graph.neighbors((2,3))))
-#print(graph[(2,3)][(2,4)]['weight'])
+company.routes[vehicle1] =  route
+company.routes[vehicle2] =  route
+
+company.assignations.append({'V1':vehicle1, 'R1':route})
+company.assignations.append({'V2':vehicle2, 'R1':route})
+
+plan_company = company.plan()
+sim = VRP_Simulation(graph,company, 3)
+simulate_threads = []
+
+for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
+    forward_problem_company = ForwardPlan(p)
+    thread = threading.Thread(target= sim.simulation_Company, args= (forward_problem_company, i) )
+    simulate_threads.append(thread)
+    print(thread.getName())
+    thread.start() # Iniciamos los hilos
+
+for t in simulate_threads: # Esperamos a que todos los hilos terminen
+    t.join()
+
+# Una vez que todos los hilos han terminado, podemos mostrar el tiempo total transcurrido
+print(f"El tiempo total transcurrido fue de {tiempo_global} segundos")
+print("FIN")
+
 
 #print(ast.literal_eval(route[0].id) == (2,0))
 

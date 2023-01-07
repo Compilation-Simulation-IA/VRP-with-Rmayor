@@ -6,7 +6,7 @@ from utils import is_basic_type
 from my_ast import *
 
 definiciones = {}
-simulation= None
+#simulation= None
 
 class Visitor:
     def __init__(self, context:Context, errors=[]):
@@ -47,92 +47,119 @@ class Visitor:
     
     @visitor.when(MapNode)
     def visit(self, node:MapNode,scope:Scope):
-        simulation.Map = node.map
+        #simulation.Map = node.map
+        self.visit(node.map)
     
     @visitor.when(StopsNode)
     def visit(self, node:StopsNode,scope:Scope):
         for dec in node.stop_declarations:
-            self.visit(dec)
+            self.visit(dec,scope)
         
     @visitor.when(StopDeclarationNode)
     def visit(self, node:StopDeclarationNode,scope:Scope):
-        simulation.add_stop(node.identifier, node.address, node.people)
+        #simulation.add_stop(node.identifier, node.address, node.people)
+        pass
         
     @visitor.when(VehicleTypeNode)
     def visit(self, node:VehicleTypeNode,scope:Scope):
-        for dec in node.vehicle_type_declarations:
-            self.visit(dec)
+        for dec in node.declarations:
+            self.visit(dec,scope)
     
     @visitor.when(VehicleTypeDeclarationNode)
     def visit(self, node:VehicleTypeDeclarationNode,scope:Scope):
-        simulation.add_vehicle_type(node.type)
+        #simulation.add_vehicle_type(node.type)
+        pass
     
     @visitor.when(ClientsNode)
     def visit(self, node:ClientsNode,scope:Scope):
         for dec in node.client_declarations:
-            self.visit(dec)
+            self.visit(dec,scope)
             
     @visitor.when(ClientDeclarationNode)
     def visit(self, node:ClientDeclarationNode,scope:Scope):
-        simulation.add_client(node.identifier, node.name, node.stops)
+       # simulation.add_client(node.identifier, node.name, node.stops,node.depot)
+       pass
         
     @visitor.when(CompanyBlockNode)
     def visit(self, node:CompanyBlockNode,scope:Scope):
-        simulation.set_budget(node.budget)
-        for dec in node.company_declarations:
-            self.visit(dec)
+        #simulation.set_budget(node.budget)
+        #simulation.direction_depot(node.depot)
+        for dec in node.vehicle_declarations:
+            self.visit(dec,scope)
             
     @visitor.when(CompanyDeclarationNode)
     def visit(self, node:CompanyDeclarationNode,scope:Scope):
         for dec in node.vehicle_declarations:
-            self.visit(dec)
+            self.visit(dec,scope)
             # Recupera el valor de la variable del nodo VarDeclarationNode
             value = dec.value
             type = dec.type
             # Pasa el valor como argumento al método add_vehicle de la simulación
-            simulation.add_vehicle(type, node.identifier, value)
+            #simulation.add_vehicle(type, node.identifier, value)
             
     @visitor.when(DemandsNode)
     def visit(self, node:DemandsNode,scope:Scope):
-        for dec in node.demand_declarations:
-            self.visit(dec)
+        for dec in node.demands:
+            self.visit(dec,scope)
     
     
     def add_function(id, params, return_type, body):
         def function(*args, **kwargs):
             exec(body)
-        function.__code__ = compile(body, "<string>", "exec")
+            function.__code__ = compile(body, "<string>", "exec")
         return function
         
     @visitor.when(FuncDeclarationNode)
     def visit(self, node:FuncDeclarationNode,scope:Scope):
-    # Accede al identificador de la función a través de la propiedad 'id' del nodo
+        args_names = []
+        args_types = []
+        self.current_type = node.type
+        # parent = self.current_type.parent 
+        # pnames = [param[0] for param in node.params]
+        # ptypes = [param[1] for param in node.params]
+
+        new_scope = scope.create_child()
+        scope.functions[node.id] = new_scope
+
+        # Añadir las variables de argumento
+        for pname, ptype in node.params:
+            if pname == 'self':
+                self.errors.append(SemanticError(SemanticError.SELF_PARAM, *ptype.pos)) 
+                args_names.append(pname)
+            
+            try:
+                arg_type = self.context.get_type(ptype.value, ptype.pos)
+            except SemanticError:
+                error_text = TypesError.PARAMETER_UNDEFINED % (ptype.value, ptype.value)
+                self.errors.append(TypesError(error_text, *ptype.pos))
+                arg_type = ErrorType()
+            args_types.append(arg_type)
+            
+        # try:
+        return_type = node.type
+        # except SemanticError as e:
+        #     error_text = TypesError.RETURN_TYPE_UNDEFINED % (node.type, node.id)
+        #     self.errors.append(TypesError(error_text, *node.type_pos))
+        #     return_type = ErrorType(node.type_pos)
+    
+        try:
+            self.current_type.define_method(node.id, args_names, args_types, return_type, node.pos)
+        except SemanticError as e:
+            self.errors.append(e)
+            new_scope.define_variable(pname, self._get_type(ptype.value, ptype.pos))
+            
+    
         id = node.id
     # Accede a los parámetros de la función a través de la propiedad 'params' del nodo
         params = node.params
     # Accede al tipo de retorno de la función a través de la propiedad 'type' del nodo
         return_type = node.type
-    # Accede al cuerpo de la función a través de la propiedad 'body' del nodo
-        body = node.body
-        function =self.add_function(id, params, return_type, body)
-        definiciones[id]= [scope,function]
         new_scope = scope.create_child()
-        self.visit(node.body, new_scope)
-        # parent = self.current_type.parent 
-        # pnames = [param[0] for param in node.params]
-        # ptypes = [param[1] for param in node.params]
-
-        # self.current_method = self.current_type.get_method(node.id, node.pos)
-
-        # new_scope = scope.create_child()
-        # scope.functions[node.id] = new_scope
-
-        # # Añadir las variables de argumento
-        # for pname, ptype in node.params:
-        #     if pname == 'self':
-        #         self.errors.append(SemanticError(SemanticError.SELF_PARAM, *ptype.pos)) 
-        #     new_scope.define_variable(pname, self._get_type(ptype.value, ptype.pos))
-            
+        visited_body = self.visit(node.body, new_scope)
+        function =self.add_function(params, return_type, visited_body)
+        definiciones[id]= [scope,function]
+        self.current_method = self.current_type.get_method(node.id, node.pos)
+        
         # self.visit(node.body, new_scope)
   
         
@@ -173,14 +200,20 @@ class Visitor:
 #             self.visit(declaration, scope.create_child())
 #         return scope
 
-    
-#     def copy_scope(self, scope:Scope, parent:Type):
-#         if parent is None:
-#             return
-#         for attr in parent.attributes.values():
-#             if scope.find_variable(attr.name) is None:
-#                 scope.define_attribute(attr)
-#         self.copy_scope(scope, parent.parent)
+    def _get_type(self, ntype, pos):
+        try:
+            return self.context.get_type(ntype, pos)
+        except SemanticError as e:
+            self.errors.append(e)
+            return ErrorType()
+        
+    def copy_scope(self, scope:Scope, parent:Type):
+        if parent is None:
+            return
+        for attr in parent.attributes.values():
+            if scope.find_variable(attr.name) is None:
+                scope.define_attribute(attr)
+        self.copy_scope(scope, parent.parent)
 
 
         
@@ -286,8 +319,10 @@ class Visitor:
     @visitor.when(CallNode)
     def visit(self, node:CallNode, scope:Scope):
         self.visit(node.obj, scope)
+        args=[]
         for arg in node.args:
-            self.visit(arg, scope)
+            args.append(self.visit(arg, scope))
+        definiciones[node.id](*args)
 
 
     @visitor.when(BaseCallNode)
@@ -299,10 +334,22 @@ class Visitor:
 
     @visitor.when(StaticCallNode)
     def visit(self, node:StaticCallNode, scope:Scope):
+        args=[]
         for arg in node.args:
-            self.visit(arg, scope)
+            args.append(self.visit(arg, scope))
+            if args[0] == []:
+                args = [arg.lex]
+        if self.current_type.name == 'IO':
+                if node.id == 'out_string':
+                    self.current_type.out_string(args)
+                elif node.id == 'out_int':
+                    self.current_type.methods['out_int'](args)
+        else:
+            definiciones[node.id](*args)
+       
 
 
+   
     # @visitor.when(CaseNode)
     # def visit(self, node:CaseNode, scope:Scope):
     #     self.visit(node.expr, scope)

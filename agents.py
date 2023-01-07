@@ -21,7 +21,7 @@ class Vehicle:
         self.days_off = 0 #disponibilidad del vehiculo. Si es > 0 representa los dias que no se usara
         self.capacity = capacity
         self.initial_miles = initial_miles
-        #self.miles_traveled = 0
+        self.miles_traveled = 0
         #self.std_dev = std_dev   # Desviación estándar inicial del vehículo
         #self.spent = 0
         self.route = None
@@ -31,7 +31,7 @@ class Vehicle:
         #self.pos_traffic_edge = -1
         #self.state = 0 
         self.speed = 0 #Representa los km/h
-        #self.taxes = 0
+        self.taxes = 0
         self.chage_speed()
         self.count_moves =0 
         
@@ -162,9 +162,9 @@ class Vehicle:
 
             
 
-        print('initial:' + initial)
-        print('goals:' + goals)
-        print('domain:' + domain)
+        #print('initial:' + initial)
+        #print('goals:' + goals)
+        #print('domain:' + domain)
 
         return PlanningProblem(initial=initial, goals=goals, actions=actions, agent=self, domain=domain)
 
@@ -276,6 +276,7 @@ class Company:
         self.vehicles=vehicles #lista de vehiculos q tiene la compañia
         #self.authorities = []  # Lista de autoridades que pueden parar a los vehículos
         self.map = map
+        self.assignations = []
         self.vehicle_client = {}
         self.assign_vehicle_to_client()
         
@@ -355,9 +356,16 @@ class Company:
 
         return path
 
+    def get_vehicle_from_id(self, vehicle_id):
+        """Devuelve el objeto vehiculo a partir de su id"""
+        for a in self.assignations:
+            if list(a.keys())[0] == str(vehicle_id):
+                return list(a.values())[0]
 
-    def start_route(self,vehicle, route):
+    def start_route(self, vehicle_id, route_id):
+        vehicle = self.get_vehicle_from_id(vehicle_id)
         return vehicle.plan()
+
         
     def calculate_optimal_routes(self):
         """Este metodo llama a la IA para q me de la organizacion de los vehiculos por clientes y sus rutas"""
@@ -388,28 +396,18 @@ class Company:
     #    self.vehicles.remove(old_vehicle)
     #    self.budget += cost
 
-    def pay_taxes(self) -> int:
-        result = 0
-        for v in self.vehicles:
-            result += v.taxes
-            v.taxes = 0
+    def pay_taxes(self, vehicle_id) -> int: #ARREGLAR Q PAGUE LA MULTA DE UN VEHICULO
+        """Paga las multas de los vehiculos en esa ruta si hubo y tambien cobra al cliente por haber
+        pedido el servicio de taxis."""
+        vehicle = self.get_vehicle_from_id(vehicle_id)
+        result = vehicle.taxes
+        vehicle.taxes = 0
+        self.budget += 10 * vehicle.capacity * len(vehicle.route) # El pago por los servicios
         self.budget -= result
         return result
 
-
-    #def check_vehicules(self): # PROPUESTA: QUE CHEQUEE UN VEHICULO A LA VEZ Y NO TODOS
-    #    """Determina si cada vehículo debe ir al mantenimiento o no."""
-    #    for vehicle in self.vehicles:
-    #        if vehicle.millas_recorridas >= vehicle.millas_inicial:
-    #            # El vehículo debe ir al mantenimiento
-    #            vehicle.maintenance()
-    #            vehicle.days_off = 2
-    #            self.in_maintenance.append(vehicle)
-    #        elif vehicle.days_off == 0:
-    #            self.in_maintenance.remove(vehicle)
-    #            # El vehículo no necesita mantenimiento todavía o  ya salio del mantenimiento
-    
-    def check_vehicle(self, vehicle: Vehicle):
+    def check_vehicle(self, vehicle_id):
+        vehicle = self.get_vehicle_from_id(vehicle_id)
         if vehicle.miles_traveled >= vehicle.initial_miles:
             # El vehículo debe ir al mantenimiento
             vehicle.days_off = random.randint(1,3)
@@ -429,30 +427,32 @@ class Company:
             # ...
             pass
 
-    def plan(self, assignations):
+    def plan(self):
 
         plans=[]
 
-        for v,r in assignations:
+        for a in self.assignations:            
+            v,r = a.keys()
+
 
             new_plan = PlanningProblem(initial = f'~Done({v},{r}) & ~Checked({v}) & ~Payed({v})',
                                         goals = f'Checked({v})',
-                                        actions = [Action('start_route(v,r)',
+                                        actions = [Action('start_route(c,v,r)',
                                                             precond='~Done(v,r) & ~Checked(v) & ~Payed(v)',
                                                             effect='Done(v,r) & EndRoute(v)',
-                                                            domain='Vehicle(v) & Route(r)'),
-                                                    Action('check_vehicle(v)',
+                                                            domain='Vehicle(v) & Route(r) & Company(c)'),
+                                                    Action('check_vehicle(c,v)',
                                                             precond='EndRoute(v) & Payed(v) & ~Checked(v)',
                                                             effect='Checked(v)',
-                                                            domain='Vehicle(v)'),
-                                                    Action('pay_taxes(v)',
+                                                            domain='Vehicle(v) & Company(c)'),
+                                                    Action('pay_taxes(c,v)',
                                                             precond='~Checked(v) & EndRoute(v) & ~Payed(v)',
                                                             effect='Payed(v)',
-                                                            domain='Vehicle(v)')
+                                                            domain='Vehicle(v) & Company(c)')
 
                                                     ],
                                         agent=self,
-                                        domain=f'Vehicle({v}) & Route({r})')
+                                        domain=f'Vehicle({v}) & Route({r}) & Company({self.name})')
             plans.append(new_plan)
 
         return plans
