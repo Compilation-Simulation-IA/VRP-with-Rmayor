@@ -218,14 +218,21 @@ graph.add_edges_from([((2,0),(2,3),{'weight':100}),
                        ])
 
 route = [n1,n4,n5,n6,n7,n8]
-vehicle = Vehicle('V1', 20, 100, 0.4)
-vehicle.route = route
-plan = vehicle.plan()
+s = sum(map(lambda x:x.people,route))
+print(s)
+#vehicle = Vehicle('V1', 20, 100, 0.4)
+#vehicle.route = route
+#plan = vehicle.plan()
+#
+list_vehicles = [Vehicle('V1', 10,100,0.5),Vehicle('V2', 12,100,0.5), Vehicle('V3', 9,100,0.5), Vehicle('V4',8,100,0.5),Vehicle('V5',10,100,0.5)]
+list_stops = {'C1':[MapNode(1,1),MapNode(2,6)],'C2':[MapNode(3,8)], 'C3':[MapNode(4,2),MapNode(5,1),MapNode(6,2)]}
+#
+#
+company = Company('C1', 100,graph, list_stops, list_vehicles)
 
-company = Company('C1', 100,graph)
-forward_problem = ForwardPlan(plan)
-sim = VRP_Simulation(graph,company, 3)
-sim.simulation_vehicle(forward_problem)
+#forward_problem = ForwardPlan(plan)
+#sim = VRP_Simulation(graph,company, 3)
+#sim.simulation_vehicle(forward_problem)
 #path = sim.relocate_route('(2,3)',route)
 #for p in path:
 #    print(p.id)
@@ -235,4 +242,6 @@ sim.simulation_vehicle(forward_problem)
 #print(list(graph.neighbors((2,3))))
 #print(graph[(2,3)][(2,4)]['weight'])
 
-print(ast.literal_eval(route[0].id) == (2,0))
+#print(ast.literal_eval(route[0].id) == (2,0))
+
+
