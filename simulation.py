@@ -10,7 +10,7 @@ from heapq import heappush, heappop
 import ast
 import threading
 import time
-from logger import Logger
+from my_logger import Logger
 
 tiempo_global = 0  # Inicializamos la variable global en 0
 
@@ -135,7 +135,7 @@ class VRP_Simulation:
                 if action_name == 'start_route':
                     print("ENTRO AL START ROUTE " )
                     forward_problem_vehicle = ForwardPlan(response)
-                    sim.simulation_vehicle(forward_problem_vehicle)
+                    self.simulation_vehicle(forward_problem_vehicle)
                     
                     tiempo_global += 1
                     time.sleep(1)
@@ -283,44 +283,43 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
 
 route = [n1,n4,n5,n6,n7,n8]
 s = sum(map(lambda x:x.people,route))
-print(s)
-#vehicle = Vehicle('V1', 20, 100, 0.4)
-#vehicle.route = route
+#print(s)
+vehicle = Vehicle('V1', 20, 100, 0.4)
+vehicle.route = route
 #plan = vehicle.plan()
 #
 list_vehicles = [Vehicle('V1', 10,100,0.5),Vehicle('V2', 12,100,0.5), Vehicle('V3', 9,100,0.5), Vehicle('V4',8,100,0.5),Vehicle('V5',10,100,0.5)]
 list_stops = {'C1':[MapNode(1,1),MapNode(2,6)],'C2':[MapNode(3,8)], 'C3':[MapNode(4,2),MapNode(5,1),MapNode(6,2)]}
 #
 #
-company = Company('C1', 100,graph, list_stops, list_vehicles)
+#company = Company('C1', 100,graph, list_stops, list_vehicles)
 
-company = Company('C1', 100,graph)
-company.vehicles.append(vehicle1)
-company.vehicles.append(vehicle2)
-
-company.routes[vehicle1] =  route
-company.routes[vehicle2] =  route
-
-company.assignations.append({'V1':vehicle1, 'R1':route})
-company.assignations.append({'V2':vehicle2, 'R1':route})
-
-plan_company = company.plan()
-sim = VRP_Simulation(graph,company, 3)
-simulate_threads = []
-
-for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
-    forward_problem_company = ForwardPlan(p)
-    thread = threading.Thread(target= sim.simulation_Company, args= (forward_problem_company, i) )
-    simulate_threads.append(thread)
-    print(thread.getName())
-    thread.start() # Iniciamos los hilos
-
-for t in simulate_threads: # Esperamos a que todos los hilos terminen
-    t.join()
-
-# Una vez que todos los hilos han terminado, podemos mostrar el tiempo total transcurrido
-print(f"El tiempo total transcurrido fue de {tiempo_global} segundos")
-print("FIN")
+#company = Company('C1', 100,graph)
+#company.vehicles.append(vehicle1)
+#company.vehicles.append(vehicle2)
+#
+#company.routes[vehicle1] =  route
+#company.routes[vehicle2] =  route
+#
+#company.assignations.append({'V1':vehicle1, 'R1':route})
+#company.assignations.append({'V2':vehicle2, 'R1':route})
+#plan_company = company.plan()
+#sim = VRP_Simulation(graph,company, 3)
+#simulate_threads = []
+#
+#for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
+#    forward_problem_company = ForwardPlan(p)
+#    thread = threading.Thread(target= sim.simulation_Company, args= (forward_problem_company, i) )
+#    simulate_threads.append(thread)
+#    print(thread.getName())
+#    thread.start() # Iniciamos los hilos
+#
+#for t in simulate_threads: # Esperamos a que todos los hilos terminen
+#    t.join()
+#
+## Una vez que todos los hilos han terminado, podemos mostrar el tiempo total transcurrido
+#print(f"El tiempo total transcurrido fue de {tiempo_global} segundos")
+#print("FIN")
 
 
 #print(ast.literal_eval(route[0].id) == (2,0))

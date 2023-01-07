@@ -11,6 +11,10 @@ def simplex(c,A,b):
     return res.x
 
 
+a = {'hola':[{'s1':3},{'s2':3}], 'hi':[{'s4':3},{'s3':3}]}
 
+b = [stop for stop in a.values()] 
+
+print(b)
     
 

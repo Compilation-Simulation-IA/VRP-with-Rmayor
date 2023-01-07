@@ -96,7 +96,7 @@ class RmayorParser(Parser):
     
     def p_client_declarations(self, p):
         '''client_declarations : client_declaration
-                            | client_declaration semi client_declarations'''
+                            | client_declaration client_declarations'''
         if len(p) == 2:
         # Una sola declaración de cliente
             p[0] = [p[1]]
@@ -133,7 +133,7 @@ class RmayorParser(Parser):
                 stop = self.stops[p[1]]
                 p[0]= [stop]
         else:
-            if p[2] not in self.stops:
+            if p[3] not in self.stops:
                 # Identificador de parada no declarado
                 raise Exception("Identificador de parada no declarado: " + p[3])
             else:
@@ -145,7 +145,7 @@ class RmayorParser(Parser):
 
     def p_company_block(self, p):
         'company_block : company ocur budget colon num depot opar address colon string cpar company_declarations ccur'
-        p[0] = CompanyBlockNode(p[5],p[8], p[10])
+        p[0] = CompanyBlockNode(p[5],p[10], p[12])
 
     
     def p_company_declarations(self, p):
@@ -167,10 +167,10 @@ class RmayorParser(Parser):
             node = VarDeclarationNode(idx, vehicle_type, p[4])
             if len(p) == 5:
                 # Declaración de tipo de vehículo
-                p[0] = CompanyDeclarationNode(p[1],[node])
+                p[0] = [CompanyDeclarationNode(p[1],[node])]
             else:
                 # Múltiples declaraciones
-                p[0] = [CompanyDeclarationNode(p[1],[node]), p[5]]
+                p[0] = [CompanyDeclarationNode(p[1],[node])]+ p[5]
           
     def p_demands_block(self, p):
         '''demands_block : demands ocur feature_list ccur'''
