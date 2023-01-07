@@ -79,6 +79,9 @@ class MapNode:
         self.authority = authority
         self.semaphore = semaphore
         
+
+
+
 #class Distribution_Type: 
 #    """ Clase para guardar todas las distribuciones que siguen las variables del problema"""
 #    def __init__(self):

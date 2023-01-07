@@ -15,7 +15,7 @@ class Vehicle:
     """Representa los vehículos de la compañía"""
     percent_of_deterioration_per_model = {"Lada": 5, "Moskovich": 7,"Ford": 5, "Mercedes Venz":3}
 
-    def __init__(self, ID, capacity, initial_miles, risk_probability): #current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float
+    def __init__(self, ID, capacity, initial_miles, risk_probability, logger): #current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float
         self.id = ID
         self.current_location = None
         self.days_off = 0 #disponibilidad del vehiculo. Si es > 0 representa los dias que no se usara
@@ -34,17 +34,8 @@ class Vehicle:
         self.taxes = 0
         self.chage_speed()
         self.count_moves =0 
+        self.logger = logger
         
-
-        """ los estados son:
-        0 : no hacer nada
-        1 : el vehiculo esta en movimiento
-        2 : el vehiculo esta cargando pasajeros
-        3 : el vehiculo esta descargando pasajeros
-        4 : el vehiculo esta en mantenimiento
-        5 : el vehiculo esta detenido por una autoridad del trafico
-        6 : el vehiculo esta volviendo para atras en la arista pq lo paro una autoridad.
-        """
 
     def __repr__(self) -> str:
         return f"<Vehicle({self.id})>" 
@@ -54,16 +45,15 @@ class Vehicle:
 
     def move(self, origin, destination):
         """Mueve al vehículo a su próximo destino"""
-        print('origin ' + str(origin))
-        print('dest ' + str(destination))
-
         speed = self.speed
         #self.miles_traveled += cost
         self.chage_speed()
         self.count_moves += 1
         self.current_location = self.route[self.count_moves]
+        self.logger.log(f"El {self} se desplazo de {origin} a {destination} con una velocidad {speed}.")
 
         return speed
+
         
     
     def chage_speed(self):
@@ -82,8 +72,10 @@ class Vehicle:
         people = self.current_location.people
         self.people_on_board += people
         self.current_location.people = 0
+        self.logger.log(f"El {self} cargo {people} personas en la parada {current_pos}.")
         
         return people
+
         
     
     def unload(self, current_pos):
@@ -91,7 +83,7 @@ class Vehicle:
 
         people = self.people_on_board
         self.people_on_board = 0
-
+        self.logger.log(f"El {self} descargo {people} personas en la parada {current_pos}.")
         return people
 
     def at_semaphore(self, current_pos):
@@ -102,14 +94,17 @@ class Vehicle:
         semaphore_time_left = sum(semaphore.color_range) - semaphore.time_color
         if color == Color.YELLOW:
             if self.pass_yellow():# no hace nada
-                print(f"El {self} NO paró en la luz amarilla del {semaphore}.")
+                self.logger.log(f"El {self} NO paró en la luz amarilla del {semaphore}.")
             else:
                 wait = semaphore_time_left
-                print(f"El {self} le cogio la luz amarilla en el {semaphore} y paró. Tiempo de espera: {wait}.")
+                self.logger.log(f"El {self} le cogio la luz amarilla en el {semaphore} y paró. Tiempo de espera: {wait}.")
 
         elif color == Color.RED:
             wait = semaphore_time_left
-            print(f"El {self} le cogio la luz roja en el {semaphore}. Tiempo de espera: {semaphore_time_left}.")
+            self.logger.log(f"El {self} le cogio la luz roja en el {semaphore}. Tiempo de espera: {semaphore_time_left}.")
+        
+        else:
+            self.logger.log(f"El {self} paso con luz verde en el {semaphore}.")
 
         return wait
 
@@ -135,7 +130,6 @@ class Vehicle:
                         precond='At(v,x) & Empty(x) & ~FreePass(x)',
                         effect= 'FreePass(x)',
                         domain='Vehicle(v) & Semaphore(x)'),                                    
-
                 ]
 
         goals = f'~Empty({self.route[len(self.route)-1].id})'
@@ -159,12 +153,6 @@ class Vehicle:
                 domain += f' & Semaphore({self.route[i].id})'
             else:
                 initial += f' & FreePass({self.route[i].id})'
-
-            
-
-        #print('initial:' + initial)
-        #print('goals:' + goals)
-        #print('domain:' + domain)
 
         return PlanningProblem(initial=initial, goals=goals, actions=actions, agent=self, domain=domain)
 
@@ -199,7 +187,7 @@ class Semaphore:
             
 class Authority:
     """Representa la autoridad del trafico """
-    def __init__(self, ID , map, probability = 0.5):
+    def __init__(self, ID , map = None, probability = 0.5):
         self.id = ID
         self.probability = probability  # Probabilidad de que la autoridad para al vehículo. Tiene que estar entre 0 y 1e
         self.map = map
@@ -232,10 +220,12 @@ class Authority:
         """Detiene al vehiculo para ponerle una multa si excede la velocidad. El vehiculo continua su ruta."""
         result = 0
         if vehicle.speed > 60:
+            vehicle.logger.log(f"El {vehicle} fue multado por {self}, por ir a {vehicle.speed} km/h.")
             vehicle.taxes += 50 # pone multa y continua
             result = 1
 
         elif random.random() < self.probability: # Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino
+            vehicle.logger.log(f"El {vehicle} fue desviado del camino por {self}.")
             route = vehicle.route
             next_stop = None
             start = len(route)
@@ -259,27 +249,28 @@ class Authority:
 
             if path != None:
                 result = 2 #devia el vehicle
-
-        
+        else:
+            vehicle.logger.log(f"El {vehicle} no fue parado por {self}.")
         return result
             
-
 class Company:
     """Representa la compañia de transporte"""
 
-    def __init__(self, name: str, budget: float, map, stops, vehicles):
+    def __init__(self, name: str, budget: float, map,stops, vehicles, logger):
         self.name = name
+        #self.stops = [] # diccionario de paradas por clientes. Para despues formar las rutas
         #self.warehouses = []  #lista de almacenes
         self.stops = stops # lista de diccionarios de la forma {client_name:[MapNode]}
         self.routes = {} #a cada vehiculo se le asigna una ruta
         self.budget = budget # presupuesto disponible
-        self.vehicles=vehicles #lista de vehiculos q tiene la compañia
+        self.vehicles = vehicles # lista de vehiculos q tiene la compañia
         #self.authorities = []  # Lista de autoridades que pueden parar a los vehículos
         self.map = map
         self.assignations = []
         self.vehicle_client = {}
-        self.assign_vehicle_to_client()
+        #self.assign_vehicle_to_client()
         
+        self.logger = logger
 
     def __repr__(self) -> str:
         return f"<Company: {self.name}>"
@@ -364,13 +355,12 @@ class Company:
 
     def start_route(self, vehicle_id, route_id):
         vehicle = self.get_vehicle_from_id(vehicle_id)
+        self.logger.log(f"{self}: El {vehicle} acaba de comenzar la ruta.")
         return vehicle.plan()
 
-        
     def calculate_optimal_routes(self):
         """Este metodo llama a la IA para q me de la organizacion de los vehiculos por clientes y sus rutas"""
         pass
-        
         
     # Añadir una parada a la ruta especificada
     #def insert_stop(self, route: Route, stop: MapNode): 
@@ -389,6 +379,7 @@ class Company:
     #    route.assign_vehicle(new_vehicle)
     
     def buy_vehicle(self, new_vehicle: Vehicle, cost: int):
+        self.logger.log(f"{self} compro un nuevo {new_vehicle} a {cost} pesos.")
         self.vehicles.append(new_vehicle)
         self.budget -= cost
     
@@ -401,16 +392,22 @@ class Company:
         pedido el servicio de taxis."""
         vehicle = self.get_vehicle_from_id(vehicle_id)
         result = vehicle.taxes
+        self.logger.log(f"{self} tuvo perdidas de {result} pesos en multas por el {vehicle}.")
         vehicle.taxes = 0
-        self.budget += 10 * vehicle.capacity * len(vehicle.route) # El pago por los servicios
+        income = 10 * vehicle.capacity * len(vehicle.route) # El pago por los servicios
+        self.budget +=income
+        self.logger.log(f"{self} tuvo ganancias de {income} pesos por los servivios prestados por el {vehicle}.")
         self.budget -= result
         return result
 
     def check_vehicle(self, vehicle_id):
         vehicle = self.get_vehicle_from_id(vehicle_id)
         if vehicle.miles_traveled >= vehicle.initial_miles:
-            # El vehículo debe ir al mantenimiento
             vehicle.days_off = random.randint(1,3)
+            self.logger.log(f"El {vehicle} debe ir al mantenimiento por {vehicle.days_off}")
+        else:
+            self.logger.log(f"El {vehicle} esta en perfectas condiciones.")
+
         return vehicle.days_off
         
 
