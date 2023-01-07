@@ -1,4 +1,5 @@
  (* An assignment has the form while*)
+Simulate 10
 map {
     import "mapa.txt"
 }

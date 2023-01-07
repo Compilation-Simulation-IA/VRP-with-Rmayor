@@ -1,4 +1,5 @@
 (* An assignment has the form <id> <- <expr> *)
+Simulate 5
 map {
     import "mapa.txt"
 }

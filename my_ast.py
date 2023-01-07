@@ -6,7 +6,9 @@ class Node:
 
 
 class ProgramNode(Node):
-    def __init__(self, map_block, stops_block, vehicle_type_block, clients_block, company_block, demands_block):
+    def __init__(self, simulate, days, map_block, stops_block, vehicle_type_block, clients_block, company_block, demands_block):
+        self.simulate = simulate
+        self.days = days
         self.map_block = map_block
         self.stops_block = stops_block
         self.vehicle_type_block = vehicle_type_block
@@ -63,9 +65,8 @@ class CompanyDeclarationNode:
         self.identifier = identifier
         self.vehicle_declarations = vehicle_declarations
 class DemandsNode:
-        def __init__(self, demands,simulate):
+        def __init__(self, demands):
             self.demands = demands
-            self.simulate = simulate
 class DeclarationNode(Node):
     pass
 

@@ -36,8 +36,13 @@ class RmayorParser(Parser):
     client = {}
     def p_program(self, p):
         # 'program : map_block stop_block vehicle_type_block clients_block company_block demands_block'
-        'program :  map_block stops_block vehicle_type_block clients_block company_block demands_block'
-        p[0] = ProgramNode(p[1],p[2],p[3],p[4],p[5],p[6])
+        '''program :  type num map_block stops_block vehicle_type_block clients_block company_block demands_block
+                | map_block stops_block vehicle_type_block clients_block company_block demands_block'''
+
+        if p[1] == 'Simulate':
+            p[0] = ProgramNode(True,p[2],p[3],p[4],p[5],p[6],p[7],p[8])
+        else:
+            p[0] = ProgramNode(False,0,p[1],p[2],p[3],p[4],p[5],p[6])
         
     def p_epsilon(self, p):
         'epsilon :'
@@ -168,12 +173,8 @@ class RmayorParser(Parser):
                 p[0] = [CompanyDeclarationNode(p[1],[node]), p[5]]
           
     def p_demands_block(self, p):
-        '''demands_block : demands ocur feature_list ccur
-                    | demands ocur feature_list Simulate ccur'''
-        if len(p) == 5:
-            p[0] = DemandsNode(p[3],False)
-        else:
-            p[0] = DemandsNode(p[3],True)
+        '''demands_block : demands ocur feature_list ccur'''
+        p[0] = DemandsNode(p[3])
     
 
     # def p_class_list(self, p):
@@ -539,7 +540,7 @@ class RmayorParser(Parser):
 
 
 if __name__ == "__main__":
-    with open('comp/string2.rm', 'r') as f:
+    with open('string4.rm', 'r') as f:
         file = f.read()
     # Parser()
     parser = RmayorParser()

@@ -1,5 +1,4 @@
-import sys
-sys.path.append('/../')
+
 
 from errors import SemanticError, AttributesError, TypesError, NamesError
 from my_types import *
@@ -7,11 +6,14 @@ from tools import Context, Scope
 import visitor
 from utils import is_basic_type
 from my_ast import *
-import VRP_Simulation
-from ..agents import *
+from  simulation import VRP_Simulation
+from agents import *
 definiciones = {}
 
-simulation= VRP_Simulation()
+graph=None
+Company=None
+days=1
+my_simulation= VRP_Simulation()
 
 class Visitor:
     def __init__(self, context:Context, errors=[]):
