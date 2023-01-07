@@ -303,13 +303,11 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                                          
                        ])
 
-logger = Sim_Logger()
-route1 = [n1,n2,n3,n4,n5,n6,n7,n8]
-route2 = [n1,n2,n3,n4,n5]
-vehicle1 = Vehicle('V1', 20, 100, 0.0, logger)
-vehicle2 = Vehicle('V2', 10, 100, 1.0, logger)
-vehicle1.route = route1
-vehicle2.route = route2
+route = [n1,n2,n3,n4,n5,n6,n7,n8]
+vehicle1 = Vehicle('V1', 20, 100, 0.0)
+vehicle2 = Vehicle('V2', 10, 100, 1.0)
+vehicle1.route = route
+vehicle2.route = route
 
 company = Company('C1', 100, graph, logger)
 company.vehicles.append(vehicle1)
