@@ -1,0 +1,82 @@
+Día Lunes 1:
+<Company: C1>: El <Vehicle: ID V1> acaba de comenzar la ruta.
+<Company: C1>: El <Vehicle: ID V2> acaba de comenzar la ruta.
+El <Vehicle: ID V2> se desplazo de (2, 0) a (2, 1) con una velocidad 50.
+<Vehicle: ID V2> HIZO LA ACCION move(V2, (2, 0), (2, 1)) en el tiempo 0
+ EL COSTO FUE DE 7
+El <Vehicle: ID V2> se desplazo de (2, 1) a (2, 2) con una velocidad 43.
+<Vehicle: ID V2> HIZO LA ACCION move(V2, (2, 1), (2, 2)) en el tiempo 8
+ EL COSTO FUE DE 10
+El <Vehicle: ID V2> paso con luz verde en el <Semaphore: Position (2,2), State: GREEN>.
+<Vehicle: ID V2> HIZO LA ACCION at_semaphore(V2, (2, 2)) en el tiempo 19
+ EL COSTO FUE DE 0
+El <Vehicle: ID V2> se desplazo de (2, 2) a (2, 3) con una velocidad 47.
+<Vehicle: ID V2> HIZO LA ACCION move(V2, (2, 2), (2, 3)) en el tiempo 20
+ EL COSTO FUE DE 6
+El <Vehicle: ID V2> no fue parado por <Authority: ID (2,3)>.
+<Vehicle: ID V2> HIZO LA ACCION AUTHORITY: 0 en el tiempo 27
+ EL COSTO FUE DE 0
+El <Vehicle: ID V2> cargo 3 personas en la parada (2, 3).
+<Vehicle: ID V2> HIZO LA ACCION load(V2, (2, 3)) en el tiempo 27
+ EL COSTO FUE DE 176
+El <Vehicle: ID V2> no fue parado por <Authority: ID (2,3)>.
+<Vehicle: ID V2> HIZO LA ACCION AUTHORITY: 0 en el tiempo 204
+ EL COSTO FUE DE 0
+El <Vehicle: ID V2> se desplazo de (2, 3) a (2, 4) con una velocidad 45.
+<Vehicle: ID V2> HIZO LA ACCION move(V2, (2, 3), (2, 4)) en el tiempo 204
+ EL COSTO FUE DE 8
+El <Vehicle: ID V2> descargo 3 personas en la parada (2, 4).
+<Vehicle: ID V2> HIZO LA ACCION unload(V2, (2, 4)) en el tiempo 213
+ EL COSTO FUE DE 176
+<Vehicle: ID V2> termino en 390
+<Company: C1> tuvo perdidas de 0 pesos en multas por el <Vehicle: ID V2>.
+<Company: C1> tuvo ganancias de 500 pesos por los servivios prestados por el <Vehicle: ID V2>.
+El <Vehicle: ID V2> esta en perfectas condiciones.
+El <Vehicle: ID V1> se desplazo de (2, 0) a (2, 1) con una velocidad 62.
+<Vehicle: ID V1> HIZO LA ACCION move(V1, (2, 0), (2, 1)) en el tiempo 0
+ EL COSTO FUE DE 5
+El <Vehicle: ID V1> se desplazo de (2, 1) a (2, 2) con una velocidad 45.
+<Vehicle: ID V1> HIZO LA ACCION move(V1, (2, 1), (2, 2)) en el tiempo 6
+ EL COSTO FUE DE 9
+El <Vehicle: ID V1> paso con luz verde en el <Semaphore: Position (2,2), State: GREEN>.
+<Vehicle: ID V1> HIZO LA ACCION at_semaphore(V1, (2, 2)) en el tiempo 16
+ EL COSTO FUE DE 0
+El <Vehicle: ID V1> se desplazo de (2, 2) a (2, 3) con una velocidad 19.
+<Vehicle: ID V1> HIZO LA ACCION move(V1, (2, 2), (2, 3)) en el tiempo 17
+ EL COSTO FUE DE 17
+El <Vehicle: ID V1> no fue parado por <Authority: ID (2,3)>.
+<Vehicle: ID V1> HIZO LA ACCION AUTHORITY: 0 en el tiempo 35
+ EL COSTO FUE DE 0
+El <Vehicle: ID V1> cargo 0 personas en la parada (2, 3).
+<Vehicle: ID V1> HIZO LA ACCION load(V1, (2, 3)) en el tiempo 35
+ EL COSTO FUE DE 0
+El <Vehicle: ID V1> no fue parado por <Authority: ID (2,3)>.
+<Vehicle: ID V1> HIZO LA ACCION AUTHORITY: 0 en el tiempo 36
+ EL COSTO FUE DE 0
+El <Vehicle: ID V1> se desplazo de (2, 3) a (2, 4) con una velocidad 46.
+<Vehicle: ID V1> HIZO LA ACCION move(V1, (2, 3), (2, 4)) en el tiempo 36
+ EL COSTO FUE DE 7
+El <Vehicle: ID V1> se desplazo de (2, 4) a (2, 5) con una velocidad 46.
+<Vehicle: ID V1> HIZO LA ACCION move(V1, (2, 4), (2, 5)) en el tiempo 44
+ EL COSTO FUE DE 8
+El <Vehicle: ID V1> cargo 2 personas en la parada (2, 5).
+<Vehicle: ID V1> HIZO LA ACCION load(V1, (2, 5)) en el tiempo 53
+ EL COSTO FUE DE 140
+El <Vehicle: ID V1> se desplazo de (2, 5) a (2, 6) con una velocidad 56.
+<Vehicle: ID V1> HIZO LA ACCION move(V1, (2, 5), (2, 6)) en el tiempo 194
+ EL COSTO FUE DE 8
+El <Vehicle: ID V1> no fue parado por <Authority: ID (2,6)>.
+<Vehicle: ID V1> HIZO LA ACCION AUTHORITY: 0 en el tiempo 203
+ EL COSTO FUE DE 0
+El <Vehicle: ID V1> se desplazo de (2, 6) a (2, 7) con una velocidad 45.
+<Vehicle: ID V1> HIZO LA ACCION move(V1, (2, 6), (2, 7)) en el tiempo 203
+ EL COSTO FUE DE 6
+El <Vehicle: ID V1> descargo 2 personas en la parada (2, 7).
+<Vehicle: ID V1> HIZO LA ACCION unload(V1, (2, 7)) en el tiempo 210
+ EL COSTO FUE DE 140
+<Vehicle: ID V1> termino en 351
+<Company: C1> tuvo perdidas de 0 pesos en multas por el <Vehicle: ID V1>.
+<Company: C1> tuvo ganancias de 1600 pesos por los servivios prestados por el <Vehicle: ID V1>.
+El <Vehicle: ID V1> esta en perfectas condiciones.
+Termino el día.
+FIN

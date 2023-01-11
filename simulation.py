@@ -1,18 +1,18 @@
 from storage import *
 from agents import *
+
 import random
 import math
 import networkx as nx
+import time
 from ia.planning import *
 from collections import deque
 from ia.utils import *
 from heapq import heappush, heappop
 import ast
 import threading
-import time
-from my_logger import Logger
-
-tiempo_global = 0  # Inicializamos la variable global en 0
+from simulation_logger import Logger
+import matplotlib.pyplot as plt
 
 class WeekDays(Enum):
     Lunes = 1
@@ -32,9 +32,32 @@ class VRP_Simulation:
         self.days = days
         self.week_day = WeekDays.Lunes.name
         
-    def simulation_vehicle(self,problem):
-        global tiempo_global 
+    def start_simulation(self):
+        while self.current_date <= self.days:
+            company.logger.log(f"Día {self.week_day} {self.current_date}:")
+            plan_company = company.plan()
+            simulate_threads = []
 
+            for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
+                forward_problem_company = ForwardPlan(p)
+                thread = threading.Thread(target= sim.simulation_Company, args= (forward_problem_company, i) )
+                simulate_threads.append(thread)
+                print(thread.getName())
+                thread.start() # Iniciamos los hilos
+
+            for t in simulate_threads: # Esperamos a que todos los hilos terminen
+                t.join()
+
+            # Una vez que todos los hilos han terminado, podemos mostrar el tiempo total transcurrido
+            company.logger.log(f"Termino el día.")
+            #company.logger.log(f"El tiempo total transcurrido fue de {global_time} segundos")
+            self.current_date +=1
+            self.week_day = WeekDays(self.current_date % 7).name
+            time.sleep(1)
+        company.logger.log("FIN")
+
+
+    def simulation_vehicle(self,problem, global_time):
         f = memoize(lambda node: node.path_cost, 'f')
         node = Node(problem.initial) # problem.initial is Node state
         frontier = PriorityQueue('min', f)
@@ -44,52 +67,52 @@ class VRP_Simulation:
         wait_time = 0
         
         while frontier:
-            if wait_time == 0:
-                
+            if wait_time == 0:   
                 current_pos = problem.planning_problem.agent.current_location
 
                 if current_pos.authority != None:
-                    print("ENTRO AL AUTHORITY " )
                     decision = current_pos.authority.stop_vehicle(problem.planning_problem.agent)
                     if decision == 2:
-                        print("ENTRO AL AUTHORITY CAMBIAR RUTA " )
                         new_route = self.relocate_route(current_pos.id, problem.planning_problem.agent.route)
                         problem.planning_problem.agent.route = new_route
                         problem = ForwardPlan(problem.planning_problem.agent.plan())
                         frontier = PriorityQueue('min', f)
                         frontier.append(Node(problem.initial)) 
                         current_pos.authority = None
-                    wait_time += self.cost_with_authority(decision)
 
-                        
+                    temp = self.cost_with_authority(decision)
+                    wait_time += temp
+                    self.company.logger.log(f"{problem.planning_problem.agent} HIZO LA ACCION AUTHORITY: {decision} en el tiempo {global_time}")
+                    self.company.logger.log(f" EL COSTO FUE DE {temp}")
 
                 node = frontier.pop()
                 action = problem.actions(node.state)
                 
-
                 if len(action) > 0:
                     action_name = action[0].name
-                    #print(action_name)
                     action_args = action[0].args
-                    #print(action_args)
                     response = problem.act(expr(str(action[0])))
-
+                    self.company.logger.log(f"{problem.planning_problem.agent} HIZO LA ACCION {action[0]} en el tiempo {global_time}")
                     if action_name == 'move':
-                        print("ENTRO AL MOVE " )
                         x = action_args[1]
                         y = action_args[2]
                         edge = graph.get_edge_data(x,y)
-                        wait_time += self.cost_move(response, edge['weight'])
+                        temp = self.cost_move(response, edge['weight'])
+                        wait_time += temp
+                        self.company.logger.log(f" EL COSTO FUE DE {temp}")
                     elif action_name == 'load' or action_name=='unload':
-                        print("ENTRO AL LOAD Y UNLOAD " )
-                        wait_time += self.cost_load_and_unload(response)
+                        temp = self.cost_load_and_unload(response)
+                        wait_time += temp
+                        self.company.logger.log(f" EL COSTO FUE DE {temp}")
                     elif action_name == 'at_semaphore':
-                        print("ENTRO AL AT SEMAPHORE " )
                         wait_time += response
+                        self.company.logger.log(f" EL COSTO FUE DE {response}")
                     else:
                         pass
                
                 if problem.goal_test(node.state):
+                    self.company.logger.log(f"{problem.planning_problem.agent} termino en {global_time}")
+                    
                     return node
                 explored.add(node.state)
                 for child in node.expand(problem):
@@ -100,17 +123,15 @@ class VRP_Simulation:
                         if f(child) < frontier[child]:
                             del frontier[child]
                             frontier.append(child)
-
+                #global_time += wait_time  # Actualizamos el tiempo global
             else:
                 wait_time -=1
+            global_time += 1
             
-            # Actualizamos el tiempo global
-            tiempo_global += 1
-
         return None
     
     def simulation_Company(self, problem, index: int):
-        global tiempo_global # Declaramos que vamos a usar la variable global
+        global_time = 0# Declaramos que vamos a usar la variable global
 
         f = memoize(lambda node: node.path_cost, 'f')
         node = Node(problem.initial) # problem.initial is Node state
@@ -118,7 +139,6 @@ class VRP_Simulation:
         frontier.append(node)
         explored = set()
         response = None
-        print("ENTRO AL SIMULATION_COMPANY")
         while frontier:
                 
             current_vehicle = list(problem.planning_problem.agent.routes.keys())[index]
@@ -128,44 +148,22 @@ class VRP_Simulation:
             
             if len(action) > 0:
                 action_name = action[0].name
-                #print(action_name)
-                #action_args = action[0].args
-                #print(action_args)
                 response = problem.act(expr(str(action[0])))
                 if action_name == 'start_route':
-                    print("ENTRO AL START ROUTE " )
                     forward_problem_vehicle = ForwardPlan(response)
-                    self.simulation_vehicle(forward_problem_vehicle)
-                    
-                    tiempo_global += 1
-                    time.sleep(1)
-
-                elif action_name == 'check_vehicle':
-                    print("ENTRO AL CHECK VEHICLE " )
-  
-                    tiempo_global += 1
-                    time.sleep(1)
-                
-                else: #  action_name == 'pay_taxes':
-                    print("ENTRO AL PAY TAXES " )
-                    
-                    tiempo_global += 1
-                    time.sleep(1)
+                    self.simulation_vehicle(forward_problem_vehicle, global_time)
                     
             if problem.goal_test(node.state):
-                print(f"El vehiculo {self.company.vehicles[index]} ha llegado a su destino en {tiempo_global} segundos")
+                #company.logger.log(f"El vehiculo {self.company.vehicles[index]} ha llegado a su destino en {global_time} segundos")
                 return node
             explored.add(node.state)
             for child in node.expand(problem):
-                #print('Frontier Child: ' + str(child))
                 if child.state not in explored and child not in frontier:
                     frontier.append(child)
                 elif child in frontier:
                     if f(child) < frontier[child]:
                         del frontier[child]
                         frontier.append(child)
-
-        
         return None
 
     def cost_move(self, speed, distance): 
@@ -229,7 +227,14 @@ class VRP_Simulation:
         self.graph_map[origin][not_available]['weight']=temp
 
         return path
+    
 
+
+
+
+       
+
+    
 
 graph = nx.Graph()
 
@@ -237,7 +242,7 @@ n1 = MapNode('(2,0)', 0)
 n2 = MapNode('(2,1)', 0)
 n3= MapNode('(2,2)', 0, semaphore= Semaphore('(2,2)'))
 n4 = MapNode('(2,3)', 3, authority= Authority('(2,3)', map =graph, probability = 0))
-n5 = MapNode('(2,4)', 0, semaphore=Semaphore('(2,4)'))
+n5 = MapNode('(2,4)', 0)#, semaphore=Semaphore('(2,4)'))
 n6 = MapNode('(2,5)', 2)
 n7 = MapNode('(2,6)', 0, authority=Authority('(2,6)', map=graph))
 n8 = MapNode('(2,7)', 0)
@@ -280,52 +285,48 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                       ((3,5),(2,5),{'weight':80}),
                                          
                        ])
+logger = Logger()
 
-#route = [n1,n4,n5,n6,n7,n8]
-#s = sum(map(lambda x:x.people,route))
-##print(s)
-#vehicle = Vehicle('V1', 20, 100, 0.4)
-#vehicle.route = route
-##plan = vehicle.plan()
-##
-#list_vehicles = [Vehicle('V1', 10,100,0.5),Vehicle('V2', 12,100,0.5), Vehicle('V3', 9,100,0.5), Vehicle('V4',8,100,0.5),Vehicle('V5',10,100,0.5)]
-#list_stops = {'C1':[MapNode(1,1),MapNode(2,6)],'C2':[MapNode(3,8)], 'C3':[MapNode(4,2),MapNode(5,1),MapNode(6,2)]}
-#
-#
-#company = Company('C1', 100,graph, list_stops, list_vehicles)
+stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1), MapNode('(7,7)', 1), MapNode('(6,6)', 1), MapNode('(4,4)', 1), MapNode('(5,5)', 1)]
+G, nodes_color = generate_random_graph(stop_list, (3,3))
+print(G.edges())
+write_map(G, 'map_in')
+print("FIN")
+#nx.draw(G, node_color= nodes_color)
+#plt.show()
 
-#company = Company('C1', 100,graph)
+#logger = Logger()
+#
+#route1 = [n1,n2,n3,n4,n5,n6,n7,n8]
+#route2 = [n1,n2,n3,n4,n5]
+#vehicle1 = Vehicle('V1', 20, 100, 0.0, logger)
+#vehicle2 = Vehicle('V2', 10, 100, 1.0, logger)
+#vehicle1.route = route1
+#vehicle2.route = route2
+#
+#vehicles = [vehicle1, vehicle2]
+#stops = {'client1':[], 'client2':[]}
+#company = Company('C1', 100, graph, stops, vehicles, logger)
 #company.vehicles.append(vehicle1)
 #company.vehicles.append(vehicle2)
 #
-#company.routes[vehicle1] =  route
-#company.routes[vehicle2] =  route
+#company.routes[vehicle1] =  route1
+#company.routes[vehicle2] =  route2
 #
-#company.assignations.append({'V1':vehicle1, 'R1':route})
-#company.assignations.append({'V2':vehicle2, 'R1':route})
-#plan_company = company.plan()
-#sim = VRP_Simulation(graph,company, 3)
-#simulate_threads = []
+#company.assignations.append({'V1':vehicle1, 'R1':route1})
+#company.assignations.append({'V2':vehicle2, 'R1':route2})
 #
-#for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
-#    forward_problem_company = ForwardPlan(p)
-#    thread = threading.Thread(target= sim.simulation_Company, args= (forward_problem_company, i) )
-#    simulate_threads.append(thread)
-#    print(thread.getName())
-#    thread.start() # Iniciamos los hilos
+#sim = VRP_Simulation(graph,company, 1)
+#sim.start_simulation()
 #
-#for t in simulate_threads: # Esperamos a que todos los hilos terminen
-#    t.join()
+#print()
+#print(company)
+#info = company.logger.get_logs()
+##info_strings = [str(elem) for elem in info]
+#info_result = "\n".join(info)
+#print(info_result)
+#with open('30_simulations.txt', 'w') as f:
+#    f.write(info_result)
 #
-## Una vez que todos los hilos han terminado, podemos mostrar el tiempo total transcurrido
-#print(f"El tiempo total transcurrido fue de {tiempo_global} segundos")
-#print("FIN")
-
-
-#print(ast.literal_eval(route[0].id) == (2,0))
-
-
-distances = nx.floyd_warshall_numpy(graph)
-print(distances)
-print([1 for i in range(5-2)] + [2 for j in range(2)])
-print(1%7)
+#print("FIN 2.0")
+#
