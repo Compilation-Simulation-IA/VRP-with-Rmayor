@@ -6,19 +6,24 @@ from tools import Context, Scope
 import visitor
 from utils import is_basic_type
 from my_ast import *
-from  simulation import VRP_Simulation
+from  generate import Generator 
 from agents import *
+
 definiciones = {}
-
-graph=None
-mapa=""
-budget=0
-name=""
-
-days=1
-
-simulate=False
 class Visitor:
+   
+    graph=None
+    map=""
+    budget=0
+    name=""
+    stops={}
+    vehicles={}
+    clients={}
+    days=1
+    depot=""
+    types={}
+
+    simulate=False
     def __init__(self, context:Context, errors=[]):
         self.context:Context = context
         self.current_type:Type = None
@@ -37,9 +42,9 @@ class Visitor:
         self.context.types['Bool'] = BoolType()
         self.context.types['SELF_TYPE'] = SelfType()
         self.context.types['IO'] = IOType()
-        days=node.days
-        simulate=node.simulate
-        self.visit(node.map_block,scope.create_child())
+        self.days=node.days
+        self.simulate=node.simulate
+        self.map = node.map_block.map
         self.visit(node.stops_block,scope.create_child())
         self.visit(node.vehicle_type_block,scope.create_child())
         self.visit(node.clients_block,scope.create_child())
@@ -57,10 +62,9 @@ class Visitor:
             else:
                 node.expr = ConstantVoidNode(node.id)
     
-    @visitor.when(MapNode)
-    def visit(self, node:MapNode,scope:Scope):
-        mapa = node.map
-        self.visit(node.map)
+    # @visitor.when(MapNode)
+    # def visit(self, node:MapNode,scope:Scope):
+    #     self.map = node.map
     
     @visitor.when(StopsNode)
     def visit(self, node:StopsNode,scope:Scope):
@@ -69,7 +73,7 @@ class Visitor:
         
     @visitor.when(StopDeclarationNode)
     def visit(self, node:StopDeclarationNode,scope:Scope):
-        #simulation.add_stop(node.identifier, node.address, node.people)
+        #stops[node.identifier]=[node.address, node.people]
         pass
         
     @visitor.when(VehicleTypeNode)
@@ -79,7 +83,7 @@ class Visitor:
     
     @visitor.when(VehicleTypeDeclarationNode)
     def visit(self, node:VehicleTypeDeclarationNode,scope:Scope):
-        #simulation.add_vehicle_type(node.type)
+        self.types[node.identifier]=[node.type]
         pass
     
     @visitor.when(ClientsNode)
@@ -89,13 +93,13 @@ class Visitor:
             
     @visitor.when(ClientDeclarationNode)
     def visit(self, node:ClientDeclarationNode,scope:Scope):
-       # simulation.add_client(node.identifier, node.name, node.stops,node.depot)
+       self.clients[node.identifier]=[node.name, node.stops, node.depot]
        pass
         
     @visitor.when(CompanyBlockNode)
     def visit(self, node:CompanyBlockNode,scope:Scope):
-        budget=node.budget
-        #simulation.direction_depot(node.depot)
+        self.budget=node.budget
+        self.depot=node.depot
         for dec in node.vehicle_declarations:
             self.visit(dec,scope)
             
@@ -104,19 +108,29 @@ class Visitor:
         for dec in node.vehicle_declarations:
             self.visit(dec,scope)
             # Recupera el valor de la variable del nodo VarDeclarationNode
-            value = dec.value
-            type = dec.type
+            id = dec.id
+            type = None
+            if node.identifier in self.types:
+                type = self.types[node.identifier] 
             # Pasa el valor como argumento al método add_vehicle de la simulación
-            #simulation.add_vehicle(type, node.identifier, value)
+            self.vehicles[id]=[type, dec.expr]
             
     @visitor.when(DemandsNode)
     def visit(self, node:DemandsNode,scope:Scope):
         for dec in node.demands:
             self.visit(dec,scope)
-        if simulate:
-            company=Company(name,budget,mapa)
-            VRP_Simulation(graph,Company,days)
-    
+        if self.simulate:
+            print(self.days)
+            print(self.budget)
+            print(self.vehicles)
+            print(self.depot)
+            print(self.map)
+            print(self.clients)
+            gen = Generator(self.vehicles,self.clients,self.depot,self.days,self.budget,self.map)
+            gen.generate_simulation()
+            #clients: ['Coca Cola', [<my_ast.StopDeclarationNode object at 0x000002236DBF6FD0>], <my_ast.StopDeclarationNode object at 0x000002236DBF6FD0>]
+            #vehicles: {'v1': [[...], 5.0]}
+            pass
     
     def add_function(id, params, return_type, body):
         def function(*args, **kwargs):
@@ -337,7 +351,7 @@ class Visitor:
         args=[]
         for arg in node.args:
             args.append(self.visit(arg, scope))
-        definiciones[node.id](*args)
+        self.definiciones[node.id](*args)
 
 
     @visitor.when(BaseCallNode)

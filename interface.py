@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.font import Font
 import init
+
 def open_file():
     """Open a file for editing."""
     filepath = askopenfilename(
@@ -28,9 +29,6 @@ def save_file():
         text = txt_code.get("1.0", END)
         output_file.write(text)
     window.title(f"Simple Text Editor - {filepath}")
-
-def run():
-    pass
 
 def stop():
     pass

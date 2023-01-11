@@ -6,7 +6,7 @@ cwd = os.getcwd()
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename=f"comp/parselog.txt",
+    filename=f"parselog.txt",
     filemode="w",
     format="%(filename)10s:%(lineno)4d:%(message)s"
 )

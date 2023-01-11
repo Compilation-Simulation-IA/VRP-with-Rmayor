@@ -6,6 +6,8 @@ map {
 
 stops {
     s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+    s2 (address:"156A, #107, Playa, La Habana", people:2)
+    s3 (address:"156A, #107", people:0)
 
 }
 
@@ -17,7 +19,8 @@ vehicle_type {
 
 clients {
     
-    c1 (name: "Coca Cola", stops_list: (s1),depot:s1 ) (*puede cambiarse por []*)
+    c1 (name: "Coca Cola", stops_list: (s1,s2),depot:s3 ) (*puede cambiarse por []*)
+    c2 (name: "Coca", stops_list: (s1),depot:s3 ) 
 
 }
 
@@ -32,24 +35,5 @@ demands{
 
 func print() : IO {
         out_string("reached!!\n")
-    }
-func main(): Object {
-        print()
-    }
-
-    test1<- 1
-
-    test3<- "1"
-
-func testing2 ( a: Int, b: String ) : Int {
-        2 + 2
-    }
-
-func testing3(): String {
-        "2 + 2"
-    }
-
-func testing4(): String {
-        test1 <- "Hello World" -- Identifiers begin with a lower case letter
     }
 }
