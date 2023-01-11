@@ -281,15 +281,15 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                                          
                        ])
 
-route = [n1,n4,n5,n6,n7,n8]
-s = sum(map(lambda x:x.people,route))
-#print(s)
-vehicle = Vehicle('V1', 20, 100, 0.4)
-vehicle.route = route
-#plan = vehicle.plan()
-#
-list_vehicles = [Vehicle('V1', 10,100,0.5),Vehicle('V2', 12,100,0.5), Vehicle('V3', 9,100,0.5), Vehicle('V4',8,100,0.5),Vehicle('V5',10,100,0.5)]
-list_stops = {'C1':[MapNode(1,1),MapNode(2,6)],'C2':[MapNode(3,8)], 'C3':[MapNode(4,2),MapNode(5,1),MapNode(6,2)]}
+#route = [n1,n4,n5,n6,n7,n8]
+#s = sum(map(lambda x:x.people,route))
+##print(s)
+#vehicle = Vehicle('V1', 20, 100, 0.4)
+#vehicle.route = route
+##plan = vehicle.plan()
+##
+#list_vehicles = [Vehicle('V1', 10,100,0.5),Vehicle('V2', 12,100,0.5), Vehicle('V3', 9,100,0.5), Vehicle('V4',8,100,0.5),Vehicle('V5',10,100,0.5)]
+#list_stops = {'C1':[MapNode(1,1),MapNode(2,6)],'C2':[MapNode(3,8)], 'C3':[MapNode(4,2),MapNode(5,1),MapNode(6,2)]}
 #
 #
 #company = Company('C1', 100,graph, list_stops, list_vehicles)
@@ -325,3 +325,7 @@ list_stops = {'C1':[MapNode(1,1),MapNode(2,6)],'C2':[MapNode(3,8)], 'C3':[MapNod
 #print(ast.literal_eval(route[0].id) == (2,0))
 
 
+distances = nx.floyd_warshall_numpy(graph)
+print(distances)
+print([1 for i in range(5-2)] + [2 for j in range(2)])
+print(1%7)

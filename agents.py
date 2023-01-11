@@ -5,7 +5,7 @@ from enum import Enum
 import networkx as nx
 from ia.planning import Action,PlanningProblem
 import ast
-from ia.simplex import simplex
+from scipy.optimize import linprog
 
 class Color(Enum):
     GREEN = 1
@@ -267,10 +267,10 @@ class Authority:
 class Company:
     """Representa la compañia de transporte"""
 
-    def __init__(self, name: str, budget: float, map, stops, vehicles):
+    def __init__(self, name: str, budget: float, map, stops, vehicles, depot):
         self.name = name
         #self.warehouses = []  #lista de almacenes
-        self.stops = stops # lista de diccionarios de la forma {client_name:[MapNode]}
+        self.stops = stops # lista de diccionarios de la forma {client_name:[[{stop:MapNode,people:int}],{stop:MapNode}]}
         self.routes = {} #a cada vehiculo se le asigna una ruta
         self.budget = budget # presupuesto disponible
         self.vehicles=vehicles #lista de vehiculos q tiene la compañia
@@ -278,7 +278,8 @@ class Company:
         self.map = map
         self.assignations = []
         self.vehicle_client = {}
-        self.assign_vehicle_to_client()
+        self.vehicle_stop = {}
+        self.__assign()
         
 
     def __repr__(self) -> str:
@@ -287,9 +288,19 @@ class Company:
     def __str__(self) -> str:
         return f"<Company: {self.name}>"
 
-    def assign_vehicle_to_client(self):
+    def __assign(self):
+
+        self.__assign_vehicle_to_client()
+
+        for c in self.vehicle_client.keys():
+            vehicles = self.vehicle_client[c]
+            stops = self.stops[c][0] + self.stops[c][1] + self.depot
+            self.__assign_route_to_vehicle(vehicles,stops)
+
+    def __assign_vehicle_to_client(self):
         """Asigna a cada cliente los vehiculos 
-        necesarios para recoger a todas las personas en las paradas"""
+        necesarios para recoger a todas las personas en las paradas. 
+        Retorna discionario de la forma {client_name:[lista vehiculos]}"""
 
         n = len(self.vehicles) * len(self.stops)
         c = []
@@ -315,7 +326,7 @@ class Company:
         A.append([1 for i in range(n)])
         A.append([-1 for i in range(n)])
 
-        for value in self.stops.values():
+        for value in self.stops.values()[0]:
             b.append(-sum(map(lambda x:x.people,value)))
 
         for i in range(len(self.stops)):
@@ -324,7 +335,7 @@ class Company:
         b.append(len(self.vehicles))
         b.append(0)
 
-        assignations = simplex(c,A,b)
+        assignations = linprog(c, A_ub=A, b_ub=b, bounds=(0,1))
 
         for i in range(len(assignations)):
             if assignations[i] == 1:
@@ -335,14 +346,62 @@ class Company:
                     self.vehicle_client[client].append(vehicle)
                 else:
                     self.vehicle_client.update({client:[vehicle]})
+       
 
-        print(self.vehicle_client)
+    def __get_distance_beetween_stops(self, stops):
+        
+        distances = []
+
+        for i in range(len(stops)):
+            for j in range(len(stops)):
+                distances[i][j]=nx.shortest_path_length(self.map,source=stops[i].id,target=stops[j].id)
+        
+        return distances
+
+
+    def __assign_route_to_vehicle(self, vehicles, stops):
+
+        """Asigna vehiculos a rutas de un cliente. 
+        Retorna diccionario de la forma {vehiculo.id:[lista de paradas]}"""
+        
+        D =self.__get_distance_beetween_stops(stops)
+        V= [v['capacity'] for v in vehicles]
+        P = [s['people'] for s in stops]
+
+        c = [(sum(D[j])) for i in range(len(V)) for j in range(len(P))]
+        A_eq = [[0 for i in range(len(V)*len(P))] for j in range(len(P))]
+        b_eq= [1 for i in range(len(P)-2)] + [2 for j in range(2)]
+        A_ub=[[0 for i in range(len(c))] for j in range(len(V))]
+        b_ub= V.copy()
+
+        for i in range(len(P)):
+            for j in range(len(P)):
+                if i == j:
+                    A_eq[i][j] = 1
+                    A_eq[i][j+len(P)]=1 
+
+        for i in range(len(V)):
+            for j in range(len(P)):
+                if i == 0:
+                    A_ub[i][j]=P[j]
+                else:
+                    A_ub[i][j+len(P)]=P[j]
+
+        assignations = linprog(c,A_eq = A_eq, b_eq = b_eq, A_ub=A_ub,b_ub=b_ub, bounds = [0,1]).x
+
+        for i in range(len(assignations)):
+            if assignations[i] == 1:
+                vehicle = self.vehicles[int(i/len(self.stops))]
+                stop = list(self.stops.keys())[i%len(self.stops)]
+                
+                if vehicle in self.vehicle_stop.keys():
+                    self.vehicle_stop[vehicle].append(stop)
+                else:
+                    self.vehicle_stop.update({vehicle:[stop]})
 
 
 
-
-    def assign_routes_to_vehicles(self):
-        pass
+        
     
     def get_complete_route(self, stops, map):
 
