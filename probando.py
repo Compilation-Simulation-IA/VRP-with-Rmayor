@@ -30,3 +30,8 @@ A = nx.to_numpy_matrix(G)
 L = nx.to_dict_of_lists(G)
 
 #print(L)
+n=0
+while n <10:
+    r  = abs(int(random.gauss(0,2)))
+    print(r)
+    n+=1

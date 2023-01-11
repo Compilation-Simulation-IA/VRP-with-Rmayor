@@ -11,15 +11,8 @@ from ia.utils import *
 from heapq import heappush, heappop
 import ast
 import threading
-import time
-<<<<<<< Updated upstream
 from simulation_logger import Logger
 import matplotlib.pyplot as plt
-=======
-from my_logger import Logger
->>>>>>> Stashed changes
-
-#global_time = 0  # Inicializamos la variable global en 0
 
 class WeekDays(Enum):
     Lunes = 1
@@ -74,8 +67,7 @@ class VRP_Simulation:
         wait_time = 0
         
         while frontier:
-            if wait_time == 0:
-                
+            if wait_time == 0:   
                 current_pos = problem.planning_problem.agent.current_location
 
                 if current_pos.authority != None:
@@ -166,15 +158,12 @@ class VRP_Simulation:
                 return node
             explored.add(node.state)
             for child in node.expand(problem):
-                #print('Frontier Child: ' + str(child))
                 if child.state not in explored and child not in frontier:
                     frontier.append(child)
                 elif child in frontier:
                     if f(child) < frontier[child]:
                         del frontier[child]
                         frontier.append(child)
-
-        
         return None
 
     def cost_move(self, speed, distance): 
@@ -239,57 +228,13 @@ class VRP_Simulation:
 
         return path
     
-def generate_random_graph(stop_list, lim):
-    G = nx.Graph()
-    nodes_color = [] #['red', 'green', 'blue', 'blue']
-    #semaphores =[(x,y) for x]
-    count_authority = 0
-    count_semaphore = 0
-    for stop in stop_list:
-        G.add_node(eval(stop.id), value=stop)
-        nodes_color.append('red')
-    for x in range(lim[0]):
-        for y in range(lim[1]):
-            if (x,y) not in G:
-                r = random.randint(0,4)# 0: no hay nada, 1: hay semaforo, 2: hay autoridad, 3: hay semaforo y autoridad
-                if r == 0:
-                    G.add_node((x,y), value = MapNode(str((x,y)), 0))
-                    nodes_color.append('black')
-                elif r == 1 and count_semaphore < min(lim[0],lim[1]):
-                    G.add_node((x,y), value = MapNode(str((x,y)), 0, semaphore= Semaphore(str((x,y)))))
-                    count_semaphore += 1
-                    nodes_color.append('yellow')
-                elif r == 2 and count_authority < min(lim[0],lim[1]):
-                    G.add_node((x,y), value = MapNode(str((x,y)), 0, authority = Authority(str((x,y)))))
-                    count_authority += 1
-                    nodes_color.append('blue')
-                else:
-                    G.add_node((x,y), value = MapNode(str((x,y)), 0,semaphore= Semaphore(str((x,y))), authority = Authority(str((x,y)))))
-                    count_authority += 1
-                    count_semaphore += 1
-                    nodes_color.append('green')
 
-    for x in range(lim[0]):
-        for y in range(lim[1]):
-            if x+1 < lim[0]:
-                G.add_edge((x,y), (x+1,y), weight=random.randint(1,100))
-            if y+1 < lim[1]:
-                G.add_edge((x,y), (x,y+1), weight=random.randint(1,100))
-        
-        #for i in range(cant_semaphores):
-        #    if list(G.nodes(data = 'value'))[i][1].people == 0: 
-        #        location = list(G.nodes(data = 'value'))[i][0]
-        #        semaphore = Semaphore(str(location))
-        #        list(G.nodes(data = 'value'))[i] = MapNode(id = str(location), people=0, semaphore=semaphore)
-        #    #random.choice(G.nodes(value=None)).value = MapNode(id = str((x,y)), people=0, semaphore=semaphore)
-        #for i in range(cant_authorities): 
-        #    if list(G.nodes(data = 'value'))[i][1].people == 0:
-        #        location = list(G.nodes(data = 'value'))[i][0]
-        #        authority = Authority(str(location))
-        #        list(G.nodes(data = 'value'))[i] = MapNode(id = str(location), people=0,authority=authority)
-        #    #random.choice(G.nodes(value=None)).value =  MapNode(id = str((x,y)), people=0,authority=authority)
-    return G, nodes_color
 
+
+
+       
+
+    
 
 graph = nx.Graph()
 
@@ -342,11 +287,13 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                        ])
 logger = Logger()
 
-stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1)]
+stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1), MapNode('(7,7)', 1), MapNode('(6,6)', 1), MapNode('(4,4)', 1), MapNode('(5,5)', 1)]
 G, nodes_color = generate_random_graph(stop_list, (3,3))
-
-nx.draw(G, node_color= nodes_color)
-plt.show()
+print(G.edges())
+write_map(G, 'map_in')
+print("FIN")
+#nx.draw(G, node_color= nodes_color)
+#plt.show()
 
 #logger = Logger()
 #
@@ -363,7 +310,6 @@ plt.show()
 #company.vehicles.append(vehicle1)
 #company.vehicles.append(vehicle2)
 #
-<<<<<<< Updated upstream
 #company.routes[vehicle1] =  route1
 #company.routes[vehicle2] =  route2
 #
@@ -384,38 +330,3 @@ plt.show()
 #
 #print("FIN 2.0")
 #
-=======
-company = Company('C1', 100,graph, list_stops, list_vehicles)
-
-company = Company('C1', 100,graph)
-company.vehicles.append(vehicle1)
-company.vehicles.append(vehicle2)
-
-company.routes[vehicle1] =  route
-company.routes[vehicle2] =  route
-
-company.assignations.append({'V1':vehicle1, 'R1':route})
-company.assignations.append({'V2':vehicle2, 'R1':route})
-
-plan_company = company.plan()
-sim = VRP_Simulation(graph,company, 3)
-simulate_threads = []
-
-for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
-    forward_problem_company = ForwardPlan(p)
-    thread = threading.Thread(target= sim.simulation_Company, args= (forward_problem_company, i) )
-    simulate_threads.append(thread)
-    print(thread.getName())
-    thread.start() # Iniciamos los hilos
-
-for t in simulate_threads: # Esperamos a que todos los hilos terminen
-    t.join()
-
-# Una vez que todos los hilos han terminado, podemos mostrar el tiempo total transcurrido
-print(f"El tiempo total transcurrido fue de {tiempo_global} segundos")
-print("FIN")
-
-
-
-
->>>>>>> Stashed changes
