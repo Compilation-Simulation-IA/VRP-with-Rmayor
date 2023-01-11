@@ -80,12 +80,15 @@ class Generator:
 
             while True:
                 line = f.readline()
+                if not line:
+                    break
                 semaphore = None
                 authority = None
                 obstacle = False
                 people = 0
-                if not cost:
-                    line = line.split(' ')
+                if not line.startswith('Cost') and not cost:
+                    line = line.removeprefix('[').removesuffix(']')
+                    line =line.split(',')                    
                     for i in range(len(line)):
                         if int(line[i]) == 1:
                             semaphore = Semaphore(f'({count},{i})')
@@ -97,18 +100,21 @@ class Generator:
                         if (count, i) in all_stops.keys():
                             people = all_stops[(count, i)]
                         graph.add_node((count,i),value = MapNode(f'({count},{i})',people,authority,semaphore))
-                elif line == 'Cost' or cost:
+                elif line.startswith('Cost') or cost:
                     cost = True
+                    if line.startswith('Cost'):
+                        continue                    
                     line = line.split(':')
-                    edge = line[0].split(',')
+                    edge = line[0].split(';') 
                     edge[0]= ast.literal_eval(edge[0].removeprefix('['))
                     edge[1]=ast.literal_eval(edge[1].removesuffix(']'))
                     distance = int(line[1])
-                    graph.add_edge(edge[0],edge[1],{'weight':distance})
-
+                    graph.add_edge(edge[0],edge[1],weight= distance)
+        print(graph)
         return graph
                         
 
+gen = Generator([], [], [], 1, 100, 'map.txt')
 
                         
 
