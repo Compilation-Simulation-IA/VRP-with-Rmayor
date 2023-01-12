@@ -15,24 +15,19 @@ reserved = {
     'people': 'people',
     'depot': 'depot',
     'Simulate': 'Simulate',
-   # 'as': "as",
     'if': "if",
     'fi': 'fi',
     'then': "then",
     'else': "else",
     'while': "while",
-    'loop': 'loop',
-    'pool': 'pool',
     'false': 'false',
     'new': 'new',
-    #'of': 'of',
     'not': 'not',
     'true': 'true',
     'let': 'let',
     'in': 'in',
     'func': 'func',
     'isvoid': 'isvoid',
-    #'inherits': 'inherits',
 }
 
 tokens = [
@@ -46,7 +41,6 @@ tokens = [
     'ccur',     # '} '
 
     'larrow',   # '<-'
-    #'rarrow',   # '->'
     'arroba',   # '@'
     'nox',          # ~
 
@@ -54,18 +48,9 @@ tokens = [
     'minus',        # -
     'star',     # \*
     'div',       # /
-    #'mod',       # %
     'equal',     # =
     'lesseq',       # <=
-    #'moreeq',     # >=
     'less',         # <
-    #'more',        # >
-
-
-
-
-    #'and',          # &
-    #'or',           # |
 
     'end',          # end
     'id',

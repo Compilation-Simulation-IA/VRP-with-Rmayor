@@ -3,6 +3,7 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.font import Font
 import init
 
+
 def open_file():
     """Open a file for editing."""
     filepath = askopenfilename(
@@ -33,6 +34,8 @@ def save_file():
 def stop():
     pass
 
+
+
 window = Tk()
 window.title("Simple Text Editor")
 window.geometry('1000x1000')
@@ -55,6 +58,7 @@ frm_buttons = Frame(window, relief=RAISED, bd=2, bg='white')
 btn_run = Button(frm_buttons, text="Run", command=run, bg='green', font=myFont)
 btn_stop = Button(frm_buttons, text="Stop", command=stop, bg='red', font=myFont)
 
+text_input=Entry(frm_buttons,width=10, textvariable=txt_code)
 
 btn_run.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 btn_stop.grid(row=2, column=0, sticky="ew", padx=5)

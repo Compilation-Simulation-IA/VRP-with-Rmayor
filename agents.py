@@ -1,6 +1,5 @@
 import random
-from typing import List, Tuple, Dict
-from storage import Route, MapNode
+from ia.ant_colony import AntColony
 from enum import Enum
 import networkx as nx
 from ia.planning import Action,PlanningProblem
@@ -258,17 +257,14 @@ class Company:
 
     def __init__(self, name: str, budget: float, map,stops, vehicles, depot, logger):
         self.name = name
-        #self.stops = [] # diccionario de paradas por clientes. Para despues formar las rutas
-        #self.warehouses = []  #lista de almacenes
         self.stops = stops # lista de diccionarios de la forma {client_name:[[{stop:MapNode,people:int}],{stop:MapNode}]}
         self.routes = {} #a cada vehiculo se le asigna una ruta
         self.budget = budget # presupuesto disponible
         self.vehicles = vehicles # lista de vehiculos q tiene la compañia
-        #self.authorities = []  # Lista de autoridades que pueden parar a los vehículos
         self.map = map
-        self.assignations = []
         self.vehicle_client = {}
         self.vehicle_stop = {}
+        self.vehicle_route = []
         self.__assign()
         
         self.logger = logger
@@ -287,6 +283,19 @@ class Company:
             vehicles = self.vehicle_client[c]
             stops = self.stops[c][0] + self.stops[c][1] + self.depot
             self.__assign_route_to_vehicle(vehicles,stops)
+
+        for v in self.vehicle_stop.keys():
+            distances = self.__get_distance_beetween_stops(self.vehicle_stop[v])
+            route = AntColony(distances, 5, 100, 0.95, alpha=1, beta=1, delta_tau = 2)[0]
+            route_nodes = []
+            for u,v in route:
+                route_nodes.append(self.vehicle_stops[v][u])
+            route_nodes.append(self.vehicle_stops[v][len(self.vehicle_stops[v])-1])
+
+            route_nodes = self.get_complete_route(route_nodes)
+            self.vehicle_route.update({v: self.get_vehicle_from_id(v),'R' + v:route_nodes})
+
+                    
 
     def __assign_vehicle_to_client(self):
         """Asigna a cada cliente los vehiculos 
@@ -317,8 +326,9 @@ class Company:
         A.append([1 for i in range(n)])
         A.append([-1 for i in range(n)])
 
-        for value in self.stops.values()[0]:
-            b.append(-sum(map(lambda x:x.people,value)))
+        for value in list(self.stops.values())[0]:
+            for i in range(len(value)):
+                b.append(-sum(map(lambda x:x['people'],value[i])))
 
         for i in range(len(self.stops)):
             b.append(-1)
@@ -390,17 +400,16 @@ class Company:
                 else:
                     self.vehicle_stop.update({vehicle:[stop]})
 
-
-
-        
     
-    def get_complete_route(self, stops, map):
+    def get_complete_route(self, stops):
+
+        """Obtiene la ruta completa a partir de una secuencia de paradas"""
 
         path = []
-        nodes = nx.get_node_attributes(map,'value')
-
+        nodes = nx.get_node_attributes(self.map,'value')
+        
         for i in range(len(stops)-1):
-            shortest_path = nx.shortest_path(map,stops[i],stops[i+1],weight='weight')
+            shortest_path = nx.shortest_path(self.map,stops[i],stops[i+1],weight='weight')
             for j in range(1,len(shortest_path)):
                 path.append(nodes[shortest_path[j]])
 
@@ -408,6 +417,7 @@ class Company:
 
     def get_vehicle_from_id(self, vehicle_id):
         """Devuelve el objeto vehiculo a partir de su id"""
+
         for a in self.assignations:
             if list(a.keys())[0] == str(vehicle_id):
                 return list(a.values())[0]
@@ -417,36 +427,14 @@ class Company:
         self.logger.log(f"{self}: El {vehicle} acaba de comenzar la ruta.")
         return vehicle.plan()
 
-    def calculate_optimal_routes(self):
-        """Este metodo llama a la IA para q me de la organizacion de los vehiculos por clientes y sus rutas"""
-        pass
+         
         
-    # Añadir una parada a la ruta especificada
-    #def insert_stop(self, route: Route, stop: MapNode): 
-    #    route.add_stop(stop)
-    #    
-    #def relocate_stop(self, stop: MapNode, from_route: Route, to_route: Route):
-    #    from_route.remove_stop(stop)
-    #    to_route.add_stop(stop)
-    #
-    #def swap_stops(self, stop1: MapNode, route1: Route, stop2: MapNode, route2: Route):
-    #    route1.stops[route1.stops.index(stop1)] = stop2
-    #    route2.stops[route2.stops.index(stop2)] = stop1
-    #    
-    #def replace_vehicle(self, old_vehicle: Vehicle, new_vehicle: Vehicle, route: Route):
-    #    route.unassign_vehicle(old_vehicle)
-    #    route.assign_vehicle(new_vehicle)
-    
     def buy_vehicle(self, new_vehicle: Vehicle, cost: int):
         self.logger.log(f"{self} compro un nuevo {new_vehicle} a {cost} pesos.")
         self.vehicles.append(new_vehicle)
         self.budget -= cost
     
-    #def delete_vehicle(self, old_vehicle: Vehicle, cost: int):
-    #    self.vehicles.remove(old_vehicle)
-    #    self.budget += cost
-
-    def pay_taxes(self, vehicle_id) -> int: #ARREGLAR Q PAGUE LA MULTA DE UN VEHICULO
+    def pay_taxes(self, vehicle_id) -> int: 
         """Paga las multas de los vehiculos en esa ruta si hubo y tambien cobra al cliente por haber
         pedido el servicio de taxis."""
         vehicle = self.get_vehicle_from_id(vehicle_id)
@@ -470,24 +458,11 @@ class Company:
         return vehicle.days_off
         
 
-    def optimize_routes(self):
-        # Iterar a través de todas las rutas y llevar a cabo operaciones de optimización 
-        for route in self.routes:
-            # Reubicar clientes para minimizar tiempo de espera en la parada
-            # ...
-            
-            # Intercambiar clientes para minimizar tiempo de viaje total
-            # ...
-            
-            # Cambiar vehículos para minimizar gasto de combustible
-            # ...
-            pass
-
     def plan(self):
 
         plans=[]
 
-        for a in self.assignations:            
+        for a in self.vehicle_route:            
             v,r = a.keys()
 
 

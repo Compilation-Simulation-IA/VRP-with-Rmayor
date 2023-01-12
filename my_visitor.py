@@ -22,6 +22,8 @@ class Visitor:
     days=1
     depot=""
     types={}
+    vehicle_types = {}
+    client = {}
 
     simulate=False
     def __init__(self, context:Context, errors=[]):
@@ -62,10 +64,6 @@ class Visitor:
             else:
                 node.expr = ConstantVoidNode(node.id)
     
-    # @visitor.when(MapNode)
-    # def visit(self, node:MapNode,scope:Scope):
-    #     self.map = node.map
-    
     @visitor.when(StopsNode)
     def visit(self, node:StopsNode,scope:Scope):
         for dec in node.stop_declarations:
@@ -73,7 +71,7 @@ class Visitor:
         
     @visitor.when(StopDeclarationNode)
     def visit(self, node:StopDeclarationNode,scope:Scope):
-        #stops[node.identifier]=[node.address, node.people]
+        self.stops[node.identifier]=[node.address, node.people]
         pass
         
     @visitor.when(VehicleTypeNode)
@@ -107,12 +105,8 @@ class Visitor:
     def visit(self, node:CompanyDeclarationNode,scope:Scope):
         for dec in node.vehicle_declarations:
             self.visit(dec,scope)
-            # Recupera el valor de la variable del nodo VarDeclarationNode
             id = dec.id
-            type = None
-            if node.identifier in self.types:
-                type = self.types[node.identifier] 
-            # Pasa el valor como argumento al método add_vehicle de la simulación
+            type = self.types[node.identifier]
             self.vehicles[id]=[type, dec.expr]
             
     @visitor.when(DemandsNode)
@@ -120,16 +114,8 @@ class Visitor:
         for dec in node.demands:
             self.visit(dec,scope)
         if self.simulate:
-            print(self.days)
-            print(self.budget)
-            print(self.vehicles)
-            print(self.depot)
-            print(self.map)
-            print(self.clients)
             gen = Generator(self.vehicles,self.clients,self.depot,self.days,self.budget,self.map)
             gen.generate_simulation()
-            #clients: ['Coca Cola', [<my_ast.StopDeclarationNode object at 0x000002236DBF6FD0>], <my_ast.StopDeclarationNode object at 0x000002236DBF6FD0>]
-            #vehicles: {'v1': [[...], 5.0]}
             pass
     
     def add_function(id, params, return_type, body):
@@ -183,8 +169,7 @@ class Visitor:
         params = node.params
     # Accede al tipo de retorno de la función a través de la propiedad 'type' del nodo
         return_type = node.type
-        new_scope = scope.create_child()
-        visited_body = self.visit(node.body, new_scope)
+        visited_body=self.visit(node.body, new_scope)
         function =self.add_function(params, return_type, visited_body)
         definiciones[id]= [scope,function]
         self.current_method = self.current_type.get_method(node.id, node.pos)
@@ -210,25 +195,6 @@ class Visitor:
         attr.expr = node.expr
         scope.define_attribute(attr)
 
-# class VarVisitor:
-#     def __init__(self, context=Context, errors=[]):
-#         self.context = context
-#         self.current_type = None
-#         self.current_method = None
-#         self.errors = errors
-#         self.current_index = None # Lleva 
-        
-#     @visitor.on('node')
-#     def visit(self, node, scope):
-#         pass
-
-#     @visitor.when(ProgramNode)
-#     def visit(self, node:ProgramNode, scope:Scope=None):
-#         scope = Scope()
-#         for declaration in node.declarations:
-#             self.visit(declaration, scope.create_child())
-#         return scope
-
     def _get_type(self, ntype, pos):
         try:
             return self.context.get_type(ntype, pos)
@@ -243,9 +209,6 @@ class Visitor:
             if scope.find_variable(attr.name) is None:
                 scope.define_attribute(attr)
         self.copy_scope(scope, parent.parent)
-
-
-        
     
     @visitor.when(VarDeclarationNode)
     def visit(self, node:VarDeclarationNode, scope:Scope):
@@ -287,12 +250,6 @@ class Visitor:
                 scope.define_variable(node.id, vtype)
             
         self.visit(node.expr, scope)
-    
-    # @visitor.when(BlockNode)
-    # def visit(self, node:BlockNode, scope:Scope):
-    #     for exp in node.expr_list:
-    #         self.visit(exp, scope)
-    
 
     @visitor.when(LetNode)
     def visit(self, node:LetNode, scope:Scope):
@@ -351,7 +308,7 @@ class Visitor:
         args=[]
         for arg in node.args:
             args.append(self.visit(arg, scope))
-        self.definiciones[node.id](*args)
+        definiciones[node.id](*args)
 
 
     @visitor.when(BaseCallNode)
@@ -375,20 +332,6 @@ class Visitor:
                     self.current_type.methods['out_int'](args)
         else:
             definiciones[node.id](*args)
-       
-
-
-   
-    # @visitor.when(CaseNode)
-    # def visit(self, node:CaseNode, scope:Scope):
-    #     self.visit(node.expr, scope)
-
-    #     new_scp = scope.create_child()
-    #     scope.expr_dict[node] = new_scp
-
-    #     for case in node.case_list:
-    #         self.visit(case, new_scp.create_child())
-        
 
     @visitor.when(OptionNode)
     def visit(self, node:OptionNode, scope:Scope):

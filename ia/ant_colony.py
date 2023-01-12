@@ -49,21 +49,22 @@ class AntColony(object):
     def gen_all_paths(self):
         all_paths = []
         for i in range(self.n_ants):
-            path = self.gen_path(0)
+            path = self.gen_path(len(self.distances)-2,len(self.distances)-1)
             all_paths.append((path, self.path_dist(path)))
         return all_paths
 
-    def gen_path(self, start):
+    def gen_path(self, start, end):
         path = []
         visited = set()
         visited.add(start)
+        visited.add(end)
         prev = start
-        for i in range(len(self.distances) - 1):
+        for i in range(len(self.distances) - 2):
             move = self.pick_move(self.pheromone[prev], self.distances[prev], visited)
             path.append((prev, move))
             prev = move
             visited.add(move)
-        path.append((prev, start)) # going back to where we started    
+        path.append((prev, end)) # going back to where we started    
         return path
 
     def pick_move(self, pheromone, dist, visited):

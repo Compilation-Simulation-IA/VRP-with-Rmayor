@@ -1,5 +1,7 @@
+
+Simulate 10
 map {
-    import "mapa.txt"
+    import "map1.txt"
 }
 
 stops {
@@ -33,9 +35,7 @@ demands {
     {
         out_string("Yay! This is the newest test")
     }
-   
 }
-
 
 
 

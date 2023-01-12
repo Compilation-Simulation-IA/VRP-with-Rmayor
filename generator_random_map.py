@@ -8,8 +8,6 @@ import networkx as nx
 def generate_random_graph(stop_list, lim):
     G = nx.Graph()
     nodes_color = []
-    count_authority = 0
-    count_semaphore = 0
     stops = [eval(s.id) for s in stop_list]
 
     for x in range(lim[0]):
@@ -49,7 +47,7 @@ def generate_random_graph(stop_list, lim):
     print(G)
     print(nodes_color)
     print(len(nodes_color))
-    return G, nodes_color
+    return G
         
 def write_map(graph,name):
 
@@ -83,3 +81,8 @@ def write_map(graph,name):
 
         with open(name + '.txt','a') as f:
             f.write('['+ str(edge1) + ';' + str(edge2) + ']' + ':' + str(weight) + '\n')
+
+
+G = generate_random_graph([],(10,10))
+print(G)
+write_map(G,'map1')

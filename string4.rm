@@ -32,6 +32,8 @@ demands
 {
     func testing6(a: Int): IO 
     {
+        pow<-1
+        count<-0
         while pow < 4
         {
                 count <- count + 1

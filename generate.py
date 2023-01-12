@@ -1,5 +1,6 @@
 from storage import MapNode
-from agents import Vehicle, Semaphore,Authority
+from agents import Vehicle, Semaphore,Authority, Company
+from simulation_logger import Logger
 import random
 import networkx as nx
 import ast
@@ -26,16 +27,22 @@ class Generator:
 
         for value in stops.values():
             for stop in value:
-                stops.append(stop)
+                all_stops.append(stop)
 
-        map = self.__generate_graph(all_stops)        
+        map = self.__generate_graph(all_stops)  
+        company = Company('Compañía de Transporte',self.company_budget,map,stop,vehicles,self.depot_company, Logger())
+
+        simulation = VRP_Simulation(map,company,self.days)
+        
+        simulation.start_simulation()
+
 
 
     def __process_stops(self):
 
         """A partir de lo recibido de la compilacion, 
         se crea un diccionario de la forma 
-        { client_id : [{stop_position:people}]}"""
+        { client_id : [[{stop_position:people}],client_depot]}"""
 
         stops = {}
 
@@ -45,8 +52,7 @@ class Generator:
             client_stops = []
             for s in stop[1]:
                 client_stops.append({s.address:s.people})
-            client_stops.append(client_depot)
-            stops.update({client_id:client_stops})
+            stops.update({client_id:[client_stops,client_depot]})
 
         return stops
 
