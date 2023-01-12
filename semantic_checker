@@ -1,0 +1,68 @@
+from errors import SemanticError, AttributesError, TypesError, NamesError
+from my_types import *
+from tools import Context, Scope
+import visitor
+from utils import is_basic_type
+from my_ast import *
+from  generate import Generator 
+from agents import *
+
+class Visitor:
+
+    simulate=False
+    def __init__(self, context:Context, errors=[]):
+        self.context:Context = context
+        self.current_type:Type = None
+        self.errors:list = errors
+    
+    @visitor.on('node')
+    def visit(self, node):
+        pass
+    
+    @visitor.when(ProgramNode)
+    def visit(self, node:ProgramNode):
+        self.visit(node.stops_block())
+        self.visit(node.vehicle_type_block)
+        self.visit(node.clients_block)
+        self.visit(node.company_block)
+        self.visit(node.demands_block)
+    
+    @visitor.when(StopsNode)
+    def visit(self, node:StopsNode):
+        self.visit(node.stop_declarations)
+    
+    @visitor.when(StopDeclarationNode)
+    def visit(self, node:StopDeclarationNode,scope:Scope):
+        pass
+        
+    @visitor.when(VehicleTypeNode)
+    def visit(self, node:VehicleTypeNode,scope:Scope):
+        pass
+    
+    @visitor.when(VehicleTypeDeclarationNode)
+    def visit(self, node:VehicleTypeDeclarationNode):
+        pass
+    
+    @visitor.when(ClientsNode)
+    def visit(self, node:ClientsNode):
+        pass
+            
+    @visitor.when(ClientDeclarationNode)
+    def visit(self, node:ClientDeclarationNode):
+       pass
+        
+    @visitor.when(CompanyBlockNode)
+    def visit(self, node:CompanyBlockNode):
+        for dec in node.vehicle_declarations:
+            self.visit(dec)
+            
+    @visitor.when(CompanyDeclarationNode)
+    def visit(self, node:CompanyDeclarationNode):
+        for dec in node.vehicle_declarations:
+            self.visit(dec)
+            
+    @visitor.when(DemandsNode)
+    def visit(self, node:DemandsNode,scope:Scope):
+            pass
+
+         

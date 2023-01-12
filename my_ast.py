@@ -126,7 +126,7 @@ class FuncDeclarationNode(DeclarationNode):
         elif return_type.value == 'CustomVehicle':
             self.type = CustomVehicleType(self.pos)
         self.type_pos = (return_type.lineno, return_type.column)
-        self.body = body
+        self.body=body
 
 
 class AttrDeclarationNode(DeclarationNode):
