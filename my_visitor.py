@@ -22,8 +22,6 @@ class Visitor:
     days=1
     depot=""
     types={}
-    vehicle_types = {}
-    client = {}
 
     simulate=False
     def __init__(self, context:Context, errors=[]):
@@ -129,14 +127,10 @@ class Visitor:
         args_names = []
         args_types = []
         self.current_type = node.type
-        # parent = self.current_type.parent 
-        # pnames = [param[0] for param in node.params]
-        # ptypes = [param[1] for param in node.params]
 
         new_scope = scope.create_child()
         scope.functions[node.id] = new_scope
 
-        # Añadir las variables de argumento
         for pname, ptype in node.params:
             if pname == 'self':
                 self.errors.append(SemanticError(SemanticError.SELF_PARAM, *ptype.pos)) 
@@ -150,12 +144,7 @@ class Visitor:
                 arg_type = ErrorType()
             args_types.append(arg_type)
             
-        # try:
         return_type = node.type
-        # except SemanticError as e:
-        #     error_text = TypesError.RETURN_TYPE_UNDEFINED % (node.type, node.id)
-        #     self.errors.append(TypesError(error_text, *node.type_pos))
-        #     return_type = ErrorType(node.type_pos)
     
         try:
             self.current_type.define_method(node.id, args_names, args_types, return_type, node.pos)
@@ -165,16 +154,12 @@ class Visitor:
             
     
         id = node.id
-    # Accede a los parámetros de la función a través de la propiedad 'params' del nodo
         params = node.params
-    # Accede al tipo de retorno de la función a través de la propiedad 'type' del nodo
         return_type = node.type
         visited_body=self.visit(node.body, new_scope)
         function =self.add_function(params, return_type, visited_body)
         definiciones[id]= [scope,function]
         self.current_method = self.current_type.get_method(node.id, node.pos)
-        
-        # self.visit(node.body, new_scope)
   
         
     @visitor.when(StaticCallNode)
@@ -185,15 +170,6 @@ class Visitor:
         else:
             raise SemanticError("La función no existe")
     
-    @visitor.when(AttrDeclarationNode)
-    def visit(self, node:AttrDeclarationNode,scope:Scope):
-        attr = self.current_type.get_attribute(node.id, node.pos)
-        if node.expr is None:
-            self._define_default_value(attr.type, node)
-        else:
-            self.visit(node.expr, scope)
-        attr.expr = node.expr
-        scope.define_attribute(attr)
 
     def _get_type(self, ntype, pos):
         try:
@@ -201,14 +177,7 @@ class Visitor:
         except SemanticError as e:
             self.errors.append(e)
             return ErrorType()
-        
-    def copy_scope(self, scope:Scope, parent:Type):
-        if parent is None:
-            return
-        for attr in parent.attributes.values():
-            if scope.find_variable(attr.name) is None:
-                scope.define_attribute(attr)
-        self.copy_scope(scope, parent.parent)
+    
     
     @visitor.when(VarDeclarationNode)
     def visit(self, node:VarDeclarationNode, scope:Scope):

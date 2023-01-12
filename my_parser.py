@@ -114,9 +114,9 @@ class RmayorParser(Parser):
                                      | id id colon num company_declarations'''
         node = VarDeclarationNode(p.slice[2], p.slice[1], p[4])
         if len(p) == 5:
-            p[0] = [CompanyDeclarationNode(p[1],[node])]
+            p[0] = [CompanyDeclarationNode(p[1],node)]
         else:
-            p[0] = [CompanyDeclarationNode(p[1],[node])]+ p[5]
+            p[0] = [CompanyDeclarationNode(p[1],node)]+ p[5]
           
     def p_demands_block(self, p):
         '''demands_block : demands ocur feature_list ccur'''

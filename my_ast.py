@@ -128,17 +128,6 @@ class FuncDeclarationNode(DeclarationNode):
         self.type_pos = (return_type.lineno, return_type.column)
         self.body=body
 
-
-class AttrDeclarationNode(DeclarationNode):
-    def __init__(self, idx: LexToken, typex, expr=None):
-        self.id = idx.value
-        self.pos = (idx.lineno, idx.column)
-        self.type = typex.value
-        self.type_pos = (typex.lineno, typex.column)
-        self.expr = expr
-        self.token = idx
-
-
 class VarDeclarationNode(ExpressionNode):
     def __init__(self, idx: LexToken, typex, expr=None):
         self.id = idx.value
@@ -165,13 +154,6 @@ class CallNode(ExpressionNode):
         self.id = idx.value
         self.pos = (idx.lineno, idx.column)
         self.args = args
-
-
-class BlockNode(ExpressionNode):
-    def __init__(self, expr_list, tok):
-        self.expr_list = expr_list
-        self.pos = (tok.lineno, tok.column)
-        self.token = tok
 
 
 class BaseCallNode(ExpressionNode):
@@ -243,17 +225,6 @@ class ConditionalNode(ExpressionNode):
         self.stm = stm
         self.else_stm = else_stm
         self.pos = (tok.lineno, tok.column)
-
-
-class CaseNode(ExpressionNode):
-    def __init__(self, expr, case_list, tok):
-        self.expr = expr
-        self.case_list = case_list
-        self.pos = (tok.lineno, tok.column)
-
-    def __hash__(self):
-        return id(self)
-
 
 class OptionNode(ExpressionNode):
     def __init__(self, idx: LexToken, typex, expr):
