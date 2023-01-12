@@ -239,14 +239,6 @@ class VRP_Simulation:
 
         return path
     
-
-
-
-
-       
-
-    
-
 graph = nx.Graph()
 
 n1 = MapNode('(2,0)', 0)
@@ -296,13 +288,13 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                       ((3,5),(2,5),{'weight':80}),
                                          
                        ])
-logger = Logger()
+#logger = Logger()
 
-stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1), MapNode('(7,7)', 1), MapNode('(6,6)', 1), MapNode('(4,4)', 1), MapNode('(5,5)', 1)]
-G, nodes_color = generate_random_graph(stop_list, (3,3))
-print(G.edges())
-write_map(G, 'map_in')
-print("FIN")
+#stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1), MapNode('(7,7)', 1), MapNode('(6,6)', 1), MapNode('(4,4)', 1), MapNode('(5,5)', 1)]
+#G, nodes_color = generate_random_graph(stop_list, (3,3))
+#print(G.edges())
+#write_map(G, 'map_in')
+#print("FIN")
 #nx.draw(G, node_color= nodes_color)
 #plt.show()
 
@@ -340,16 +332,15 @@ print("FIN")
 #print()
 #print(company)
 
-#
-#stops = {'c1':[[{'s1':MapNode('(4,0)',3),'people':3},{'s2':MapNode('(2,3)',2),'people':2},{'s1':MapNode('(6,8)',6),'people':6}], {'depot':MapNode('(8,7)',0),'people':0}],'c2':[[{'s1':MapNode('(1,1)',3),'people':3},{'s2':MapNode('(5,6)',3),'people':3}],{'depot':MapNode('(7,7)',0),'people':0}],'c3':[[{'s1':MapNode('(3,3)',4),'people':4},{'s2':MapNode('(2,1)',3),'people':3},{'s1':MapNode('(4,7)',3),'people':3}],{'depot':MapNode('(9,9)',0),'people':0}]}
-#all_stops = []
-#for value in stops.values():
-#    for stop in value[0]:
-#        all_stops.append(list(stop.values())[0])
 
-#map = generate_random_graph(all_stops,(10,10))
-#logger = Logger()
-#vehicles = [Vehicle('V1',5,1000,0.5,logger),Vehicle('V2',5,1000,0.5,logger),Vehicle('V3',10,1000,0.5,logger),Vehicle('V4',8,1000,0.5,logger),Vehicle('V5',8,1000,0.5,logger)]
-#company = Company('hola',10000,map,stops,vehicles,(5,5),logger)
-#sim = VRP_Simulation(map, company,2)
-#sim.start_simulation()
+stops = {'c1':[[{'s1':MapNode('(4,0)',3),'people':3},{'s2':MapNode('(2,3)',2),'people':2},{'s3':MapNode('(6,8)',6),'people':6}], {'depot':MapNode('(8,7)',0),'people':0}],'c2':[[{'s1':MapNode('(1,1)',3),'people':3},{'s2':MapNode('(5,6)',3),'people':3}],{'depot':MapNode('(7,7)',0),'people':0}],'c3':[[{'s1':MapNode('(3,3)',4),'people':4},{'s2':MapNode('(2,1)',3),'people':3},{'s3':MapNode('(4,7)',3),'people':3}],{'depot':MapNode('(9,9)',0),'people':0}]}
+all_stops = []
+for value in stops.values():
+    for stop in value[0]:
+        all_stops.append(list(stop.values())[0])
+map = generate_random_graph(all_stops,(10,10))
+logger = Logger()
+vehicles = [Vehicle('V1',5,1000,0.5,logger),Vehicle('V2',5,1000,0.5,logger),Vehicle('V3',10,1000,0.5,logger),Vehicle('V4',8,1000,0.5,logger),Vehicle('V5',8,1000,0.5,logger)]
+company = Company('hola',10000,map,stops,vehicles,(5,5),logger)
+sim = VRP_Simulation(map, company,2)
+sim.start_simulation()
