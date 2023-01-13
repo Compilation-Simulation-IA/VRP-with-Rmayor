@@ -44,9 +44,7 @@ def generate_random_graph(stop_list, lim):
             if r >= 4 :
                 G.nodes()[n].update({'value': MapNode(str(n), 0,  authority = Authority(str(n)))})
                 nodes_color.append('blue')
-    print(G)
-    print(nodes_color)
-    print(len(nodes_color))
+    
     return G
         
 def write_map(graph,name):
@@ -83,6 +81,3 @@ def write_map(graph,name):
             f.write('['+ str(edge1) + ';' + str(edge2) + ']' + ':' + str(weight) + '\n')
 
 
-G = generate_random_graph([],(10,10))
-print(G)
-write_map(G,'map1')

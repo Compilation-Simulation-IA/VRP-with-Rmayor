@@ -186,7 +186,7 @@ class Semaphore:
             
 class Authority:
     """Representa la autoridad del trafico """
-    def __init__(self, ID , map=None, probability = 0.5):
+    def __init__(self, ID , map = None, probability = 0.5):
         self.id = ID
         self.probability = probability  # Probabilidad de que la autoridad para al vehículo. Tiene que estar entre 0 y 1e
         self.map = map
@@ -255,7 +255,7 @@ class Authority:
 class Company:
     """Representa la compañia de transporte"""
 
-    def __init__(self, name: str, budget: float, map,stops, vehicles, depot, logger):
+    def __init__(self, name: str, budget: float, map, stops, vehicles, depot, logger):
         self.name = name
         self.stops = stops # lista de diccionarios de la forma {client_name:[[{stop:MapNode,people:int}],{stop:MapNode}]}
         self.routes = {} #a cada vehiculo se le asigna una ruta
@@ -317,18 +317,24 @@ class Company:
         capacity = [-v.capacity for v in self.vehicles]    
         ones = [-1 for i in range(len(self.vehicles))]
 
+        for i in range(len(self.stops)):
+            for j in range(len(capacity)):
+                A[i][i + j*(len(self.stops))] = capacity[j]
+               # A[i+len(self.stops)][i + j*(len(self.stops))] = -1
 
         for i in range(len(self.stops)):
-            A[i][i*len(self.vehicles):((i+1)*len(self.vehicles))]=capacity
+           # A[i][i*len(self.vehicles):((i+1)*len(self.vehicles))]=capacity
             A[i + len(self.stops)][i*len(self.vehicles):((i+1)*len(self.vehicles))]= ones
             
 
         A.append([1 for i in range(n)])
         A.append([-1 for i in range(n)])
 
-        for value in list(self.stops.values())[0]:
-            for i in range(len(value)):
-                b.append(-sum(map(lambda x:x['people'],value[i])))
+        for value in self.stops.values():
+            sum = 0
+            for stop in value[0]:
+                sum += stop['people']
+            b.append(sum)
 
         for i in range(len(self.stops)):
             b.append(-1)
@@ -336,7 +342,7 @@ class Company:
         b.append(len(self.vehicles))
         b.append(0)
 
-        assignations = linprog(c, A_ub=A, b_ub=b, bounds=(0,1))
+        assignations = linprog(c, A_ub=A, b_ub=b, bounds=(0,1)).x
 
         for i in range(len(assignations)):
             if assignations[i] == 1:
