@@ -55,15 +55,16 @@ class ClientDeclarationNode:
         self.depot = depot
         
 class CompanyBlockNode:
-    def __init__(self, budget, depot, vehicle_declarations):
+    def __init__(self, budget, depot, company_declarations):
         self.budget = budget
         self.depot = depot
-        self.vehicle_declarations = vehicle_declarations
+        self.company_declarations = company_declarations
 
 class CompanyDeclarationNode:
-    def __init__(self, identifier, vehicle_declarations):
+    def __init__(self, identifier, vehicle_type, count):
         self.identifier = identifier
-        self.vehicle_declarations = vehicle_declarations
+        self.vehicle_type = vehicle_type
+        self.count = count
 class DemandsNode:
         def __init__(self, demands):
             self.demands = demands
@@ -101,39 +102,19 @@ class _Param:
 
 
 class FuncDeclarationNode(DeclarationNode):
-    def __init__(self, idx: LexToken, params, return_type: LexToken, body):
+    def __init__(self, idx: LexToken, params, return_type: LexToken, body, return_expr):
         self.id = idx.value
         self.pos = (idx.lineno, idx.column)
         self.params = [(pname.value, _Param(ptype)) for pname, ptype in params]
-        if return_type.value == 'IO':
-            self.type = IOType(self.pos)
-        elif return_type.value == 'SELF_TYPE':
-            self.type = SelfType(self.pos)
-        elif return_type.value == 'Int':
-            self.type = IntType(self.pos)
-        elif return_type.value == 'Bool':
-            self.type = BoolType(self.pos)
-        elif return_type.value == 'String':
-            self.type = StringType(self.pos)
-        elif return_type.value == 'Object':
-            self.type = ObjectType(self.pos)
-        elif return_type.value == 'Void':
-            self.type = VoidType(self.pos)
-        elif return_type.value == 'Auto':
-            self.type = AutoType(self.pos)
-        elif return_type.value == 'Vehicle':
-            self.type = VehicleType(self.pos)
-        elif return_type.value == 'CustomVehicle':
-            self.type = CustomVehicleType(self.pos)
+        self.type = Type.type_dict(return_type.value,self.pos)
         self.type_pos = (return_type.lineno, return_type.column)
+        self.out_expr = return_expr
         self.body=body
 
 class VarDeclarationNode(ExpressionNode):
-    def __init__(self, idx: LexToken, typex, expr=None):
+    def __init__(self, idx: LexToken, expr=None):
         self.id = idx.value
         self.pos = (idx.lineno, idx.column)
-        self.type = typex.value
-        self.type_pos = (typex.lineno, typex.column)
         self.expr = expr
 
 
@@ -145,6 +126,7 @@ class AssignNode(ExpressionNode):
         else:
             self.id = idx
             self.pos = None
+            VarDeclarationNode(idx,expr)
         self.expr = expr
 
 
@@ -279,40 +261,69 @@ class InstantiateNode(AtomicNode):
 
 
 class BinaryNotNode(UnaryArithNode):
+    
     pass
 
 
 class NotNode(UnaryLogicalNode):
-    pass
-
-
-class IsVoidNode(UnaryLogicalNode):
-    pass
+    def __init__(self, expr, tok):
+        super().expr = expr
+        super().pos = (tok.lineno, tok.column)
+        self.value = not expr
 
 
 class PlusNode(BinaryArithNode):
-    pass
+    def __init__(self, left, right):
+        super().left = left
+        super().right = right
+        super().pos = left.pos
+        self.value = left+right
 
 
 class MinusNode(BinaryArithNode):
-    pass
+    def __init__(self, left, right):
+        super().left = left
+        super().right = right
+        super().pos = left.pos
+        self.value = left - right
+    
 
 
 class StarNode(BinaryArithNode):
-    pass
+     def __init__(self, left, right):
+        super().left = left
+        super().right = right
+        super().pos = left.pos
+        self.value = left * right
 
 
 class DivNode(BinaryArithNode):
-    pass
+     def __init__(self, left, right):
+        super().left = left
+        super().right = right
+        super().pos = left.pos
+        self.value = left / right
 
 
 class LessNode(BinaryLogicalNode):
-    pass
+    def __init__(self, left, right):
+        super().left = left
+        super().right = right
+        super().pos = left.pos
+        self.value = left < right
 
 
 class LessEqNode(BinaryLogicalNode):
-    pass
+    def __init__(self, left, right):
+        super().left = left
+        super().right = right
+        super().pos = left.pos
+        self.value = left <= right
 
 
 class EqualNode(BinaryLogicalNode):
-    pass
+    def __init__(self, left, right):
+        super().left = left
+        super().right = right
+        super().pos = left.pos
+        self.value = left == right

@@ -6,6 +6,7 @@ from utils import is_basic_type
 from my_ast import *
 from  generate import Generator 
 from agents import *
+from my_visitor import Visitor
 class Semantic_Check:
     
     stops = {}
@@ -89,74 +90,44 @@ class Semantic_Check:
 
     @visitor.when(FuncDeclarationNode)
     def visit(self, node:FuncDeclarationNode,scope:Scope):
-        args_names = []
-        args_types = []
-        self.current_type = node.type
-
         new_scope = scope.create_child()
-        scope.functions[node.id] = new_scope
+        new_scope.functions = [m for m in scope.functions]
+        if node.type not in Type.type_dict:
+            raise TypeError("Tipo de retorno desconocido")
+        return_type = Type.type_dict[node.type]
 
-        for pname, ptype in node.params:
-            if pname == 'self':
-                self.errors.append(SemanticError(SemanticError.SELF_PARAM, *ptype.pos)) 
-                args_names.append(pname)
-            
-            try:
-                arg_type = self.context.get_type(ptype.value, ptype.pos)
-            except SemanticError:
-                error_text = TypesError.PARAMETER_UNDEFINED % (ptype.value, ptype.value)
-                self.errors.append(TypesError(error_text, *ptype.pos))
-                arg_type = ErrorType()
-            args_types.append(arg_type)
-            
-        return_type = node.type
-    
-        try:
-            self.current_type.define_method(node.id, args_names, args_types, return_type, node.pos)
-        except SemanticError as e:
-            self.errors.append(e)
-            new_scope.define_variable(pname, self._get_type(ptype.value, ptype.pos))
-            
-    
-        id = node.id
-        params = node.params
-        return_type = node.type
-        visited_body=self.visit(node.body, new_scope)
-        function =self.add_function(params, return_type, visited_body)
-        self.definiciones[id]= [scope,function]
-        self.current_method = self.current_type.get_method(node.id, node.pos)
+        for p in node.params:
+            self.visit(p,new_scope)
+        self.visit(node.body, new_scope)
+        self.visit(node.out_expr,new_scope)
   
         
     @visitor.when(StaticCallNode)
     def visit(self, node:StaticCallNode,scope:Scope):
         evaluated_args = [self.visit(arg) for arg in node.args]
         if node.id in self.definiciones:
-            self.definiciones[node.id,scope](*evaluated_args)
+            Visitor.definiciones[node.id,scope](*evaluated_args)
         else:
             raise SemanticError("La función no existe")
     
-    def _get_type(self, ntype, pos):
-        try:
-            return self.context.get_type(ntype, pos)
-        except SemanticError as e:
-            self.errors.append(e)
-            return ErrorType()
+    # def _get_type(self, ntype, pos):
+    #     try:
+    #         return self.context.get_type(ntype, pos)
+    #     except SemanticError as e:
+    #         self.errors.append(e)
+    #         return ErrorType()
         
-    def copy_scope(self, scope:Scope, parent:Type):
-        if parent is None:
-            return
-        for attr in parent.attributes.values():
-            if scope.find_variable(attr.name) is None:
-                scope.define_attribute(attr)
-        self.copy_scope(scope, parent.parent)
+    # def copy_scope(self, scope:Scope, parent:Type):
+    #     if parent is None:
+    #         return
+    #     for attr in parent.attributes.values():
+    #         if scope.find_variable(attr.name) is None:
+    #             scope.define_attribute(attr)
+    #     self.copy_scope(scope, parent.parent)
     
     @visitor.when(VarDeclarationNode)
     def visit(self, node:VarDeclarationNode, scope:Scope):
-        if node.id == 'self':
-            error_text = SemanticError.SELF_IN_LET
-            self.errors.append(SemanticError(error_text, *node.pos))
-            return
-
+       
         try:
             vtype = self.context.get_type(node.type, node.pos)
         except SemanticError:
@@ -237,10 +208,6 @@ class Semantic_Check:
         self.visit(node.cond, scope)
         self.visit(node.stm, scope)
         self.visit(node.else_stm, scope)
-
-    @visitor.when(IsVoidNode)
-    def visit(self, node:IsVoidNode, scope:Scope):
-        self.visit(node.expr, scope)
     
     @visitor.when(CallNode)
     def visit(self, node:CallNode, scope:Scope):
@@ -266,12 +233,8 @@ class Semantic_Check:
             if args[0] == []:
                 args = [arg.lex]
         if self.current_type.name == 'IO':
-                if node.id == 'out_string':
-                    self.current_type.out_string(args)
-                elif node.id == 'out_int':
-                    self.current_type.methods['out_int'](args)
-        # else:
-        #     self.definiciones[node.id](*args)
+                if node.id != 'out_string' and node.id != 'out_int':
+                    raise SemanticError("No se reconoce el metodo IO: "+node.id)
 
     @visitor.when(OptionNode)
     def visit(self, node:OptionNode, scope:Scope):

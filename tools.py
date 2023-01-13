@@ -105,8 +105,8 @@ class Scope:
         self.children.append(child)
         return child
 
-    def define_variable(self, vname, vtype) -> VariableInfo:
-        info = VariableInfo(vname, vtype)
+    def define_variable(self, vname) -> VariableInfo:
+        info = VariableInfo(vname)
         if info not in self.locals:
             self.locals.append(info)
         return info
