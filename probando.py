@@ -28,8 +28,11 @@ A = nx.to_numpy_matrix(G)
 
 # Obtenemos la lista de adyacencia del grafo
 L = nx.to_dict_of_lists(G)
+a={}
+a["e"] = 5
+a[5] = "e"
 
-#print(L)
+print(a)
 n=0
 while n <10:
     r  = abs(int(random.gauss(0,2)))
