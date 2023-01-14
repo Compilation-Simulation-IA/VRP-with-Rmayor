@@ -32,7 +32,7 @@ class Vehicle:
         self.speed = 0 #Representa los km/h
         self.taxes = 0
         self.chage_speed()
-        self.count_moves =0 
+        self.count_moves = 0 
         self.logger = logger
         
 
@@ -255,9 +255,9 @@ class Authority:
 class Company:
     """Representa la compañia de transporte"""
 
-    def __init__(self, name: str, budget: float, map, stops, vehicles, depot, logger):
+    def __init__(self, name: str, budget: float, map, clients, vehicles, depot, logger):
         self.name = name
-        self.stops = stops # lista de diccionarios de la forma {client_name:[[{stop:MapNode,people:int}],{stop:MapNode}]}
+        self.clients = clients # lista de diccionarios de la forma {client_name:[[{stop:MapNode,people:int}],{stop:MapNode}]}
         self.routes = {} #a cada vehiculo se le asigna una ruta
         self.budget = budget # presupuesto disponible
         self.vehicles = vehicles # lista de vehiculos q tiene la compañia
@@ -265,6 +265,9 @@ class Company:
         self.vehicle_client = {}
         self.vehicle_stop = {}
         self.vehicle_route = []
+        self.substitute = {}# diccionario de vehiculo que esta sustituyendo al que esta en mantenimiento
+        # y era del cliente. La ruta que era original al vehiculo que se mando al mantenimiento
+        self.available_vehicles = [] # vehiculos que no estan asignados a ningun 
         self.__assign()
         
         self.logger = logger
@@ -281,7 +284,7 @@ class Company:
 
         for c in self.vehicle_client.keys():
             vehicles = self.vehicle_client[c]
-            stops = self.stops[c][0] + self.stops[c][1] + self.depot
+            stops = self.clients[c][0] + self.clients[c][1] + self.depot
             self.__assign_route_to_vehicle(vehicles,stops)
 
         for v in self.vehicle_stop.keys():
@@ -300,54 +303,64 @@ class Company:
     def __assign_vehicle_to_client(self):
         """Asigna a cada cliente los vehiculos 
         necesarios para recoger a todas las personas en las paradas. 
-        Retorna discionario de la forma {client_name:[lista vehiculos]}"""
-
-        n = len(self.vehicles) * len(self.stops)
+        Retorna diccionario de la forma {client_name:[lista vehiculos]}"""
+        
+        n = len(self.vehicles) * len(self.clients)
         c = []
-        A = [[0 for i in range(n)] for i in range(2*len(self.stops))]
-        b = []
+        A_u = [[0 for i in range(n)] for i in range(len(self.clients))]
+        b_u = [-1 for i in range(len(self.clients))]
+        A_eq =[[0 for i in range(n)] for i in range(len(self.vehicles))]
+        b_eq = [1 for i in range(len(self.vehicles))]
+        s = 0
 
         # f.o
-        for v in self.vehicles:
-            for i in range(len(self.stops)):
-                c.append(v.capacity)
+        for v in self.vehicles:            
+            for i in range(len(self.clients)):
+                c.append(v.capacity)#sum([value['people'] for value in list(self.clients.values())[i][0]])))
+        for i in range(len(self.clients)):
+            s+=sum([value['people'] for value in list(self.clients.values())[i][0]])
+
+        c.append(s)
 
         # s.a         
         
         capacity = [-v.capacity for v in self.vehicles]    
-        ones = [-1 for i in range(len(self.vehicles))]
+        ones = [1 for i in range(len(self.clients))]
 
-        for i in range(len(self.stops)):
+        for i in range(len(self.clients)):
             for j in range(len(capacity)):
-                A[i][i + j*(len(self.stops))] = capacity[j]
-               # A[i+len(self.stops)][i + j*(len(self.stops))] = -1
+                #A_u[i][i + j*(len(self.clients))] = capacity[j]
+                A_u[i][i + j*(len(self.clients))] = -1
 
-        for i in range(len(self.stops)):
+        for i in range(len(self.vehicles)):
            # A[i][i*len(self.vehicles):((i+1)*len(self.vehicles))]=capacity
-            A[i + len(self.stops)][i*len(self.vehicles):((i+1)*len(self.vehicles))]= ones
+            A_eq[i][i*len(self.clients):((i+1)*len(self.clients))]= ones
             
+        #A_ub = A_u + A_eq
+        #b_ub = b_u + b_eq
+        #A.append([1 for i in range(n)])
+        #A.append([-1 for i in range(n)])
 
-        A.append([1 for i in range(n)])
-        A.append([-1 for i in range(n)])
+        #for value in self.clients.values():
+        #    sum = 0
+        #    for stop in value[0]:
+        #        sum += stop['people']
+        #    b.append(sum)
+#
+        #for i in range(len(self.clients)):
+        #    b.append(-1)
+#
+        #b.append(len(self.vehicles))
+        #b.append(0)
 
-        for value in self.stops.values():
-            sum = 0
-            for stop in value[0]:
-                sum += stop['people']
-            b.append(sum)
-
-        for i in range(len(self.stops)):
-            b.append(-1)
-
-        b.append(len(self.vehicles))
-        b.append(0)
-
-        assignations = linprog(c, A_ub=A, b_ub=b, bounds=(0,1)).x
-
+        assignations = linprog(c, A_ub=A_u, b_ub=b_u, A_eq=A_eq, b_eq=b_eq, bounds=(0,1))
+        print(assignations)
+        assignations_simplex = linprog(c, A_ub=A_u, b_ub=b_u,A_eq=A_eq, b_eq=b_eq, bounds=(0,1),method = 'simplex')
+        print(assignations_simplex)
         for i in range(len(assignations)):
             if assignations[i] == 1:
-                vehicle = self.vehicles[int(i/len(self.stops))]
-                client = list(self.stops.keys())[i%len(self.stops)]
+                vehicle = self.vehicles[int(i/len(self.clients))]
+                client = list(self.clients.keys())[i%len(self.clients)]
                 
                 if client in self.vehicle_client.keys():
                     self.vehicle_client[client].append(vehicle)
@@ -398,8 +411,8 @@ class Company:
 
         for i in range(len(assignations)):
             if assignations[i] == 1:
-                vehicle = self.vehicles[int(i/len(self.stops))]
-                stop = list(self.stops.keys())[i%len(self.stops)]
+                vehicle = self.vehicles[int(i/len(self.clients))]
+                stop = list(self.clients.keys())[i%len(self.clients)]
                 
                 if vehicle in self.vehicle_stop.keys():
                     self.vehicle_stop[vehicle].append(stop)
@@ -455,14 +468,46 @@ class Company:
 
     def check_vehicle(self, vehicle_id):
         vehicle = self.get_vehicle_from_id(vehicle_id)
-        if vehicle.miles_traveled >= vehicle.initial_miles:
+        if vehicle.miles_traveled >= (3/4) * vehicle.initial_miles:
             vehicle.days_off = random.randint(1,3)
+            self.find_replacement(vehicle)
             self.logger.log(f"El {vehicle} debe ir al mantenimiento por {vehicle.days_off}")
         else:
             self.logger.log(f"El {vehicle} esta en perfectas condiciones.")
 
-        return vehicle.days_off
+        return vehicle.days_off        
+
+    def find_replacement(self, vehicle: Vehicle):
+        """Cuando un vehiculo se manda a mantenimiento buscar sustituto si se puede."""
+        #Ver si hay vehiculos disponibles: Son los vehiculos que estan en self.vehicles que no estan
+        # en self.vehicles_client:
         
+        if len(self.available_vehicles) != 0:
+            max_capacity = 0
+            v_max = None
+            for v in self.available_vehicles:
+                if max_capacity < v.capacity:
+                    v_max = v
+                    max_capacity = v_max.capacity
+
+            v_max.route = vehicle.route
+            vehicle.route = []
+            self.vehicle_route.remove(vehicle.id)
+            self.vehicle_route[v_max] = v_max.route
+
+            for c in self.vehicle_client.values():
+                for i in c:
+                    if vehicle.id == c[i]:
+                        c.remove(vehicle.id)
+                        c.append(v_max.id)
+                        break
+            
+        # Ver si el cliente tiene asignado otros vehiculos
+        
+
+            
+            
+            
 
     def plan(self):
 
@@ -470,27 +515,27 @@ class Company:
 
         for a in self.vehicle_route:            
             v,r = a.keys()
+            if v.days_off == 0:#ARREGLAR PQ V,R SON NOMBRES Y NO OBJETOS
 
+                new_plan = PlanningProblem(initial = f'~Done({v},{r}) & ~Checked({v}) & ~Payed({v})',
+                                            goals = f'Checked({v})',
+                                            actions = [Action('start_route(c,v,r)',
+                                                                precond='~Done(v,r) & ~Checked(v) & ~Payed(v)',
+                                                                effect='Done(v,r) & EndRoute(v)',
+                                                                domain='Vehicle(v) & Route(r) & Company(c)'),
+                                                        Action('check_vehicle(c,v)',
+                                                                precond='EndRoute(v) & Payed(v) & ~Checked(v)',
+                                                                effect='Checked(v)',
+                                                                domain='Vehicle(v) & Company(c)'),
+                                                        Action('pay_taxes(c,v)',
+                                                                precond='~Checked(v) & EndRoute(v) & ~Payed(v)',
+                                                                effect='Payed(v)',
+                                                                domain='Vehicle(v) & Company(c)')
 
-            new_plan = PlanningProblem(initial = f'~Done({v},{r}) & ~Checked({v}) & ~Payed({v})',
-                                        goals = f'Checked({v})',
-                                        actions = [Action('start_route(c,v,r)',
-                                                            precond='~Done(v,r) & ~Checked(v) & ~Payed(v)',
-                                                            effect='Done(v,r) & EndRoute(v)',
-                                                            domain='Vehicle(v) & Route(r) & Company(c)'),
-                                                    Action('check_vehicle(c,v)',
-                                                            precond='EndRoute(v) & Payed(v) & ~Checked(v)',
-                                                            effect='Checked(v)',
-                                                            domain='Vehicle(v) & Company(c)'),
-                                                    Action('pay_taxes(c,v)',
-                                                            precond='~Checked(v) & EndRoute(v) & ~Payed(v)',
-                                                            effect='Payed(v)',
-                                                            domain='Vehicle(v) & Company(c)')
-
-                                                    ],
-                                        agent=self,
-                                        domain=f'Vehicle({v}) & Route({r}) & Company({self.name})')
-            plans.append(new_plan)
+                                                        ],
+                                            agent=self,
+                                            domain=f'Vehicle({v}) & Route({r}) & Company({self.name})')
+                plans.append(new_plan)
 
         return plans
         
