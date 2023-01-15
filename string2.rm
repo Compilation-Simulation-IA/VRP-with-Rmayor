@@ -27,13 +27,15 @@ clients {
 company {
     budget: 1000000
     depot (address:"156A, #107, Playa, La Habana, Cuba")
-    small v1: 5
-    medium v2: 3
+    v1 small: 5
+    v2 medium: 3
 
 }
 demands{
 
-func print() : IO {
-        out_string("reached!!\n")
-    }
+x <- false
+if x
+then 1
+else 2
+fi
 }

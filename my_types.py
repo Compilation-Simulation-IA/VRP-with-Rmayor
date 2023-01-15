@@ -2,18 +2,18 @@ from collections import OrderedDict
 from errors import SemanticError, AttributesError, TypesError, NamesError
 
 
-class Attribute:
-    def __init__(self, name, typex, index, tok=None):
-        self.name = name
-        self.type = typex
-        self.index = index  # lugar que ocupa en el scope
-        self.expr = None
+# class Attribute:
+#     def __init__(self, name, typex, index, tok=None):
+#         self.name = name
+#         self.type = typex
+#         self.index = index  # lugar que ocupa en el scope
+#         self.expr = None
 
-    def __str__(self):
-        return f'[attrib] {self.name} : {self.type.name};'
+#     def __str__(self):
+#         return f'[attrib] {self.name} : {self.type.name};'
 
-    def __repr__(self):
-        return str(self)
+#     def __repr__(self):
+#         return str(self)
 
 
 class Method:
@@ -54,6 +54,28 @@ class Type:
         else:
             self.parent = None
         self.pos = pos
+    
+    def type_dict(arg, pos):
+        if arg == 'IO':
+            return IOType(pos)
+        elif arg == 'SELF_TYPE':
+            return SelfType(pos)
+        elif arg == 'Int':
+            return IntType(pos)
+        elif arg == 'Bool':
+            return BoolType(pos)
+        elif arg == 'String':
+            return StringType(pos)
+        elif arg == 'Object':
+            return ObjectType(pos)
+        elif arg == 'Void':
+            return VoidType(pos)
+        elif arg == 'Auto':
+            return AutoType(pos)
+        elif arg == 'Vehicle':
+            return VehicleType(pos)
+        elif arg == 'CustomVehicle':
+            return CustomVehicleType(pos)
 
     def set_parent(self, parent):
         if type(self.parent) != ObjectType and self.parent is not None:
@@ -61,39 +83,39 @@ class Type:
             raise TypesError(error_text, *self.pos)
         self.parent = parent
 
-    def get_attribute(self, name: str, pos) -> Attribute:
-        try:
-            # next(attr for attr in self.attributes if attr.name == name)
-            return self.attributes[name]
-        except KeyError:
-            if self.parent is None:
-                error_text = AttributesError.ATTRIBUTE_NOT_DEFINED % (
-                    name, self.name)
-                raise AttributesError(error_text, *pos)
-            try:
-                return self.parent.get_attribute(name, pos)
-            except AttributesError:
-                error_text = AttributesError.ATTRIBUTE_NOT_DEFINED % (
-                    name, self.name)
-                raise AttributesError(error_text, *pos)
+    # def get_attribute(self, name: str, pos) -> Attribute:
+    #     try:
+    #         # next(attr for attr in self.attributes if attr.name == name)
+    #         return self.attributes[name]
+    #     except KeyError:
+    #         if self.parent is None:
+    #             error_text = AttributesError.ATTRIBUTE_NOT_DEFINED % (
+    #                 name, self.name)
+    #             raise AttributesError(error_text, *pos)
+    #         try:
+    #             return self.parent.get_attribute(name, pos)
+    #         except AttributesError:
+    #             error_text = AttributesError.ATTRIBUTE_NOT_DEFINED % (
+    #                 name, self.name)
+    #             raise AttributesError(error_text, *pos)
 
-    def define_attribute(self, name: str, typex, pos):
-        try:
-            self.attributes[name]
-        except KeyError:
-            try:
-                self.get_attribute(name, pos)
-            except SemanticError:
-                self.attributes[name] = attribute = Attribute(
-                    name, typex, len(self.attributes))
-                # self.attributes.append(attribute)
-                return attribute
-            else:
-                error_text = SemanticError.ATTR_DEFINED_PARENT % name
-                raise SemanticError(error_text, *pos)
-        else:
-            error_text = SemanticError.ATTRIBUTE_ALREADY_DEFINED % name
-            raise SemanticError(error_text, *pos)
+    # def define_attribute(self, name: str, typex, pos):
+    #     try:
+    #         self.attributes[name]
+    #     except KeyError:
+    #         try:
+    #             self.get_attribute(name, pos)
+    #         except SemanticError:
+    #             self.attributes[name] = attribute = Attribute(
+    #                 name, typex, len(self.attributes))
+    #             # self.attributes.append(attribute)
+    #             return attribute
+    #         else:
+    #             error_text = SemanticError.ATTR_DEFINED_PARENT % name
+    #             raise SemanticError(error_text, *pos)
+    #     else:
+    #         error_text = SemanticError.ATTRIBUTE_ALREADY_DEFINED % name
+    #         raise SemanticError(error_text, *pos)
 
     def get_method(self, name: str, pos) -> Method:
         try:

@@ -1,33 +1,22 @@
-
-
 from errors import SemanticError, AttributesError, TypesError, NamesError
 from my_types import *
 from tools import Context, Scope
 import visitor
 from utils import is_basic_type
 from my_ast import *
-# from  generate import Generator 
+from  generate import Generator 
 from agents import *
-
-
-class Visitor:
-   
-    graph=None
-    map=""
-    budget=0
-    name=""
-    stops={}
-    vehicles_count={}
-    clients={}
-    days=1
-    depot=""
-    vehicle_types={}
+from my_visitor import Visitor
+class Semantic_Check:
+    
+    stops = {}
+    vehicle_types = {}
+    client = {}
     definiciones = {}
-    simulate=False
-    variables ={}
+
     def __init__(self, context:Context, errors=[]):
         self.context:Context = context
-        # self.current_type:Type = None
+        self.current_type:Type = None
         self.errors:list = errors
     
     @visitor.on('node')
@@ -35,32 +24,21 @@ class Visitor:
         pass
     
     @visitor.when(ProgramNode)
-    def visit(self, node:ProgramNode,scope:Scope=Scope()):
-        #self.context = Context()
-        # self.context.types['String'] = StringType()
-        # self.context.types['Int'] = IntType()
-        # self.context.types['Object'] = ObjectType()
-        # self.context.types['Bool'] = BoolType()
-        # self.context.types['SELF_TYPE'] = SelfType()
-        # self.context.types['IO'] = IOType()
-        self.days=node.days
-        self.simulate=node.simulate
-        self.map = node.map_block.map
-        self.visit(node.stops_block,scope)
-        self.visit(node.vehicle_type_block,scope)
-        self.visit(node.clients_block,scope)
-        self.visit(node.company_block,scope)
-        self.visit(node.demands_block,scope)
-        
+    def visit(self, node:ProgramNode):
+        self.visit(node.stops_block())
+        self.visit(node.vehicle_type_block)
+        self.visit(node.clients_block)
+        self.visit(node.company_block)
+        self.visit(node.demands_block)
+        self.errors=[]
     
     @visitor.when(StopsNode)
-    def visit(self, node:StopsNode,scope:Scope):
-        for dec in node.stop_declarations:
-            self.visit(dec,scope)
-        
+    def visit(self, node:StopsNode):
+        self.visit(node.stop_declarations)
+    
     @visitor.when(StopDeclarationNode)
     def visit(self, node:StopDeclarationNode,scope:Scope):
-        self.stops[node.identifier]=[node.address, node.people]
+        self.stops[node.identifier]= [node.address,node.people]
         pass
         
     @visitor.when(VehicleTypeNode)
@@ -69,81 +47,109 @@ class Visitor:
             self.visit(dec,scope)
     
     @visitor.when(VehicleTypeDeclarationNode)
-    def visit(self, node:VehicleTypeDeclarationNode,scope:Scope):
-        self.vehicle_types[node.identifier]=[node.type,node.capacity,node.miles]
+    def visit(self, node:VehicleTypeDeclarationNode):
+        self.vehicle_types[node.identifier]=[node.type]
         pass
     
     @visitor.when(ClientsNode)
-    def visit(self, node:ClientsNode,scope:Scope):
-        for dec in node.client_declarations:
-            self.visit(dec,scope)
+    def visit(self, node:ClientsNode):
+        pass
             
     @visitor.when(ClientDeclarationNode)
-    def visit(self, node:ClientDeclarationNode,scope:Scope):
-       self.clients[node.identifier]=[node.name, node.stops, node.depot]
-       pass
+    def visit(self, node:ClientDeclarationNode):
+        for stop in node.stops:
+            if stop not in self.stops:
+               raise Exception("Identificador de parada no declarado: " + stop +" en "+ node.identifier)
+        if node.depot not in self.stops:
+            raise Exception("Identificador de deposito no declarado: " + node.depot + " en "+ node.identifier)
+        elif stop[node.depot][1] > 0:
+            raise Exception ("Deposito " + node.depot + " no puede tener clientes")
         
     @visitor.when(CompanyBlockNode)
-    def visit(self, node:CompanyBlockNode,scope:Scope):
-        self.budget=node.budget
-        self.depot=node.depot
-        for dec in node.company_declarations:
-            self.visit(dec,scope)
+    def visit(self, node:CompanyBlockNode):
+        for dec in node.vehicle_declarations:
+            self.visit(dec)
             
     @visitor.when(CompanyDeclarationNode)
-    def visit(self, node:CompanyDeclarationNode,scope:Scope):
-            id = node.identifier
-            self.vehicles_count[id]=[node.vehicle_type, node.count]
-            
+    def visit(self, node:CompanyDeclarationNode):
+        # min_capacity = int('inf')
+        # max_stop = 0
+        for dec in node.vehicle_declarations:
+            if dec.type not in self.vehicle_types:
+                raise TypeError("Tipo de vehiculo no declarado: "+ dec.type)
+        #     min_capacity = min(min_capacity,dec.type.capacity)
+        # for stop in self.stops:
+        #     max_stop = max(max_stop,stop[2])
+        # if max_stop>min_capacity:
+        #     raise Exception("La parada de mayor cantidad es mayor que la capacidad del menor vehiculo")
+
+                
     @visitor.when(DemandsNode)
     def visit(self, node:DemandsNode,scope:Scope):
-            i=0
-            for dec in node.demands:
-                if node.demands[i] is list:
-                    for dec1 in node.demands[0][i]:
-                        self.visit(dec1,scope)
-                else: self.visit(dec,scope)
-    # def add_function(id, params, return_type, body):
-    #     # def function(*args, **kwargs):
-    #     #     exec(body)
-    #     #     function.__code__ = compile(body, "<string>", "exec")
-    #     return function
-        
+            pass
+
     @visitor.when(FuncDeclarationNode)
     def visit(self, node:FuncDeclarationNode,scope:Scope):
-        # args_names = []
-        # args_types = []
-        # self.current_type = node.type
+        new_scope = scope.create_child()
+        new_scope.functions = [m for m in scope.functions]
+        if node.type not in Type.type_dict:
+            raise TypeError("Tipo de retorno desconocido")
+        return_type = Type.type_dict[node.type]
 
-        # new_scope = scope.create_child()
-        # scope.functions[node.id] = new_scope
-        # self.current_type.define_method(node.id, args_names, args_types, self.current_type, node.pos)
-       
-        # id = node.id
-        # params = node.params
-        # visited_body=self.visit(node.body, new_scope)
-        # function =self.add_function(params, self.current_type, visited_body)
-        # self.definiciones[id]= [scope,function]
-        # self.current_method = self.current_type.get_method(node.id, node.pos)
-        pass
+        for p in node.params:
+            self.visit(p,new_scope)
+        self.visit(node.body, new_scope)
+        self.visit(node.out_expr,new_scope)
+  
         
     @visitor.when(StaticCallNode)
     def visit(self, node:StaticCallNode,scope:Scope):
-        for arg in node.args:
-            self.visit(arg)
+        evaluated_args = [self.visit(arg) for arg in node.args]
+        if node.id in self.definiciones:
+            Visitor.definiciones[node.id,scope](*evaluated_args)
+        else:
+            raise SemanticError("La función no existe")
+    
+    # def _get_type(self, ntype, pos):
+    #     try:
+    #         return self.context.get_type(ntype, pos)
+    #     except SemanticError as e:
+    #         self.errors.append(e)
+    #         return ErrorType()
         
+    # def copy_scope(self, scope:Scope, parent:Type):
+    #     if parent is None:
+    #         return
+    #     for attr in parent.attributes.values():
+    #         if scope.find_variable(attr.name) is None:
+    #             scope.define_attribute(attr)
+    #     self.copy_scope(scope, parent.parent)
     
     @visitor.when(VarDeclarationNode)
     def visit(self, node:VarDeclarationNode, scope:Scope):
+       
+        try:
+            vtype = self.context.get_type(node.type, node.pos)
+        except SemanticError:
+            error_text = TypesError.UNDEFINED_TYPE_LET % (node.type, node.id)
+            self.errors.append(TypesError(error_text, *node.type_pos))
+            vtype = ErrorType()
 
-        var_info = scope.define_variable(node.id)
+        vtype = self._get_type(node.type, node.type_pos)
+        var_info = scope.define_variable(node.id, vtype)
        
         if node.expr is not None:
             self.visit(node.expr, scope)
+        else:
+            self._define_default_value(vtype, node)
             
         
     @visitor.when(AssignNode)
     def visit(self, node:AssignNode, scope:Scope):
+        if node.id == 'self':
+            error_text = SemanticError.SELF_IS_READONLY
+            self.errors.append(SemanticError(error_text, *node.pos))
+            return
     
         vinfo = scope.find_variable(node.id)
         if vinfo is None:
@@ -165,6 +171,7 @@ class Visitor:
         
         self.visit(node.expr, n_scope)
 
+    #no necesario
     @visitor.when(BinaryNode)
     def visit(self, node:BinaryNode, scope:Scope):
         self.visit(node.left, scope)
@@ -207,9 +214,16 @@ class Visitor:
         self.visit(node.obj, scope)
         args=[]
         for arg in node.args:
-             args.append(self.visit(arg, scope))
-        # self.definiciones[node.id](*args)
+            args.append(self.visit(arg, scope))
+        self.definiciones[node.id](*args)
 
+
+    @visitor.when(BaseCallNode)
+    def visit(self, node:BaseCallNode, scope:Scope):
+        self.visit(node.obj, scope)
+        for arg in node.args:
+            self.visit(arg, scope)
+    
 
     @visitor.when(StaticCallNode)
     def visit(self, node:StaticCallNode, scope:Scope):
@@ -218,13 +232,9 @@ class Visitor:
             args.append(self.visit(arg, scope))
             if args[0] == []:
                 args = [arg.lex]
-        # if self.current_type.name == 'IO':
-        #         if node.id == 'out_string':
-        #             self.current_type.out_string(args)
-        #         elif node.id == 'out_int':
-        #             self.current_type.methods['out_int'](args)
-        # else:
-        #     self.definiciones[node.id](*args)
+        if self.current_type.name == 'IO':
+                if node.id != 'out_string' and node.id != 'out_int':
+                    raise SemanticError("No se reconoce el metodo IO: "+node.id)
 
     @visitor.when(OptionNode)
     def visit(self, node:OptionNode, scope:Scope):
@@ -237,3 +247,4 @@ class Visitor:
 
         scope.define_variable(node.id, typex)
         self.visit(node.expr, scope)
+         

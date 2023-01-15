@@ -102,7 +102,7 @@ class RmayorParser(Parser):
         if len(p) < 3:
                 p[0]= [p[1]]
         else:
-            p[0] = [p[1]] + [p[3]]
+            p[0] = p[1] + [p[3]]
 
     def p_company_block(self, p):
         'company_block : company ocur budget colon num depot opar address colon string cpar company_declarations ccur'
@@ -112,11 +112,10 @@ class RmayorParser(Parser):
     def p_company_declarations(self, p):
         '''company_declarations : id id colon num
                                      | id id colon num company_declarations'''
-        node = VarDeclarationNode(p.slice[2], p.slice[1], p[4])
         if len(p) == 5:
-            p[0] = [CompanyDeclarationNode(p[1],[node])]
+            p[0] = [CompanyDeclarationNode(p[1],p[2],p[4])]
         else:
-            p[0] = [CompanyDeclarationNode(p[1],[node])]+ p[5]
+            p[0] = [CompanyDeclarationNode(p[1],p[2],p[4])]+ p[5]
           
     def p_demands_block(self, p):
         '''demands_block : demands ocur feature_list ccur'''
@@ -134,8 +133,8 @@ class RmayorParser(Parser):
 
   
     def p_def_func(self, p):
-        'def_func : func id opar formals cpar colon type ocur multiexpr ccur'
-        p[0] = FuncDeclarationNode(p.slice[2], p[4], p.slice[7], p[9])
+        '''def_func : func id opar formals cpar colon type ocur multiexpr out atom ccur'''
+        p[0] = FuncDeclarationNode(p.slice[2], p[4], p.slice[7], p[9],p[11])
 
     def p_def_func_error(self, p):
         '''def_func : func error opar formals cpar colon type ocur multiexpr ccur
@@ -167,24 +166,6 @@ class RmayorParser(Parser):
         'param : id colon type'
         p[0] = (p.slice[1], p.slice[3])
 
-    def p_let_list(self, p):
-        '''let_list : let_assign
-                    | let_assign comma let_list'''
-        p[0] = [p[1]] if len(p) == 2 else [p[1]] + p[3]
-
-    def p_let_list_error(self, p):
-        '''let_list : error let_list
-                    | error'''
-        p[0] = [ErrorNode()]
-
-    def p_let_assign(self, p):
-        '''let_assign : param larrow expr
-                      | param'''
-        if len(p) == 2:
-            p[0] = VarDeclarationNode(p[1][0], p[1][1])
-        else:
-            p[0] = VarDeclarationNode(p[1][0], p[1][1], p[3])
-
     def p_multiexpr(self,p):
         '''multiexpr : multiexpr expr
               | expr
@@ -195,7 +176,7 @@ class RmayorParser(Parser):
                 p[0] = []
         else:
             p[0] = [p[1]] + [p[2]]
-       
+
     def p_expr(self, p):
         '''expr : id larrow expr
                  | comp'''
@@ -241,9 +222,9 @@ class RmayorParser(Parser):
         p[0] = ErrorNode()
 
     def p_term(self, p):
-        '''term : term star base_call
-                | term div base_call
-                | base_call'''
+        '''term : term star factor
+                | term div factor
+                | factor'''
         if len(p) == 2:
             p[0] = p[1]
         elif p[2] == '*':
@@ -254,20 +235,6 @@ class RmayorParser(Parser):
     def p_term_error(self, p):
         '''term : term star error
                 | term div error'''
-        p[0] = ErrorNode()
-
-    def p_base_call(self, p):
-        '''base_call : factor arroba type dot func_call
-                     | factor'''
-        if len(p) == 2:
-            p[0] = p[1]
-        else:
-            p[0] = BaseCallNode(p[1], p.slice[3], *p[5])
-
-    def p_base_call_error(self, p):
-        '''base_call : error arroba type dot func_call
-                     | factor arroba error dot func_call
-        '''
         p[0] = ErrorNode()
 
     def p_factor1(self, p):
@@ -285,25 +252,6 @@ class RmayorParser(Parser):
             p[0] = NotNode(p[2], p.slice[1])
         else:
             p[0] = CallNode(p[1], *p[3])
-
-    def p_factor3(self, p):
-        '''factor : isvoid base_call
-                  | nox base_call
-        '''
-        if p[1] == 'isvoid':
-            p[0] = IsVoidNode(p[2], p.slice[1])
-        else:
-            p[0] = BinaryNotNode(p[2], p.slice[1])
-
-    def p_expr_let(self, p):
-        'factor : let let_list in ocur expr ccur'
-        p[0] = LetNode(p[2], p[5], p.slice[1])
-
-    def p_expr_let_error(self, p):
-        '''factor : let error in expr
-                | let let_list in error
-                | let let_list error expr'''
-        p[0] = ErrorNode()
 
     def p_expr_if(self, p):
         'factor : if expr then expr else expr fi'
@@ -336,10 +284,6 @@ class RmayorParser(Parser):
     def p_atom_id(self, p):
         'atom : id'
         p[0] = VariableNode(p.slice[1])
-
-    def p_atom_new(self, p):
-        'atom : new type'
-        p[0] = InstantiateNode(p.slice[2])
 
     def p_atom_boolean(self, p):
         '''atom : true
@@ -403,4 +347,3 @@ if __name__ == "__main__":
         file = f.read()
     parser = RmayorParser()
     result = parser.parse(file)
-    print(result)

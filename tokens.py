@@ -21,13 +21,10 @@ reserved = {
     'else': "else",
     'while': "while",
     'false': 'false',
-    'new': 'new',
     'not': 'not',
     'true': 'true',
-    'let': 'let',
-    'in': 'in',
     'func': 'func',
-    'isvoid': 'isvoid',
+    'out': 'out'
 }
 
 tokens = [
@@ -52,7 +49,6 @@ tokens = [
     'lesseq',       # <=
     'less',         # <
 
-    'end',          # end
     'id',
     'type',
     'num',

@@ -35,11 +35,10 @@ demands
 {
     func testing6(a: Int): IO 
     {
-        let count: Int <- 0, pow: Int 
-        in 
-        {
-            -- count <- 0
-            pow <- 1
-        }
+        pow <- 1
+    
+        
+    out none
     }
+    out_string(testing6(3))
 }
