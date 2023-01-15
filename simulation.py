@@ -54,10 +54,33 @@ class VRP_Simulation:
             #company.logger.log(f"El tiempo total transcurrido fue de {global_time} segundos")
             self.current_date +=1
             self.week_day = WeekDays(self.current_date % 7).name
+            for v in self.company.vehicles:
+                v.days_off = max(0, v.days_off - 1)
+            self.change_authorities_places()
             time.sleep(1)
 
         self.company.logger.log("FIN")
         self.write_logs()
+
+    def change_authorities_places():
+        count_authorities = 0
+        for key in self.graph_map.nodes().keys():
+            if self.graph_map.nodes()[key]['value'].semaphore != None:
+                count_authorities += 1
+                G.nodes()[n]['value'].semaphore = None
+        
+        lim = list(self.graph_map.nodes())[len(self.graph_map.nodes())]
+        #Puede crear menos semaforos si el random da una posicion invalida
+        for i in range(count_authorities):
+            position = (random.randint(lim[0] - 1), random.randint(lim[1] - 1))
+            if len(list(self.graph_map.neighbors(position))) >=3: 
+                s = Semaphore(position)
+                map_node = self.graph_map.nodes()[key]['value']
+                map_node.semaphore = s
+                G.nodes()[position].update({'value': map_node})
+        
+        
+
 
     def write_logs(self):
         info = self.company.logger.get_logs()

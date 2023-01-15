@@ -470,8 +470,10 @@ class Company:
         vehicle = self.get_vehicle_from_id(vehicle_id)
         if vehicle.miles_traveled >= (3/4) * vehicle.initial_miles:
             vehicle.days_off = random.randint(1,3)
+            self.budget -= 500
             self.find_replacement(vehicle)
             self.logger.log(f"El {vehicle} debe ir al mantenimiento por {vehicle.days_off}")
+            self.logger.log(f"Gastos:{500}")
         else:
             self.logger.log(f"El {vehicle} esta en perfectas condiciones.")
 
@@ -481,33 +483,44 @@ class Company:
         """Cuando un vehiculo se manda a mantenimiento buscar sustituto si se puede."""
         #Ver si hay vehiculos disponibles: Son los vehiculos que estan en self.vehicles que no estan
         # en self.vehicles_client:
-        
-        if len(self.available_vehicles) != 0:
-            max_capacity = 0
-            v_max = None
-            for v in self.available_vehicles:
-                if max_capacity < v.capacity:
-                    v_max = v
-                    max_capacity = v_max.capacity
+        clientid = None
+        if len(self.available_vehicles) != 0 or len(self.vehicle_client[c]) > 1 or self.budget - 1500 > 0:
+            if len(self.available_vehicles) != 0:
+                max_capacity = 0
+                selected_v = None
+                #Selecciono el vehiculo de mayor capacidad entre los disponibles
+                for v in self.available_vehicles: 
+                    if max_capacity < v.capacity:
+                        selected_v = v
+                        max_capacity = selected_v.capacity
 
-            v_max.route = vehicle.route
-            vehicle.route = []
+                selected_v.route = vehicle.route
+                vehicle.route = []
+                
+                for c in self.vehicle_client.keys():
+                    for v in self.vehicle_client[c]:#Recorrer la lista de vehiculos del cliente
+                        if vehicle.id == v.id:
+                            clientid = c
+                            self.vehicle_client[c].remove(v)#le quito el vehiculo al cliente y le añado el nuevo
+                            self.vehicle_client[c].append(v_max)
+                            break
+
+            # Ver si el cliente tiene asignado otros vehiculos
+            elif len(self.vehicle_client[c]) > 1:
+                selected_v = random.choice(self.vehicle_client[c])
+                self.merge(selected_v, vehicle)
+
+            ## Ver si la compañia tiene presupuesto para comprar otro vehiculo(1500 pesos)
+            elif self.budget - 1500 > 0:
+                selected_v = Vehicle(len(self.vehicles) + 1, vehicle.capacity, vehicle.initial_miles, vehicle.risk_probability,Logger())
+                selected_v.route = vehicle.route
+                vehicle.route = []
+
+            #Lo añado al diccionario de vehiculos con rutas y elimino el vehiculo que va al mantenimiento
             self.vehicle_route.remove(vehicle.id)
-            self.vehicle_route[v_max] = v_max.route
-
-            for c in self.vehicle_client.values():
-                for i in c:
-                    if vehicle.id == c[i]:
-                        c.remove(vehicle.id)
-                        c.append(v_max.id)
-                        break
-            
-        # Ver si el cliente tiene asignado otros vehiculos
-        
-
-            
-            
-            
+            self.vehicle_route[selected_v] = selected_v.route
+            self.vehicle_client[c].remove(vehicle)#le quito el vehiculo al cliente y le añado el nuevo
+            self.vehicle_client[c].append(selected_v)
 
     def plan(self):
 
