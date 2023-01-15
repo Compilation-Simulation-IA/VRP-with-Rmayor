@@ -233,7 +233,7 @@ class VRP_Simulation:
     def relocate_route(self, origin, routes):
        
         start = len(routes)
-        stops = []        
+        stops = []     
              
 
         for i in range(len(routes)):
@@ -251,7 +251,7 @@ class VRP_Simulation:
         not_available = ast.literal_eval(routes[start+1].id)
 
         temp = self.graph_map[origin][not_available]['weight']
-        self.graph_map[origin][not_available]['weight'] = float('inf')             
+        self.graph_map[origin][not_available]['weight'] = float('inf')       
 
         
         path = self.company.get_complete_route(stops,self.graph_map)
@@ -356,14 +356,15 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
 #print(company)
 
 
-stops = {'c1':[[{'s1':MapNode('(4,0)',3),'people':3},{'s2':MapNode('(2,3)',2),'people':2},{'s3':MapNode('(6,8)',6),'people':6}], {'depot':MapNode('(8,7)',0),'people':0}],'c2':[[{'s1':MapNode('(1,1)',3),'people':3},{'s2':MapNode('(5,6)',3),'people':3}],{'depot':MapNode('(7,7)',0),'people':0}],'c3':[[{'s1':MapNode('(3,3)',4),'people':4},{'s2':MapNode('(2,1)',3),'people':3},{'s3':MapNode('(4,7)',3),'people':3}],{'depot':MapNode('(9,9)',0),'people':0}]}
+stops = {'c1':[[MapNode('(4, 0)',3),MapNode('(2, 3)',2),MapNode('(6, 8)',6)],MapNode('(8, 7)',0)],'c2':[[MapNode('(1, 1)',3),MapNode('(5, 6)',3)],MapNode('(7, 7)',0)],'c3':[[MapNode('(3, 3)',4),MapNode('(2, 1)',3),MapNode('(4, 7)',3)],MapNode('(9, 9)',0)]}
 all_stops = []
 for value in stops.values():
     for stop in value[0]:
-        all_stops.append(list(stop.values())[0])
+        all_stops.append(stop)
+    all_stops.append(value[1])
 map = generate_random_graph(all_stops,(10,10))
 logger = Logger()
 vehicles = [Vehicle('V1',5,1000,0.5,logger),Vehicle('V2',5,1000,0.5,logger),Vehicle('V3',10,1000,0.5,logger),Vehicle('V4',8,1000,0.5,logger),Vehicle('V5',8,1000,0.5,logger)]
-company = Company('hola',10000,map,stops,vehicles,(5,5),logger)
+company = Company('hola',10000,map,stops,vehicles,MapNode('(5, 5)',people=0),logger)
 sim = VRP_Simulation(map, company,2)
 sim.start_simulation()
