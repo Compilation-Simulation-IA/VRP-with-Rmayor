@@ -3,7 +3,7 @@ import numpy as np
 from numpy.random import choice as np_choice
 from statistics import mean
 
-class AntColony(object):
+class AntColony():
 
     def __init__(self, distances, n_ants, n_iterations, decay, alpha=1, beta=0.5, delta_tau = 2):
         self.distances  = distances
@@ -59,7 +59,7 @@ class AntColony(object):
         visited.add(start)
         visited.add(end)
         prev = start
-        for i in range(len(self.distances) - 2):
+        for i in range(len(self.distances) -2):
             move = self.pick_move(self.pheromone[prev], self.distances[prev], visited)
             path.append((prev, move))
             prev = move
@@ -71,7 +71,13 @@ class AntColony(object):
         pheromone = np.copy(pheromone)
         pheromone[list(visited)] = 0
 
-        row = pheromone ** self.alpha * (( 1.0 / dist) ** self.beta)
+        row = np.zeros(pheromone.shape)
+        for i in range(len(pheromone)):
+            if dist[i]> 1e-8:
+                row [i] = pheromone[i]** self.alpha * (( 1.0 / dist[i]) ** self.beta)
+            else:
+                row[i] = 0
+
 
         norm_row = row / row.sum()
         move = np_choice(self.all_inds, 1, p=norm_row)[0]

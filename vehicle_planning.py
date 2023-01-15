@@ -1,40 +1,23 @@
-
+   
 
 class VehiclePlanning:
-
     
-    def _init__(self, initial_state):
-        self.current_state = initial_state
+    def _init__(self, initial, goals, actions, agent, domain = None):
+        self.initial = initial if domain is None else initial + domain
+        self.goals = goals
+        self.actions = actions
+        self.domain = domain
+        self.agent = agent
 
-    def actions(self):
+    def goal_test(self, state):
         pass
 
-    def precondition_move(self):
+    def expand_actions(self, state):
         pass
 
-    def precondition_load(self):
+    def act(self, action):
         pass
 
-    def precondition_unload(self):
-        pass
+   
 
-    def precondition_at_semaphore(self):
-        pass
-
-    def precondition_at_authority(self):
-        pass
-
-    def effect_move(self):
-        pass
-
-    def effect_load(self):
-        pass
-
-    def effect_unload(self):
-        pass
-
-    def effect_at_semaphore(self):
-        pass
-
-    def effect_at_authority(self):
-        pass
+   
