@@ -30,8 +30,7 @@ class AntColony():
 
             self.pheromone = self.evaporate_pheromone()     
             
-            if i%10==0: print(i,  "mean: ", mean([path[1] for path in all_paths]), "best_iteration_solution: ", shortest_path ,"best_global_solution: ", all_time_shortest_path)
-            
+                        
         return all_time_shortest_path
 
     def spread_pheronome(self, all_paths):

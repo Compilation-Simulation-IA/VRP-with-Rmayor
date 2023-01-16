@@ -19,7 +19,6 @@ def generate_random_graph(stop_list, lim):
     list_nodes_color = [abs(int(random.gauss(0,1.5))) for i in range(lim[0]*lim[1])]
 
     for i, n in enumerate(G.nodes().keys()):
-        print(n)
         r = list_nodes_color[i] 
         if n in stops:
             s=stops.index(n)
@@ -51,7 +50,6 @@ def write_map(graph,name):
 
     heigth = list(graph.nodes())[len(list(graph.nodes()))-1][0] + 1
     width = list(graph.nodes())[len(list(graph.nodes()))-1][1] + 1
-
 
     for i in range(heigth):
         line = []

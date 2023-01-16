@@ -6,7 +6,8 @@ import networkx as nx
 from ia.planning import Action,PlanningProblem
 import ast
 import numpy as np
-
+from simulation_logger import Logger
+import datetime
 
 
 class Color(Enum):
@@ -16,13 +17,13 @@ class Color(Enum):
 class Vehicle:
     """Representa los vehículos de la compañía"""
     
-    def __init__(self, ID, capacity, initial_miles, risk_probability, logger, map, initial): #current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float
+    def __init__(self, ID, capacity, total_km, risk_probability, logger, map, initial): #current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float
         self.id = ID
         self.current_location = initial
         self.days_off = 0 #disponibilidad del vehiculo. Si es > 0 representa los dias que no se usara
         self.capacity = capacity
-        self.initial_miles = initial_miles
-        self.miles_traveled = 0
+        self.total_km = total_km
+        self.km_traveled = 0
         self.route = None
         self.people_on_board = 0
         self.risk_probability = risk_probability
@@ -44,12 +45,12 @@ class Vehicle:
         
 
     def __repr__(self) -> str:
-        return f"<Vehicle({self.id})>" 
+        return f"{self.id}" 
     
     def __str__(self):
-        return f"<Vehicle: ID {self.id}>" #, Model: {self.model}>" 
+        return f"vehículo {self.id}" #, Model: {self.model}>" 
 
-    def move(self):
+    def move(self, global_time):
         """Mueve al vehículo a su próximo destino"""
         
         # TODO aumentar millas recorridas
@@ -57,12 +58,12 @@ class Vehicle:
         speed = self.speed
         self.count_moves += 1
         cost = self.map[ast.literal_eval(self.current_location.id)][ast.literal_eval(self.route[self.count_moves].id)]['weight']
-        self.miles_traveled += cost
-        self.distance += cost
+        self.km_traveled += cost/1000 #convierto el costo de las aristas que estan en metros a km
+        self.distance += cost/1000
         self.change_speed()        
         origin = self.current_location
         self.current_location = self.route[self.count_moves]
-        self.logger.log(f"El {self} se desplazo de {origin} a {self.current_location} con una velocidad {speed}.")
+        self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} se movió de {origin} a {self.current_location} con una velocidad de {speed}km/h.\n")
 
         return speed, cost      
     
@@ -76,7 +77,7 @@ class Vehicle:
     
     
     # Devuelve la cantidad de clientes que pudo recoger en esa parada
-    def load(self):
+    def load(self, global_time):
         """Modifica la cantidad de clientes que quedan en la parada y la
          capacidad disponible en el vehículo"""
 
@@ -87,25 +88,27 @@ class Vehicle:
         self.last_stop = self.current_location
         self.people_on_board += people
         self.current_location.people -= people 
-        self.logger.log(f"El {self} cargo {people} personas en la parada {self.current_location}.")
+        self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} cargó {people} personas en {self.current_location}, tiene {self.people_on_board} personas a bordo.\n ")
 
 
         if self.capacity == self.people_on_board:
             self.turning_back = True
+            route = self.route
             self.route = self.go_to_depot()
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} está lleno, cambia su ruta de {route} a {self.route} para descargar a las personas y poder seguir recogiendo.\n")
         
         return people
         
     
-    def unload(self):
+    def unload(self, global_time):
         '''Descarga a los pasajeros en la posicion current_stop'''
 
         people = self.people_on_board
         self.people_on_board = 0
-        self.logger.log(f"El {self} descargo {people} personas en la parada {self.current_location}.")
+        self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} descargó {people} personas en {self.current_location}, tiene {self.people_on_board} personas a bordo.\n ")
         return people
 
-    def at_semaphore(self):
+    def at_semaphore(self, global_time):
         wait = 0
         semaphore = self.current_location.semaphore        
         color = semaphore.state
@@ -113,23 +116,29 @@ class Vehicle:
         semaphore_time_left = sum(semaphore.color_range) - semaphore.time_color
         if color == Color.YELLOW:
             if self.pass_yellow():# no hace nada
-                self.logger.log(f"El {self} NO paró en la luz amarilla del {semaphore}.")
+                self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} no paró en el {semaphore}.\n")
             else:
                 wait = semaphore_time_left
-                self.logger.log(f"El {self} le cogio la luz amarilla en el {semaphore} y paró. Tiempo de espera: {wait}.")
+                self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} paró {wait} en el {semaphore}.\n")
 
         elif color == Color.RED:
             wait = semaphore_time_left
-            self.logger.log(f"El {self} le cogio la luz roja en el {semaphore}. Tiempo de espera: {semaphore_time_left}.")
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} paró {wait} en el {semaphore}.\n")
         
         else:
-            self.logger.log(f"El {self} paso con luz verde en el {semaphore}.")
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} pasó el {semaphore}.\n")
 
         return wait
 
-    def at_authority(self):
+    def at_authority(self,decision, global_time):
+        
+        if decision == 1:
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} fue parado por la {self.current_location.authority} por exceso de velocidad y lo multaron.\n")            
         # cambiar ruta
-        self.route=self.change_route()
+        elif decision == 2:
+            route = self.route
+            self.route=self.change_route()
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} fue parado por la {self.current_location.authority} porque estaba cerrado el camino, cambió su ruta de {route} a {self.route}.\n")
             
 
     def go_to_depot(self):
@@ -172,7 +181,15 @@ class Vehicle:
         self.map[origin][not_available]['weight']=temp
 
         return path
-        
+    
+    def broken(self, global_time):
+        self.km_traveled = 1/4 * self.total_km 
+        time_h = random.randint(30, 60) #Espera de 30min a 1h
+        time_broken = 60*time_h #convertir el tiempo de min a segundos
+        cost = time_h*2 + 80 # el costo del servicio. Si se demora 1h cuesta 200 pesos
+        self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} se rompió en la {self.current_location}.\n")
+        return time_broken, cost
+
   
     def plan(self):
 
@@ -188,7 +205,10 @@ class Vehicle:
             return 'unload'
         elif self.current_location.semaphore != None and not self.free_pass:
             self.free_pass = True
-            return 'at_semaphore'        
+            return 'at_semaphore' 
+
+        elif (self.count_moves+1)< len(self.route) and self.km_traveled + (self.map[ast.literal_eval(self.current_location.id)][ast.literal_eval(self.route[self.count_moves+1].id)]['weight'])/1000 > self.total_km:
+            return 'broken'       
         else:
             self.free_pass_authority = False
             self.free_pass = False
@@ -230,10 +250,10 @@ class Semaphore:
         self.time_color = 0
     
     def __repr__(self) -> str:
-        return f"<Semaphore({self.position})>"
+        return f"semaphore({self.position})"
     
     def __str__(self) -> str:
-        return f"<Semaphore: Position {self.position}, State: {self.state.name}>"
+        return f"semáforo con luz {self.state.name} en la posición {self.position} del mapa"
     
     def update_color(self, global_time):
         self.time_color = global_time % sum(self.color_range)
@@ -243,9 +263,7 @@ class Semaphore:
             self.state = Color.YELLOW
         else:
             self.state = Color.RED
-        
-        
-
+      
 class Authority:
     """Representa la autoridad del trafico """
     def __init__(self, ID, probability = 0.5):
@@ -254,10 +272,10 @@ class Authority:
         
 
     def __repr__(self) -> str:
-        return f"<Authority({self.id})>"
+        return f"authority({self.id})"
     
     def __str__(self) -> str:
-        return f"<Authority: ID {self.id}>"
+        return f"autoridad en la posición {self.id} del mapa"
     
     def __eq__(self, o) -> bool:
         if o == None:
@@ -277,16 +295,16 @@ class Authority:
         # Añadir la autoridad a la arista elegida aleatoriamente
         graph[start][end]['weight']['traffic_authorities'].append(self) #añadir +1 al costo de la arista por añadir una autoridad
         
-    def stop_vehicle(self, vehicle: Vehicle, graph) -> int:
+    def stop_vehicle(self, vehicle: Vehicle, graph, global_time) -> int:
         """Detiene al vehiculo para ponerle una multa si excede la velocidad. El vehiculo continua su ruta."""
         result = 0
         if vehicle.speed > 60:
-            vehicle.logger.log(f"El {vehicle} fue multado por {self}, por ir a {vehicle.speed} km/h.")
+            vehicle.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} multó a {vehicle} por ir a {vehicle.speed}km/h.\n")
             vehicle.taxes += 50 # pone multa y continua
             result = 1
 
         elif random.random() < self.probability: # Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino
-            vehicle.logger.log(f"El {vehicle} fue desviado del camino por {self}.")
+            vehicle.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} desvió a {vehicle}.\n")
             route = vehicle.route
             next_stop = None
             start = len(route)
@@ -325,24 +343,24 @@ class Company:
         self.budget = budget # presupuesto disponible
         self.vehicles = vehicles # lista de vehiculos q tiene la compañia
         self.map = map
+        self.logger=logger
         self.vehicle_client = {}
-        self.vehicle_stop = {}
+        self.vehicle_principal_stops = {}
         self.vehicle_route = []
         self.substitute = {}# diccionario de vehiculo que esta sustituyendo al que esta en mantenimiento
         # y era del cliente. La ruta que era original al vehiculo que se mando al mantenimiento
         self.available_vehicles = [] # vehiculos que no estan asignados a ningun
         self.assign()
-        print(self.vehicle_client)
-        print(self.vehicle_stop)
-        print(self.vehicle_route)
+
+        self.logger.log(f"{self} realizó las siguientes asignaciones: {self.vehicle_client} y {self.vehicle_principal_stops}.\n")
         
         self.logger = logger
 
     def __repr__(self) -> str:
-        return f"<Company: {self.name}>"
+        return f"compañia: {self.name}"
     
     def __str__(self) -> str:
-        return f"<Company: {self.name}>"
+        return f"compañia {self.name}"
 
     def assign(self):
 
@@ -356,13 +374,13 @@ class Company:
 
         not_assigned_vehicles = []
 
-        for v in self.vehicle_stop.keys():
-            if len(self.vehicle_stop[v]) == 2:
+        for v in self.vehicle_principal_stops.keys():
+            if len(self.vehicle_principal_stops[v]) == 2:
                 not_assigned_vehicles.append(v)
         
         i = 0
         while i < len(not_assigned_vehicles):
-            self.vehicle_stop.pop(not_assigned_vehicles[i])
+            self.vehicle_principal_stops.pop(not_assigned_vehicles[i])
             i += 1
 
 
@@ -394,10 +412,10 @@ class Company:
                 vehicle = vehicles[int(i/len(stops))]
                 stop = stops[i%len(stops)]
                 
-                if vehicle.id in self.vehicle_stop.keys():
-                    self.vehicle_stop[vehicle.id].append(stop)
+                if vehicle.id in self.vehicle_principal_stops.keys():
+                    self.vehicle_principal_stops[vehicle.id].append(stop)
                 else:
-                    self.vehicle_stop.update({vehicle.id:[stop]})
+                    self.vehicle_principal_stops.update({vehicle.id:[stop]})
 
     
     def __assign_vehicle_to_client(self):
@@ -430,18 +448,18 @@ class Company:
 
     def __get_route_of_vehicles(self):
 
-        for v in self.vehicle_stop.keys():
-            distances = self.__get_distance_beetween_stops(self.vehicle_stop[v])
+        for v in self.vehicle_principal_stops.keys():
+            distances = self.__get_distance_beetween_stops(self.vehicle_principal_stops[v])
             route = AntColony(distances, 5, 100, 0.95, alpha=1, beta=1, delta_tau = 2).run()[0]
             route_nodes = []
             for x,y in route:
-                route_nodes.append(self.vehicle_stop[v][x])
-            route_nodes.append(self.vehicle_stop[v][len(self.vehicle_stop[v])-1])
+                route_nodes.append(self.vehicle_principal_stops[v][x])
+            route_nodes.append(self.vehicle_principal_stops[v][len(self.vehicle_principal_stops[v])-1])
 
             route_nodes = self.__get_complete_route(route_nodes)
             vehicle = self.__get_vehicle_from_id(v)
             self.vehicle_route.append({v: vehicle ,'R' + v:route_nodes})
-            vehicle.principal_stops=self.vehicle_stop[v]
+            vehicle.principal_stops=self.vehicle_principal_stops[v]
      
 
     def __get_distance_beetween_stops(self, stops):
@@ -490,14 +508,14 @@ class Company:
     def start_route(self, vehicle_id, route_id):
         vehicle = self.__get_vehicle_from_id(vehicle_id)
         vehicle.distance = 0
-        self.logger.log(f"{self}: El {vehicle} acaba de comenzar la ruta.")
+        self.logger.log(f"{vehicle} comenzó su ruta.\n")
         vehicle.route = self.__get_route_from_id(route_id)
         return vehicle
 
          
         
     def buy_vehicle(self, new_vehicle: Vehicle, cost: int):
-        self.logger.log(f"{self} compro un nuevo {new_vehicle} a {cost} pesos.")
+        self.logger.log(f"{self} compró un nuevo {new_vehicle} a {cost} pesos.\n")
         self.vehicles.append(new_vehicle)
         self.budget -= cost
     
@@ -506,70 +524,128 @@ class Company:
         pedido el servicio de taxis."""
         vehicle = self.__get_vehicle_from_id(vehicle_id)
         result = vehicle.taxes
-        self.logger.log(f"{self} tuvo perdidas de {result} pesos en multas por el {vehicle}.")
+        self.logger.log(f"{self} tuvo perdidas de {result} pesos en multas por el {vehicle}.\n")
         vehicle.taxes = 0
         income = 10 * vehicle.capacity * len(vehicle.route) # El pago por los servicios
         gas = 10*(vehicle.distance/30) # Cada 30km gasta 1 litro de gasolina que cuesta 10 pesos.
         self.budget +=income
-        self.logger.log(f"{self} tuvo ganancias de {income} pesos por los servivios prestados por el {vehicle}.")
+        self.logger.log(f"{self} tuvo ganancias de {income} pesos por los servivios prestados por el {vehicle}.\n")
         self.budget = self.budget - (result + gas)
 
     def check_vehicle(self, vehicle_id):
         vehicle = self.__get_vehicle_from_id(vehicle_id)
-        if vehicle.miles_traveled >= (3/4) * vehicle.initial_miles:
-            vehicle.days_off = random.randint(1,3)
+        if vehicle.km_traveled >= (3/4) * vehicle.total_km:
+            vehicle.days_off = random.randint(2,4)
             self.budget -= 500
             self.find_replacement(vehicle)
-            self.logger.log(f"El {vehicle} debe ir al mantenimiento por {vehicle.days_off}")
+            self.logger.log(f"{vehicle} debe ir al mantenimiento por {vehicle.days_off}")
             self.logger.log(f"Gastos:{500}")
         else:
-            self.logger.log(f"El {vehicle} esta en perfectas condiciones.")
+            self.logger.log(f"{vehicle} está en perfectas condiciones.")
 
         return vehicle.days_off        
+
+    def check_maintenance(self):
+        """Se chequean los vehiculos que estan en mantenimiento para reincorporarlos a sus rutas si el cliente tenia mas
+        de 1 vehiculo."""
+        for v in self.vehicles:
+               if v.days_off > 0:
+                    v.days_off -= 1
+                    if v.days_off == 0:
+                        if (v.id in self.vehicle_principal_stops.keys()):
+                            substitute_vehicle, substitute_route = self.substitute.pop(v.id)
+                            substitute_vehicle.route = substitute_route
+
+                            for item in self.vehicle_route:
+                                 if substitute_vehicle.id in item.keys():
+                                     item.pop(f'R{substitute_vehicle}')
+                                     item[f'R{substitute_vehicle}'] = substitute_vehicle.route
+                                     break
+                    else:
+                        self.available_vehicles.append(v)
+
+                       
 
     def find_replacement(self, vehicle: Vehicle):
         """Cuando un vehiculo se manda a mantenimiento buscar sustituto si se puede."""
         #Ver si hay vehiculos disponibles: Son los vehiculos que estan en self.vehicles que no estan
         # en self.vehicles_client:
 
-        clientid = None
-        if len(self.available_vehicles) != 0 or len(self.vehicle_client[c]) > 1 or self.budget - 1500 > 0:
-            if len(self.available_vehicles) != 0:
-                max_capacity = 0
-                selected_v = None
-                #Selecciono el vehiculo de mayor capacidad entre los disponibles
-                for v in self.available_vehicles: 
-                    if max_capacity < v.capacity:
-                        selected_v = v
-                        max_capacity = selected_v.capacity
+        clientid = 0
+        #Encontrar el cliente del vehiculo
+        for c in self.vehicle_client.keys():
+            for v in self.vehicle_client[c]:#Recorrer la lista de vehiculos del cliente
+                if vehicle.id == v.id:
+                    clientid = c
+                    break
 
-                selected_v.route = vehicle.route
-                vehicle.route = []
-                
-                for c in self.vehicle_client.keys():
-                    for v in self.vehicle_client[c]:#Recorrer la lista de vehiculos del cliente
-                        if vehicle.id == v.id:
-                            clientid = c
-                            self.vehicle_client[c].remove(v)#le quito el vehiculo al cliente y le añado el nuevo
-                            self.vehicle_client[c].append(v_max)
-                            break
+        if len(self.available_vehicles) != 0:
+            max_capacity = 0
+            selected_v = None
+            #Selecciono el vehiculo de mayor capacidad entre los disponibles
+            for v in self.available_vehicles: 
+                if max_capacity < v.capacity:
+                    selected_v = v
+                    max_capacity = selected_v.capacity
+            selected_v.route = vehicle.route
+            vehicle.route = []
+            self.available_vehicles.append(vehicle)
+            self.available_vehicles.remove(selected_v)
+            self.vehicle_client[clientid][0].remove(vehicle)#le quito el vehiculo al cliente y le añado el nuevo
+            self.vehicle_client[clientid][0].append(selected_v)
+            self.vehicle_principal_stops[selected_v.id] = self.vehicle_principal_stops.pop(vehicle.id)
+            
+            # busco el diccionario que tenga vehicle.id y lo sustituyo por selected_v.id
+            for item in self.vehicle_route:
+                if vehicle.id in item.keys():
+                    item.pop(vehicle.id)
+                    item[selected_v.id] = selected_v
+                    break
+        # Ver si el cliente tiene asignado otros vehiculos
+        elif len(self.vehicle_client[clientid]) > 1:
+            selected_v = random.choice(self.vehicle_client[clientid])
+            selected_v.route = self.merge(selected_v, vehicle)
+            route_selected_v = None
+            for item in self.vehicle_route:
+                if selected_v.id in item.keys():
+                    route_selected_v = item.pop(f'R{selected_v}')
+                    item[f'R{selected_v}'] = selected_v.route
+                    break
+            self.substitute.update({f'{vehicle.id}':[selected_v,route_selected_v]})
+            
+        ## Ver si la compañia tiene presupuesto para comprar otro vehiculo(1500 pesos)
+        elif self.budget - 1500 > 0:
+            selected_v = Vehicle(f'V{len(self.vehicles) + 1}', vehicle.capacity, vehicle.total_km, vehicle.risk_probability, Logger())
+            self.buy_vehicle(selected_v,1500)
+            selected_v.route = vehicle.route
+            vehicle.route = []
+            self.vehicle_client[clientid][0].remove(vehicle)#le quito el vehiculo al cliente y le añado el nuevo
+            self.vehicle_client[clientid][0].append(selected_v)                    
+            self.vehicle_principal_stops[selected_v.id] = self.vehicle_principal_stops.pop(vehicle.id)
+            # busco el diccionario que tenga vehicle.id y lo sustituyo por selected_v.id
+            for item in self.vehicle_route:
+                if vehicle.id in item.keys():
+                    item.pop(vehicle.id)
+                    item[selected_v.id] = selected_v
+                    break
+           
 
-            # Ver si el cliente tiene asignado otros vehiculos
-            elif len(self.vehicle_client[c]) > 1:
-                selected_v = random.choice(self.vehicle_client[c])
-                self.merge(selected_v, vehicle)
+    def merge(self, new_vehicle, old_vehicle):
+        stops_new = self.vehicle_principal_stops[new_vehicle.id]
+        stops_old = self.vehicle_principal_stops[old_vehicle.id]
 
-            ## Ver si la compañia tiene presupuesto para comprar otro vehiculo(1500 pesos)
-            elif self.budget - 1500 > 0:
-                selected_v = Vehicle(len(self.vehicles) + 1, vehicle.capacity, vehicle.initial_miles, vehicle.risk_probability,Logger())
-                selected_v.route = vehicle.route
-                vehicle.route = []
+        stops = stops_new[:len(stops_new)-2] + stops_old
 
-            #Lo añado al diccionario de vehiculos con rutas y elimino el vehiculo que va al mantenimiento
-            self.vehicle_route.remove(vehicle.id)
-            self.vehicle_route[selected_v] = selected_v.route
-            self.vehicle_client[c].remove(vehicle)#le quito el vehiculo al cliente y le añado el nuevo
-            self.vehicle_client[c].append(selected_v)
+        distances = self.__get_distance_beetween_stops(stops)
+        route = AntColony(distances, 5, 100, 0.95, alpha=1, beta=1, delta_tau = 2).run()[0]
+        route_nodes = []
+        for x,y in route:
+            route_nodes.append(stops[x])
+        route_nodes.append(stops[len(stops)-1])
+        route_nodes = self.__get_complete_route(route_nodes)
+        
+        return route_nodes
+
 
     def plan(self):
 
@@ -606,7 +682,7 @@ class Company:
         
 
              
-            
+      
 
         
 

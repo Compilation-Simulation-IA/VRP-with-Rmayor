@@ -80,16 +80,24 @@ class MapNode:
         self.semaphore = semaphore
 
     def __repr__(self) -> str:
-        return f"<Map Node: {self.id}>"
+        return f"{self.id}"
     
     def __str__(self) -> str:
-        return f"<Map Node: {self.id}, People: {self.people}, Authority: {self.authority}, Semaphore: {self.semaphore}>"
+        pos = f'posición {self.id} del mapa'
+        people = '' if self.people == 0 else f'que es una parada con {self.people} personas'
+        authority = '' if self.authority == None else f'con autoridades'
+        semaphore = '' if self.semaphore == None else f'con semáforo' 
+        
+        return pos + ' ' + people + ' ' + authority + ' ' + semaphore
         
 
     def __eq__(self, obj) -> bool:
         if self.id == obj.id:
             return True
         return False
+
+    
+
 
 #class Distribution_Type: 
 #    """ Clase para guardar todas las distribuciones que siguen las variables del problema"""

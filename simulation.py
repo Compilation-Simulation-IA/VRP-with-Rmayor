@@ -48,7 +48,6 @@ class VRP_Simulation:
                 forward_problem_company = ForwardPlan(p)
                 thread = threading.Thread(target= self.simulation_Company, args= (forward_problem_company, i) )
                 simulate_threads.append(thread)
-                print(thread.getName())
                 thread.start() # Iniciamos los hilos
 
             for t in simulate_threads: # Esperamos a que todos los hilos terminen
@@ -60,8 +59,7 @@ class VRP_Simulation:
             #company.logger.log(f"El tiempo total transcurrido fue de {global_time} segundos")
             self.current_date +=1
             self.week_day = WeekDays(self.current_date % 7).name
-            for v in self.company.vehicles:
-                v.days_off = max(0, v.days_off - 1)
+            self.company.check_maintenance()
             self.change_authorities_places()
             time.sleep(1)
 
@@ -73,9 +71,9 @@ class VRP_Simulation:
         for key in self.graph_map.nodes().keys():
             if self.graph_map.nodes()[key]['value'].semaphore != None:
                 count_authorities += 1
-                G.nodes()[n]['value'].semaphore = None
+                self.graph_map.nodes()[key]['value'].semaphore = None
         
-        lim = list(self.graph_map.nodes())[len(self.graph_map.nodes())]
+        lim = list(self.graph_map.nodes())[len(self.graph_map.nodes()) - 1]
         #Puede crear menos semaforos si el random da una posicion invalida
         for i in range(count_authorities):
             position = (random.randint(lim[0] - 1), random.randint(lim[1] - 1))
@@ -83,10 +81,7 @@ class VRP_Simulation:
                 s = Semaphore(position)
                 map_node = self.graph_map.nodes()[key]['value']
                 map_node.semaphore = s
-                G.nodes()[position].update({'value': map_node})
-        
-        
-
+                self.graph_map.nodes()[position].update({'value': map_node})
 
     def write_logs(self):
         info = self.company.logger.get_logs()
@@ -108,39 +103,32 @@ class VRP_Simulation:
         
         while not vehicle.goal_test():
             if wait_time == 0: 
-
                 current_pos = vehicle.current_location
-
                 action = vehicle.plan()                              
-
                 if action == 'at_authority':
-                    decision = current_pos.authority.stop_vehicle(vehicle, self.graph_map)
-
-                    if decision == 2:
-                        vehicle.at_authority()
+                    decision = current_pos.authority.stop_vehicle(vehicle, self.graph_map, global_time)
+                    
+                    vehicle.at_authority(decision, global_time)
 
                     temp = self.cost_with_authority(decision)
                     wait_time += temp
-                    self.company.logger.log(f"{vehicle} HIZO LA ACCION AUTHORITY: {decision} en el tiempo {global_time}")
-                    self.company.logger.log(f" EL COSTO FUE DE {temp}")
-
                 elif action == 'move':             
-                    speed, cost = vehicle.move() 
+                    speed, cost = vehicle.move(global_time) 
                     temp = self.cost_move(speed, cost)
                     wait_time += temp
-                    self.company.logger.log(f" EL COSTO FUE DE {temp}")
                 elif action == 'load' or action=='unload':
-                    people = vehicle.load() if action =='load' else vehicle.unload()
+                    people = vehicle.load(global_time) if action =='load' else vehicle.unload(global_time)
                     temp = self.cost_load_and_unload(people)
                     wait_time += temp
-                    self.company.logger.log(f" EL COSTO FUE DE {temp}")
                 elif action == 'at_semaphore':
                     current_pos.semaphore.update_color(global_time)
-                    semaphore_time = vehicle.at_semaphore()
+                    semaphore_time = vehicle.at_semaphore(global_time)
                     wait_time += semaphore_time
-                    self.company.logger.log(f" EL COSTO FUE DE {semaphore_time}")
-            
-                self.company.logger.log(f"{vehicle} HIZO LA ACCION {action} en el tiempo {global_time}")
+                elif action == 'broken':
+                    time_broken, cost = vehicle.broken(global_time)
+                    self.company.budget -= cost
+                    wait_time += time_broken
+                    
                 #global_time += wait_time  # Actualizamos el tiempo global
             else:
                 wait_time -=1

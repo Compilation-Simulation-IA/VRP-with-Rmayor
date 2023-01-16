@@ -1,40 +1,23 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+import datetime
 
-numbers = [i for i in range(1,16)]
-random_tuple = random.sample(numbers, 2)
-print(numbers)
-print(random_tuple)
 
-# Creamos un grafo vacío
-G = nx.Graph()
 
-# Añadimos algunos nodos y aristas
-G.add_node(1)
-G.add_node(2)
-G.add_node(3)
-G.add_edge(1, 2)
-G.add_edge(2, 3)
+from colorama import Fore, Back, Style
+print(Fore.RED + 'some red text')
+print(Back.GREEN + 'and with a green background')
+print(Style.DIM + 'and in dim text')
+print(Style.RESET_ALL)
+print('back to normal now')
 
-# Dibujamos el gráfico
-#nx.draw(G)
-#plt.show()
 
-# Obtenemos la matriz de adyacencia del grafo
-A = nx.to_numpy_matrix(G)
-
-#print(A)
-
-# Obtenemos la lista de adyacencia del grafo
-L = nx.to_dict_of_lists(G)
-a={}
-a["e"] = 5
-a[5] = "e"
-
-print(a)
-n=0
-while n <10:
-    r  = abs(int(random.gauss(0,2)))
-    print(r)
-    n+=1
+from colorama import init
+from termcolor import colored
+ 
+init()
+ 
+print(colored('Hello, World!', 'green', 'on_red'))
+sec = 60
+print(str(datetime.timedelta(seconds = sec)))
