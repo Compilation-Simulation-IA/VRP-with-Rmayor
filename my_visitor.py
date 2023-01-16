@@ -25,10 +25,12 @@ class Visitor:
     definiciones = {}
     simulate=False
     variables ={}
+    calls={}
     def __init__(self, context:Context, errors=[]):
         self.context:Context = context
         # self.current_type:Type = None
         self.errors:list = errors
+    
     
     @visitor.on('node')
     def visit(self, node):
@@ -58,7 +60,7 @@ class Visitor:
         for dec in node.stop_declarations:
             self.visit(dec,scope)
         
-    @visitor.when(StopDeclarationNode)
+    @visitor.when(StopDeclarationNode,)
     def visit(self, node:StopDeclarationNode,scope:Scope):
         self.stops[node.identifier]=[node.address, node.people]
         pass
@@ -99,125 +101,108 @@ class Visitor:
     def visit(self, node:DemandsNode,scope:Scope):
             i=0
             for dec in node.demands:
-                if node.demands[i] is list:
-                    for dec1 in node.demands[0][i]:
+                if type(node.demands[i]) is list:
+                    for dec1 in node.demands[i]:
                         self.visit(dec1,scope)
                 else: self.visit(dec,scope)
-    # def add_function(id, params, return_type, body):
-    #     # def function(*args, **kwargs):
-    #     #     exec(body)
-    #     #     function.__code__ = compile(body, "<string>", "exec")
-    #     return function
+                i+=1
         
     @visitor.when(FuncDeclarationNode)
     def visit(self, node:FuncDeclarationNode,scope:Scope):
-        # args_names = []
-        # args_types = []
-        # self.current_type = node.type
-
-        # new_scope = scope.create_child()
-        # scope.functions[node.id] = new_scope
-        # self.current_type.define_method(node.id, args_names, args_types, self.current_type, node.pos)
-       
-        # id = node.id
-        # params = node.params
-        # visited_body=self.visit(node.body, new_scope)
-        # function =self.add_function(params, self.current_type, visited_body)
-        # self.definiciones[id]= [scope,function]
-        # self.current_method = self.current_type.get_method(node.id, node.pos)
-        pass
+        params = node.params
+        scope.locals=params
+        new_scope=scope.create_child()
+        if type(node.body) is list:
+            for dec in node.body:
+                self.visit(dec,new_scope)
+        else: self.visit(dec,new_scope)
+        self.definiciones[node.id]= [node,node.body,node.params,node.out_expr,node.type]
         
-    @visitor.when(StaticCallNode)
-    def visit(self, node:StaticCallNode,scope:Scope):
-        for arg in node.args:
-            self.visit(arg)
+    # @visitor.when(StaticCallNode)
+    # def visit(self, node:StaticCallNode):
+    #     for arg in node.args:
+    #         self.visit(arg)
         
     
-    @visitor.when(VarDeclarationNode)
-    def visit(self, node:VarDeclarationNode, scope:Scope):
-
-        var_info = scope.define_variable(node.id)
-       
-        if node.expr is not None:
-            self.visit(node.expr, scope)
+    # @visitor.when(VarDeclarationNode)
+    # def visit(self, node:VarDeclarationNode):
+    #     self.visit(node.expr)
+    #     self.variables[node.id]=node.expr
             
         
     @visitor.when(AssignNode)
-    def visit(self, node:AssignNode, scope:Scope):
-    
-        vinfo = scope.find_variable(node.id)
-        if vinfo is None:
-            var_info = scope.find_attribute(node.id)
-            if var_info is None:
-                error_text = NamesError.VARIABLE_NOT_DEFINED %(node.id)  
-                self.errors.append(NamesError(error_text, *node.pos))
-                vtype = ErrorType()
-                scope.define_variable(node.id, vtype)
-            
-        self.visit(node.expr, scope)
+    def visit(self, node:AssignNode,scope:Scope):
+        self.visit(node.expr,scope.create_child())
+        if node.id not in self.variables: 
+            self.variables[node.id]=[node.expr,scope.index]
+        else: self.variables[node.id]=[node.expr,self.variables[node.id][1]]
 
-    @visitor.when(LetNode)
-    def visit(self, node:LetNode, scope:Scope):
-        n_scope = scope.create_child()
-        scope.expr_dict[node] = n_scope
-        for init in node.init_list:
-            self.visit(init, n_scope)
+    # @visitor.when(LetNode)
+    # def visit(self, node:LetNode, scope:Scope):
+    #     n_scope = scope.create_child()
+    #     scope.expr_dict[node] = n_scope
+    #     for init in node.init_list:
+    #         self.visit(init, n_scope)
         
-        self.visit(node.expr, n_scope)
+    #     self.visit(node.expr, n_scope)
 
     @visitor.when(BinaryNode)
-    def visit(self, node:BinaryNode, scope:Scope):
-        self.visit(node.left, scope)
-        self.visit(node.right, scope)
+    def visit(self, node:BinaryNode,scope:Scope):
+        self.visit(node.left,scope)
+        self.visit(node.right,scope)
 
      
     @visitor.when(UnaryNode)
-    def visit(self, node:UnaryNode, scope:Scope):
-        self.visit(node.expr, scope)
+    def visit(self, node:UnaryNode,scope:Scope):
+        self.visit(node.expr,scope)
      
 
-    @visitor.when(VariableNode)
-    def visit(self, node:VariableNode, scope:Scope):
-        try:
-            return self.current_type.get_attribute(node.lex, node.pos).type
-        except AttributesError:
-            if not scope.is_defined(node.lex):
-                error_text = NamesError.VARIABLE_NOT_DEFINED %(node.lex)
-                self.errors.append(NamesError(error_text, *node.pos))
-                vinfo = scope.define_variable(node.lex, ErrorType(node.pos))
-            else:
-                vinfo = scope.find_variable(node.lex)
-            return vinfo.type
+    @visitor.when(VariableNode)#Si es none entonces devolver None
+    def visit(self, node:VariableNode,scope:Scope):
+        # try:
+        #     return self.current_type.get_attribute(node.lex, node.pos).type
+        # except AttributesError:
+        #     # if not scope.is_defined(node.lex):
+        #     #     error_text = NamesError.VARIABLE_NOT_DEFINED %(node.lex)
+        #     #     self.errors.append(NamesError(error_text, *node.pos))
+        #     #     vinfo = scope.define_variable(node.lex, ErrorType(node.pos))
+        #     # else:
+        #     #     vinfo = scope.find_variable(node.lex)
+        #     # return vinfo.type
+        #     if not self.variables[node.lex]:
+        #         error_text = NamesError.VARIABLE_NOT_DEFINED %(node.lex)
+        #         self.errors.append(NamesError(error_text, *node.pos))
+        pass
 
 
     @visitor.when(WhileNode)
-    def visit(self, node:WhileNode, scope:Scope):
-        self.visit(node.cond, scope)
-        self.visit(node.expr, scope)
+    def visit(self, node:WhileNode,scope:Scope):
+        self.visit(node.cond,scope)
+        self.visit(node.expr,scope.create_child())
 
 
     @visitor.when(ConditionalNode)
-    def visit(self, node:ConditionalNode, scope:Scope):
-        self.visit(node.cond, scope)
-        self.visit(node.stm, scope)
-        self.visit(node.else_stm, scope)
+    def visit(self, node:ConditionalNode,scope:Scope):
+        self.visit(node.cond,scope)
+        self.visit(node.stm,scope.create_child())
+        self.visit(node.else_stm,scope.create_child())
     
     @visitor.when(CallNode)
-    def visit(self, node:CallNode, scope:Scope):
-        self.visit(node.obj, scope)
-        args=[]
+    def visit(self, node:CallNode,scope:Scope):
+        self.visit(node.obj,scope)
         for arg in node.args:
-             args.append(self.visit(arg, scope))
+            self.calls[node.id] = [arg.lex,scope.index]
         # self.definiciones[node.id](*args)
 
 
     @visitor.when(StaticCallNode)
     def visit(self, node:StaticCallNode, scope:Scope):
-        args=[]
+        if node.id in self.stops or node.id in self.clients or node.id=="clients" or node.id=="stops":
+            pass
+        args={}
         for arg in node.args:
-            args.append(self.visit(arg, scope))
-            if args[0] == []:
-                args = [arg.lex]
+            self.visit(arg,scope)
+            self.calls[node.id] = [arg.lex,scope.index]
         # if self.current_type.name == 'IO':
         #         if node.id == 'out_string':
         #             self.current_type.out_string(args)
@@ -226,14 +211,14 @@ class Visitor:
         # else:
         #     self.definiciones[node.id](*args)
 
-    @visitor.when(OptionNode)
-    def visit(self, node:OptionNode, scope:Scope):
-        try:
-            typex = self.context.get_type(node.typex, node.type_pos)
-        except TypesError:
-            error_txt = TypesError.CLASS_CASE_BRANCH_UNDEFINED % node.typex
-            self.errors.append(TypesError(error_txt, *node.type_pos))
-            typex = ErrorType()
+    # @visitor.when(OptionNode)
+    # def visit(self, node:OptionNode,scope:Scope):
+    #     try:
+    #         typex = self.context.get_type(node.typex, node.type_pos)
+    #     except TypesError:
+    #         error_txt = TypesError.CLASS_CASE_BRANCH_UNDEFINED % node.typex
+    #         self.errors.append(TypesError(error_txt, *node.type_pos))
+    #         typex = ErrorType()
 
-        scope.define_variable(node.id, typex)
-        self.visit(node.expr, scope)
+    #     # scope.define_variable(node.id, typex)
+    #     self.visit(node.expr,scope)

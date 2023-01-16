@@ -368,19 +368,19 @@ class AutoType(Type):
 
 
 class IOType(Type):
+    methods = ['out_string','out_int']
     def __init__(self, pos=(0, 0)):
         self.name = 'IO'
         self.attributes = {}
-        self.methods = {}
         self.parent = ObjectType(pos)
         self.pos = pos
         #self.init_methods()
 
-    def out_string(self,string):
-            print(string)
+    def out_string(string):
+            print(str(string))
             
-    def out_int(self,int):
-            number = IntType(int)
+    def out_int(_int):
+            number = int(_int)
             print(number)
 
     # def init_methods(self):

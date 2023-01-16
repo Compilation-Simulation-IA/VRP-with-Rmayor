@@ -1,4 +1,4 @@
- (* An assignment has the form while*)
+(* An assignment has the form let in*)
 Simulate 10
 map {
     import "mapa.txt"
@@ -6,6 +6,8 @@ map {
 
 stops {
     s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+    s2 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+    s3 (address:"0,2", people:0)
 
 }
 
@@ -17,7 +19,8 @@ vehicle_type {
 
 clients {
     
-    c1 (name: "Coca Cola", stops_list: (s1),depot:s1 ) (*puede cambiarse por []*)
+    c1 (name: "Coca Cola", stops_list: (s1,s2),depot:s3 ) (*puede cambiarse por []*)
+    c2 (name: "Coca", stops_list: (s1,s2),depot:s3 )
 
 }
 
@@ -30,16 +33,18 @@ company {
 }
 demands
 {
-    func testing6(a: Int): IO 
+    func testing6(a:Int): Int
     {
-        pow<-1
-        count<-0
-        while pow < 4
-        {
-                count <- count + 1
-                pow <- pow * 2
+        pow <-a+ 1
+        while a<10
+        { pow<-a*10
+        a<-a*2
         }
-         out_string("El logaritmo en base 2 de ").out_int(a).out_string(" es ").out_int(count)
+        
+    
+        
+    out pow
     }
+    a <- testing6(3)
+    out_int(a)
 }
- 

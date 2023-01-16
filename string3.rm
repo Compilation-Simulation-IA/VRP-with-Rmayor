@@ -33,12 +33,17 @@ company {
 }
 demands
 {
-    func testing6(a: Int): IO 
+    func testing6(a:Int): Int
     {
-        pow <- 1
+        pow <-a+ 1
+        if a<10
+        then pow<-a*10
+        else pow<-a*2
+        fi
     
         
-    out none
+    out pow
     }
-    out_string(testing6(3))
+    a <- testing6(3)
+    out_int(a)
 }
