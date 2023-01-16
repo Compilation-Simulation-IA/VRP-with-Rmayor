@@ -61,7 +61,7 @@ class CompanyBlockNode:
         self.company_declarations = company_declarations
 
 class CompanyDeclarationNode:
-    def __init__(self, identifier, vehicle_type, count):
+    def __init__(self, vehicle_type,identifier, count):
         self.identifier = identifier
         self.vehicle_type = vehicle_type
         self.count = count
@@ -111,11 +111,11 @@ class FuncDeclarationNode(DeclarationNode):
         self.out_expr = return_expr
         self.body=body
 
-class VarDeclarationNode(ExpressionNode):
-    def __init__(self, idx: LexToken, expr=None):
-        self.id = idx.value
-        self.pos = (idx.lineno, idx.column)
-        self.expr = expr
+# class VarDeclarationNode(ExpressionNode):
+#     def __init__(self, idx: LexToken, expr=None):
+#         self.id = idx.value
+#         self.pos = (idx.lineno, idx.column)
+#         self.expr = expr
 
 
 class AssignNode(ExpressionNode):
@@ -123,10 +123,10 @@ class AssignNode(ExpressionNode):
         if isinstance(idx, LexToken):
             self.id = idx.value
             self.pos = (idx.lineno, idx.column)
-        else:
-            self.id = idx
-            self.pos = None
-            VarDeclarationNode(idx,expr)
+        # else:
+        #     self.id = idx
+        #     self.pos = None
+        #     VarDeclarationNode(idx,expr)
         self.expr = expr
 
 
@@ -173,11 +173,13 @@ class BinaryNode(ExpressionNode):
 
 
 class BinaryLogicalNode(BinaryNode):
+    def __init__(self, left, right):
+        super().__init__(left, right)
     pass
 
 
 class BinaryArithNode(BinaryNode):
-    pass
+        pass
 
 
 class UnaryNode(ExpressionNode):
@@ -208,23 +210,23 @@ class ConditionalNode(ExpressionNode):
         self.else_stm = else_stm
         self.pos = (tok.lineno, tok.column)
 
-class OptionNode(ExpressionNode):
-    def __init__(self, idx: LexToken, typex, expr):
-        self.id = idx.value
-        self.pos = (idx.lineno, idx.column)
-        self.typex = typex.value
-        self.type_pos = (typex.lineno, typex.column)
-        self.expr = expr
+# class OptionNode(ExpressionNode):
+#     def __init__(self, idx: LexToken, typex, expr):
+#         self.id = idx.value
+#         self.pos = (idx.lineno, idx.column)
+#         self.typex = typex.value
+#         self.type_pos = (typex.lineno, typex.column)
+#         self.expr = expr
 
 
-class LetNode(ExpressionNode):
-    def __init__(self, init_list, expr, tok):
-        self.init_list = init_list
-        self.expr = expr
-        self.pos = (tok.lineno, tok.column)
+# class LetNode(ExpressionNode):
+#     def __init__(self, init_list, expr, tok):
+#         self.init_list = init_list
+#         self.expr = expr
+#         self.pos = (tok.lineno, tok.column)
 
-    def __hash__(self):
-        return id(self)
+#     def __hash__(self):
+#         return id(self)
 
 
 class ConstantNumNode(AtomicNode):
@@ -267,63 +269,40 @@ class BinaryNotNode(UnaryArithNode):
 
 class NotNode(UnaryLogicalNode):
     def __init__(self, expr, tok):
-        super().expr = expr
-        super().pos = (tok.lineno, tok.column)
-        self.value = not expr
+        super().__init__(expr,tok)
 
 
 class PlusNode(BinaryArithNode):
     def __init__(self, left, right):
-        super().left = left
-        super().right = right
-        super().pos = left.pos
-        self.value = left+right
+        super().__init__(left, right)
 
 
 class MinusNode(BinaryArithNode):
     def __init__(self, left, right):
-        super().left = left
-        super().right = right
-        super().pos = left.pos
-        self.value = left - right
+        super().__init__(left, right)
     
 
 
 class StarNode(BinaryArithNode):
      def __init__(self, left, right):
-        super().left = left
-        super().right = right
-        super().pos = left.pos
-        self.value = left * right
+        super().__init__(left, right)
 
 
 class DivNode(BinaryArithNode):
      def __init__(self, left, right):
-        super().left = left
-        super().right = right
-        super().pos = left.pos
-        self.value = left / right
+        super().__init__(left, right)
 
 
 class LessNode(BinaryLogicalNode):
     def __init__(self, left, right):
-        super().left = left
-        super().right = right
-        super().pos = left.pos
-        self.value = left < right
+        super().__init__(left, right)
 
 
 class LessEqNode(BinaryLogicalNode):
     def __init__(self, left, right):
-        super().left = left
-        super().right = right
-        super().pos = left.pos
-        self.value = left <= right
+        super().__init__(left, right)
 
 
 class EqualNode(BinaryLogicalNode):
     def __init__(self, left, right):
-        super().left = left
-        super().right = right
-        super().pos = left.pos
-        self.value = left == right
+        super().__init__(left, right)

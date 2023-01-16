@@ -31,10 +31,7 @@ company {
 
 demands {
     
-    func main (): IO
-    {
-        out_string("Yay! This is the newest test")
-    }
+   s1+2
 }
 
 

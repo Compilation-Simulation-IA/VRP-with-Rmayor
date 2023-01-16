@@ -49,9 +49,8 @@ class Context:
 
 
 class VariableInfo:
-    def __init__(self, name, vtype, index=None):
+    def __init__(self, name, index=None):
         self.name = name
-        self.type = vtype
         self.index = index  # saves the index in the scope of the variable
 
     def __str__(self):
@@ -102,6 +101,7 @@ class Scope:
 
     def create_child(self):
         child = Scope(self)
+        child.index=self.index+1
         self.children.append(child)
         return child
 
