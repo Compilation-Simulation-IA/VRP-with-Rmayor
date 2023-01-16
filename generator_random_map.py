@@ -56,11 +56,11 @@ def write_map(graph,name):
     for i in range(heigth):
         line = []
         for j in range(width):
-            if G.nodes()[(i,j)]['value'].authority != None and G.nodes()[(i,j)]['value'].semaphore != None:
+            if graph.nodes()[(i,j)]['value'].authority != None and graph.nodes()[(i,j)]['value'].semaphore != None:
                 line.append(3)
-            elif G.nodes()[(i,j)]['value'].authority != None:
+            elif graph.nodes()[(i,j)]['value'].authority != None:
                 line.append(2)
-            elif G.nodes()[(i,j)]['value'].semaphore != None:
+            elif graph.nodes()[(i,j)]['value'].semaphore != None:
                 line.append(1)
             else:
                 line.append(0)

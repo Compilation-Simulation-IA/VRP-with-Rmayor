@@ -78,9 +78,18 @@ class MapNode:
         self.people = people #Si people = 0 entonces no es parada
         self.authority = authority
         self.semaphore = semaphore
+
+    def __repr__(self) -> str:
+        return f"<Map Node: {self.id}>"
+    
+    def __str__(self) -> str:
+        return f"<Map Node: {self.id}, People: {self.people}, Authority: {self.authority}, Semaphore: {self.semaphore}>"
         
 
-
+    def __eq__(self, obj) -> bool:
+        if self.id == obj.id:
+            return True
+        return False
 
 #class Distribution_Type: 
 #    """ Clase para guardar todas las distribuciones que siguen las variables del problema"""

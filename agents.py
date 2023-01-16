@@ -15,11 +15,10 @@ class Color(Enum):
     RED = 3
 class Vehicle:
     """Representa los vehículos de la compañía"""
-    percent_of_deterioration_per_model = {"Lada": 5, "Moskovich": 7,"Ford": 5, "Mercedes Venz":3}
-
-    def __init__(self, ID, capacity, initial_miles, risk_probability, logger, map): #current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float
+    
+    def __init__(self, ID, capacity, initial_miles, risk_probability, logger, map, initial): #current_location: Dict, capacity: int, clients_on_board: int, initial_miles: float, std_dev: float, probability: float
         self.id = ID
-        self.current_location = None
+        self.current_location = initial
         self.days_off = 0 #disponibilidad del vehiculo. Si es > 0 representa los dias que no se usara
         self.capacity = capacity
         self.initial_miles = initial_miles
@@ -28,8 +27,7 @@ class Vehicle:
         self.people_on_board = 0
         self.risk_probability = risk_probability
         self.speed = 0 #Representa los km/h
-        self.taxes = 0
-        self.chage_speed()
+        self.taxes = 0        
         self.count_moves = 0 
         self.logger = logger
         self.initial = None # posicion inicial el deposito de la compania
@@ -37,8 +35,12 @@ class Vehicle:
         self.free_pass_authority = False
         self.map = map
         self.last_stop = None
-        self.turning_back = False
-        
+        self.turning_back = False    
+        self.change_speed()
+        self.principal_stops = []
+        self.distance = 0 #es en km
+
+        #self.act ={'move':lambda : self.move(), 'load':lambda :self.load(), 'unload':lambda: self.unload(), 'at_semaphore':lambda: self.at_semaphore(), 'at_authority':lambda: self.at_authority()}
         
 
     def __repr__(self) -> str:
@@ -47,16 +49,22 @@ class Vehicle:
     def __str__(self):
         return f"<Vehicle: ID {self.id}>" #, Model: {self.model}>" 
 
-    def move(self, origin, destination):
+    def move(self):
         """Mueve al vehículo a su próximo destino"""
-        speed = self.speed
-        #self.miles_traveled += cost
-        self.chage_speed()
-        self.count_moves += 1
-        self.current_location = self.route[self.count_moves]
-        self.logger.log(f"El {self} se desplazo de {origin} a {destination} con una velocidad {speed}.")
+        
+        # TODO aumentar millas recorridas
 
-        return speed        
+        speed = self.speed
+        self.count_moves += 1
+        cost = self.map[ast.literal_eval(self.current_location.id)][ast.literal_eval(self.route[self.count_moves].id)]['weight']
+        self.miles_traveled += cost
+        self.distance += cost
+        self.change_speed()        
+        origin = self.current_location
+        self.current_location = self.route[self.count_moves]
+        self.logger.log(f"El {self} se desplazo de {origin} a {self.current_location} con una velocidad {speed}.")
+
+        return speed, cost      
     
     def change_speed(self):
         self.speed = int(random.gauss(45, 10))        
@@ -68,7 +76,7 @@ class Vehicle:
     
     
     # Devuelve la cantidad de clientes que pudo recoger en esa parada
-    def load(self, current_pos):
+    def load(self):
         """Modifica la cantidad de clientes que quedan en la parada y la
          capacidad disponible en el vehículo"""
 
@@ -79,27 +87,27 @@ class Vehicle:
         self.last_stop = self.current_location
         self.people_on_board += people
         self.current_location.people -= people 
-        self.logger.log(f"El {self} cargo {people} personas en la parada {current_pos}.")
+        self.logger.log(f"El {self} cargo {people} personas en la parada {self.current_location}.")
 
 
         if self.capacity == self.people_on_board:
             self.turning_back = True
-            self.change_route()
+            self.route = self.go_to_depot()
         
         return people
         
     
-    def unload(self, current_pos):
+    def unload(self):
         '''Descarga a los pasajeros en la posicion current_stop'''
 
         people = self.people_on_board
         self.people_on_board = 0
-        self.logger.log(f"El {self} descargo {people} personas en la parada {current_pos}.")
+        self.logger.log(f"El {self} descargo {people} personas en la parada {self.current_location}.")
         return people
 
-    def at_semaphore(self, current_pos):
+    def at_semaphore(self):
         wait = 0
-        semaphore = self.current_location.semaphore
+        semaphore = self.current_location.semaphore        
         color = semaphore.state
             
         semaphore_time_left = sum(semaphore.color_range) - semaphore.time_color
@@ -119,129 +127,98 @@ class Vehicle:
 
         return wait
 
-    def at_authority(self, decision):
-        if decision == 2:
-            # cambiar ruta
-            pass
+    def at_authority(self):
+        # cambiar ruta
+        self.route=self.change_route()
+            
+
+    def go_to_depot(self):
+        
+        stops = [self.current_location, self.route[len(self.route)-1]]        
+
+        path = self.__get_complete_route(stops)
+ 
+        path =self.route[0:self.count_moves + 1] + path[:len(path)-1] + list(reversed(path)) + self.route[self.count_moves:] #ver como arreglar esto
+
+        return path
+
 
     def change_route(self):
-        pass
-
-    def relocate_route(self, origin, routes):
        
-        start = len(routes)
-        stops = []     
-             
+        start = len(self.route)
+        stops = []              
 
-        for i in range(len(routes)):
-            if routes[i].id == origin:
+        for i in range(len(self.route)):
+            if self.route[i].id == self.current_location.id:
                 start = i
-                print(start)
-                stops.append(ast.literal_eval(routes[i].id))
+                stops.append(self.route[i])
 
-            if i > start and routes[i].people > 0:
-                stops.append(ast.literal_eval(routes[i].id))
-
-        stops.append(ast.literal_eval(routes[len(routes)-1].id)) 
-
-        origin= ast.literal_eval(origin)
-        not_available = ast.literal_eval(routes[start+1].id)
-
-        temp = self.graph_map[origin][not_available]['weight']
-        self.graph_map[origin][not_available]['weight'] = float('inf')       
+            if i > start and self.route[i] in self.principal_stops:
+                stops.append(self.route[i])
+                
 
         
-        path = self.company.get_complete_route(stops,self.graph_map)
+        origin= ast.literal_eval(self.current_location.id)
+        not_available = ast.literal_eval(self.route[start+1].id)
 
-        path = routes[0:start+1] + path   
+        temp = self.map[origin][not_available]['weight']
+        self.map[origin][not_available]['weight'] = float('inf')     
 
-        self.graph_map[origin][not_available]['weight']=temp
+        
+        path = self.__get_complete_route(stops)
+
+        path = self.route[0:start+1] + path   
+
+        self.map[origin][not_available]['weight']=temp
 
         return path
         
   
     def plan(self):
 
-        if self.turning_back and self.current_location.id == self.last_stop.id and self.capacity != self.people_on_board:
+        if self.turning_back and self.current_location == self.last_stop and self.capacity != self.people_on_board:
             self.turning_back = False
 
         if self.current_location.authority != None and not self.free_pass_authority:
             self.free_pass_authority = True
-            return 'at_authority()'
-        elif (self.current_location.people > 0 and self.people_on_board != self.capacity and not self.turning_back) or (self.turning_back and self.current_location.people > 0 and self.people_on_board != self.capacity and self.current_location.id == self.last_stop.id):
+            return 'at_authority'
+        elif self.current_location in self.principal_stops and ((self.current_location.people > 0 and self.people_on_board != self.capacity and not self.turning_back) or (self.turning_back and self.current_location.people > 0 and self.people_on_board != self.capacity and self.current_location == self.last_stop)):
             return 'load'
-        elif self.current_location.id == self.route[len(self.route)-1] and self.people_on_board > 0:
+        elif self.current_location == self.route[len(self.route)-1] and self.people_on_board > 0:
             return 'unload'
         elif self.current_location.semaphore != None and not self.free_pass:
+            self.free_pass = True
             return 'at_semaphore'        
         else:
             self.free_pass_authority = False
             self.free_pass = False
             return 'move'
 
-        
-
 
     def goal_test(self):
 
-        if self.current_location.id != self.route[len(self.route)-1].id:
+        if self.current_location != self.route[len(self.route)-1]:
             return False
 
-        for node in self.route:
+        for node in self.principal_stops:
             if node.people > 0:
                 return False
 
         return True
+
+    def __get_complete_route(self, stops):
+
+        """Obtiene la ruta completa a partir de una secuencia de paradas"""
+
+        path = []
+        nodes = nx.get_node_attributes(self.map,'value')
         
+        for i in range(len(stops)-1):
+            shortest_path = nx.shortest_path(self.map,ast.literal_eval(stops[i].id),ast.literal_eval(stops[i+1].id),weight='weight')
+            for j in range(1,len(shortest_path)):
+                path.append(nodes[shortest_path[j]])
 
-    def plan(self):
-        '''Crea el problema de planificacion del vehiculo para la simulacion'''
-
-        if self.current_location == None:
-            self.current_location = self.route[0]
-
-        actions = [Action('move(v,x,y)',
-                        precond='Adj(x,y) & At(v,x) & Empty(x) & FreePass(x)',
-                        effect='~At(v,x) & At(v,y)',
-                        domain='Vehicle(v) & Node(x) & Node(y)'),
-                Action('load(v,x)',
-                        precond='At(v,x) & ~Empty(x)',
-                        effect='Empty(x)',
-                        domain='Stop(x) & Vehicle(v)'),
-                Action('unload(v,x)',
-                        precond = 'At(v,x) & Empty(x)',
-                        effect = '~Empty(x)',
-                        domain= 'Vehicle(v) & End(x)'),
-                Action('at_semaphore(v,x)',
-                        precond='At(v,x) & Empty(x) & ~FreePass(x)',
-                        effect= 'FreePass(x)',
-                        domain='Vehicle(v) & Semaphore(x)'),                                    
-                ]
-
-        goals = f'~Empty({self.route[len(self.route)-1].id})'
-        initial =f'At({self.id},{self.current_location.id})'
-        domain = f'Vehicle({self.id}) & End({self.route[len(self.route)-1].id})'
-
-        for i in range(len(self.route)):
-                     
-            if i < (len(self.route) - 1):
-                initial += f' & Adj({self.route[i].id},{self.route[i+1].id})'
-
-            if self.route[i].people > 0:
-                initial += f' & ~Empty({self.route[i].id})'
-                domain += f' & Stop({self.route[i].id}) & Node({self.route[i].id})'
-            else:
-                initial += f' & Empty({self.route[i].id})'
-                domain += f' & Node({self.route[i].id})'
-
-            if self.route[i].semaphore != None:
-                initial += f' & ~FreePass({self.route[i].id})'
-                domain += f' & Semaphore({self.route[i].id})'
-            else:
-                initial += f' & FreePass({self.route[i].id})'
-
-        return PlanningProblem(initial=initial, goals=goals, actions=actions, agent=self, domain=domain)
-
+        return path
         
 class Semaphore:
     """Representa los semaforos en el mapa"""
@@ -258,25 +235,23 @@ class Semaphore:
     def __str__(self) -> str:
         return f"<Semaphore: Position {self.position}, State: {self.state.name}>"
     
-    def update_color(self):
-        if self.time_color == sum(self.color_range) :
-            self.time_color = 0
-        else:
-            self.time_color += 1
-
-        if self.time_color < self.color_range[0]:
+    def update_color(self, global_time):
+        self.time_color = global_time % sum(self.color_range)
+        if self.time_color <= self.color_range[0]:
             self.state = Color.GREEN
-        elif self.time_color >self.color_range[0] and self.time_color < self.color_range[0] + self.color_range[1]:
+        elif self.time_color >self.color_range[0] and (self.time_color < self.color_range[0] + self.color_range[1]):
             self.state = Color.YELLOW
         else:
             self.state = Color.RED
-            
+        
+        
+
 class Authority:
     """Representa la autoridad del trafico """
-    def __init__(self, ID , map = None, probability = 0.5):
+    def __init__(self, ID, probability = 0.5):
         self.id = ID
         self.probability = probability  # Probabilidad de que la autoridad para al vehículo. Tiene que estar entre 0 y 1e
-        self.map = map
+        
 
     def __repr__(self) -> str:
         return f"<Authority({self.id})>"
@@ -302,7 +277,7 @@ class Authority:
         # Añadir la autoridad a la arista elegida aleatoriamente
         graph[start][end]['weight']['traffic_authorities'].append(self) #añadir +1 al costo de la arista por añadir una autoridad
         
-    def stop_vehicle(self, vehicle: Vehicle) -> int:
+    def stop_vehicle(self, vehicle: Vehicle, graph) -> int:
         """Detiene al vehiculo para ponerle una multa si excede la velocidad. El vehiculo continua su ruta."""
         result = 0
         if vehicle.speed > 60:
@@ -328,10 +303,10 @@ class Authority:
             dest =ast.literal_eval(next_stop)            
 
             if dest != ast.literal_eval(route[start+1].id):
-                weight = self.map[origin][ast.literal_eval(route[start+1].id)]['weight']
-                self.map.remove_edge(origin,ast.literal_eval(route[start+1].id))
-                path = nx.shortest_path(self.map,origin,dest, weight='weight')
-                self.map.add_edge(origin,ast.literal_eval(route[start+1].id),weight=weight)
+                weight = graph[origin][ast.literal_eval(route[start+1].id)]['weight']
+                graph.remove_edge(origin,ast.literal_eval(route[start+1].id))
+                path = nx.shortest_path(graph,origin,dest, weight='weight')
+                graph.add_edge(origin,ast.literal_eval(route[start+1].id),weight=weight)
 
             if path != None:
                 result = 2 #devia el vehicle
@@ -355,8 +330,11 @@ class Company:
         self.vehicle_route = []
         self.substitute = {}# diccionario de vehiculo que esta sustituyendo al que esta en mantenimiento
         # y era del cliente. La ruta que era original al vehiculo que se mando al mantenimiento
-        self.available_vehicles = [] # vehiculos que no estan asignados a ningun 
-        self.__assign()
+        self.available_vehicles = [] # vehiculos que no estan asignados a ningun
+        self.assign()
+        print(self.vehicle_client)
+        print(self.vehicle_stop)
+        print(self.vehicle_route)
         
         self.logger = logger
 
@@ -366,14 +344,13 @@ class Company:
     def __str__(self) -> str:
         return f"<Company: {self.name}>"
 
-    def __assign(self):
+    def assign(self):
 
         self.__assign_vehicle_to_client()
         self.__assign_stops_to_all_vehicles()
         self.__check_assign_vehicles()
 
         self.__get_route_of_vehicles()
-
 
     def __check_assign_vehicles(self):
 
@@ -386,17 +363,15 @@ class Company:
         i = 0
         while i < len(not_assigned_vehicles):
             self.vehicle_stop.pop(not_assigned_vehicles[i])
+            i += 1
 
 
-        if len(not_assigned_vehicles) >0:
+        if len(not_assigned_vehicles) > 0:
             for value in self.vehicle_client.values():
                 for v in value:
                     if v.id in not_assigned_vehicles:
                         value.remove(v)
-
-
-
-                    
+                                            
     def __assign_stops_to_all_vehicles(self):
 
         for c in self.vehicle_client.keys():
@@ -464,7 +439,9 @@ class Company:
             route_nodes.append(self.vehicle_stop[v][len(self.vehicle_stop[v])-1])
 
             route_nodes = self.__get_complete_route(route_nodes)
-            self.vehicle_route.update({v: self.get_vehicle_from_id(v),'R' + v:route_nodes})
+            vehicle = self.__get_vehicle_from_id(v)
+            self.vehicle_route.append({v: vehicle ,'R' + v:route_nodes})
+            vehicle.principal_stops=self.vehicle_stop[v]
      
 
     def __get_distance_beetween_stops(self, stops):
@@ -486,12 +463,12 @@ class Company:
 
         """Obtiene la ruta completa a partir de una secuencia de paradas"""
 
-        path = []
+        path = [stops[0]]
         nodes = nx.get_node_attributes(self.map,'value')
         
         for i in range(len(stops)-1):
             shortest_path = nx.shortest_path(self.map,ast.literal_eval(stops[i].id),ast.literal_eval(stops[i+1].id),weight='weight')
-            for j in range(len(shortest_path)):
+            for j in range(1,len(shortest_path)):
                 path.append(nodes[shortest_path[j]])
 
         return path
@@ -499,14 +476,23 @@ class Company:
     def __get_vehicle_from_id(self, vehicle_id):
         """Devuelve el objeto vehiculo a partir de su id"""
 
-        for a in self.assignations:
-            if list(a.keys())[0] == str(vehicle_id):
-                return list(a.values())[0]
+        for v in self.vehicles:
+            if v.id == str(vehicle_id):
+                return v
+    
+    def __get_route_from_id(self, route_id):
+        """Devuelve el objeto vehiculo a partir de su id"""
+
+        for item in self.vehicle_route:
+            if str(route_id) in item.keys():
+                return item[str(route_id)]
 
     def start_route(self, vehicle_id, route_id):
         vehicle = self.__get_vehicle_from_id(vehicle_id)
+        vehicle.distance = 0
         self.logger.log(f"{self}: El {vehicle} acaba de comenzar la ruta.")
-        return vehicle.plan()
+        vehicle.route = self.__get_route_from_id(route_id)
+        return vehicle
 
          
         
@@ -515,7 +501,7 @@ class Company:
         self.vehicles.append(new_vehicle)
         self.budget -= cost
     
-    def pay_taxes(self, vehicle_id) -> int: 
+    def pay_taxes(self, vehicle_id): 
         """Paga las multas de los vehiculos en esa ruta si hubo y tambien cobra al cliente por haber
         pedido el servicio de taxis."""
         vehicle = self.__get_vehicle_from_id(vehicle_id)
@@ -523,10 +509,10 @@ class Company:
         self.logger.log(f"{self} tuvo perdidas de {result} pesos en multas por el {vehicle}.")
         vehicle.taxes = 0
         income = 10 * vehicle.capacity * len(vehicle.route) # El pago por los servicios
+        gas = 10*(vehicle.distance/30) # Cada 30km gasta 1 litro de gasolina que cuesta 10 pesos.
         self.budget +=income
         self.logger.log(f"{self} tuvo ganancias de {income} pesos por los servivios prestados por el {vehicle}.")
-        self.budget -= result
-        return result
+        self.budget = self.budget - (result + gas)
 
     def check_vehicle(self, vehicle_id):
         vehicle = self.__get_vehicle_from_id(vehicle_id)
@@ -545,6 +531,7 @@ class Company:
         """Cuando un vehiculo se manda a mantenimiento buscar sustituto si se puede."""
         #Ver si hay vehiculos disponibles: Son los vehiculos que estan en self.vehicles que no estan
         # en self.vehicles_client:
+
         clientid = None
         if len(self.available_vehicles) != 0 or len(self.vehicle_client[c]) > 1 or self.budget - 1500 > 0:
             if len(self.available_vehicles) != 0:
@@ -590,7 +577,7 @@ class Company:
 
         for a in self.vehicle_route:            
             v,r = a.keys()
-            if v.days_off == 0:#ARREGLAR PQ V,R SON NOMBRES Y NO OBJETOS
+            if a[v].days_off == 0:
 
                 new_plan = PlanningProblem(initial = f'~Done({v},{r}) & ~Checked({v}) & ~Payed({v})',
                                             goals = f'Checked({v})',
@@ -613,6 +600,9 @@ class Company:
                 plans.append(new_plan)
 
         return plans
+
+    def bankruptcy(self):
+        return self.budget <= 0
         
 
              
