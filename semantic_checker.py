@@ -157,8 +157,18 @@ class Semantic_Check:
     #         self.visit(node.expr, scope)
     #     else:
     #         self._define_default_value(vtype, node)
-            
-        
+    
+    @visitor.when(ListNode)
+    def visit(self,node:ListNode,scope:Scope):
+        for i in node.list:
+            self.visit(node.expr,scope)
+    
+    
+    @visitor.when(ListNode)
+    def visit(self,node:IndexNode,scope:Scope):
+        if node.idlist != 'stops' and node.idlist !="clients" and node.idlist not in self.visitor.variables:
+            SemanticError("Lista no definida")
+
     @visitor.when(AssignNode)
     def visit(self, node:AssignNode, scope:Scope):
         self.visit(node.expr, scope)

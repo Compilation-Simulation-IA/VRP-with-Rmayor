@@ -24,7 +24,8 @@ reserved = {
     'not': 'not',
     'true': 'true',
     'func': 'func',
-    'out': 'out'
+    'out': 'out',
+    'in':'in'
 }
 
 tokens = [
@@ -36,7 +37,8 @@ tokens = [
     'cpar',     # ') '
     'ocur',     # '{'
     'ccur',     # '} '
-
+    'lbracket',
+    'rbracket',
     'larrow',   # '<-'
     'arroba',   # '@'
     'nox',          # ~

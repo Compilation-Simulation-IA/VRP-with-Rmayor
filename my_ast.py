@@ -116,7 +116,14 @@ class FuncDeclarationNode(DeclarationNode):
 #         self.id = idx.value
 #         self.pos = (idx.lineno, idx.column)
 #         self.expr = expr
+class ListNode(Node):
+    def __init__(self,list):
+        self.list=list
 
+class IndexNode(Node):
+    def __init__(self,idlist,index):
+        self.idlist=list
+        self.index = index
 
 class AssignNode(ExpressionNode):
     def __init__(self, idx: LexToken, expr):

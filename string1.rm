@@ -1,12 +1,13 @@
 
 Simulate 10
 map {
-    import "map1.txt"
+    import "map_test.txt"
 }
 
 stops {
-    s1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
-    d1 (address:"156A, #107, Playa, La Habana, Cuba", people:5)
+    s1 (address:"(0,1)", people:5)
+    s2 (address:"(3,2)", people:20)
+    d1 (address:"(4,9)", people:0)
 }
 
 vehicle_type {
@@ -18,46 +19,18 @@ vehicle_type {
 clients {
     
     c1 (name: "Coca Cola", stops_list: (s1), depot:d1 ) (*puede cambiarse por []*)
+    c2 (name: "Coca Cola", stops_list: (s2), depot:d1 )
 
 }
 
 company {
     budget: 1000000
-    depot (address:"156A, #107, Playa, La Habana, Cuba")
+    depot (address:"(7,6)")
     small v1: 5
     medium v2: 3
     
 }
 
 demands {
-    
-   s1+2
+   c1+c2
 }
-
-
-
-
-
-
-
-
-
-(*AGENTS { 
-    func Main {
-        str <- "The big brown fox jumped over the fence";
-    	main() : Object
-        {
-            out_string("Yay! This is the newest test" );
-        }
-    };
-};
-
-CREATE {
-    vehicle_type big: 35
-    vehicle_type small: 10
-    vehicle_type medium: 18
-}
-(*
-this is a test
-*)
-*)

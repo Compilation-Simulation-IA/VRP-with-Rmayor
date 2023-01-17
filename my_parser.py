@@ -268,14 +268,31 @@ class RmayorParser(Parser):
 
     def p_expr_while(self, p):
         'factor : while expr ocur multiexpr ccur'
-        p[0] = WhileNode(p[2], p[4], p.slice[1])
         
+        p[0] = WhileNode(p[2], p[4], p.slice[1])
+
     def p_expr_while_error(self, p):
         '''factor : while error ocur multiexpr ccur
                 | while expr ocur error ccur
                 | while expr ocur multiexpr error
                 | while expr error multiexpr ccur'''
         p[0] = ErrorNode()
+
+    # def p_factor_list(self, p):
+    #     'factor : opar items cpar'
+    #     p[0] = ListNode(p[2])
+
+    # def p_items(self, p):
+    #     '''items : items comma atom
+    #              | atom'''
+    #     if len(p) == 2:
+    #         p[0] = [p[1]]
+    #     else:
+    #         p[0] = p[1] + [p[3]]
+    
+    # def p_factor_index(self, p):
+    #     'factor : factor lbracket expr rbracket'
+    #     p[0] = IndexNode(p[1], p[3])
 
     def p_atom_num(self, p):
         'atom : num'

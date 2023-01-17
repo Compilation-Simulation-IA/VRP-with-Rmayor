@@ -5,12 +5,15 @@ import random
 import networkx as nx
 import ast
 from simulation import VRP_Simulation
+import ast
 
 
 class Generator:
 
-    def __init__(self,vehicles, stops, depot_company, days, company_budget, map) -> None:
+    def __init__(self,vehicles,vehicle_types, clients,stops, depot_company, days, company_budget, map) -> None:
         self.vehicles = vehicles
+        self.vehicle_types=vehicle_types
+        self.clients=clients
         self.stops = stops
         self.depot_company = depot_company
         self.days= days
@@ -21,17 +24,18 @@ class Generator:
 
         """Crea una simulacion"""
 
-        vehicles = self.__process_vehicles()
+        
         stops = self.__process_stops()
-        all_stops = []
+        all_stops = {}
 
         for value in stops.values():
-            for stop in value:
-                all_stops.append(stop)
+            for stop in value[0]:
+                all_stops.update({stop.id:stop})
 
         map = self.__generate_graph(all_stops)  
-        company = Company('Compañía de Transporte',self.company_budget,map,stop,vehicles,self.depot_company, Logger())
-
+        vehicles = self.__process_vehicles(map)
+        company = Company('Compañía de Transporte',self.company_budget,map,stops,vehicles,self.depot_company, Logger())
+        #poner depot MapNode
         simulation = VRP_Simulation(map,company,self.days)
         
         simulation.start_simulation()
@@ -46,34 +50,36 @@ class Generator:
 
         stops = {}
 
-        for stop in self.stops.values():
-            client_id = stop[0]
-            client_depot = {stop[2].address:stop[2].people}
+        for client in self.clients:
+            if self.clients[client][2] in  self.stops:
+                client_depot = MapNode(self.stops[self.clients[client][2]][0],self.clients[client][2][1])
             client_stops = []
-            for s in stop[1]:
-                client_stops.append({s.address:s.people})
-            stops.update({client_id:[client_stops,client_depot]})
+            for s in self.clients[client][1]:
+                client_stops.append(MapNode(self.stops[s][0],self.stops[s][1]))
+            stops.update({client:[client_stops,client_depot]})
 
         return stops
 
 
-    def __process_vehicles(self):
+    def __process_vehicles(self,map):
 
         """A partir de lo recibido de la compilacion,
         se crea una lista de vehiculos"""
 
         
         vehicles =[]
-
-        for vehicle in self.vehicles.values():
-            for i in range(int(vehicle[1])):
-                name = str(vehicle[0][0].name) + str(i)
-                capacity = vehicle[0][0].capacity
-                miles = vehicle[0][0].miles
-                probability = random.random()
-                v = Vehicle(name,capacity,miles,probability)
-                vehicles.append(v)
-        
+        for vehicle in self.vehicles:
+            for i in range(int(self.vehicles[vehicle][1])):
+                if self.vehicles[vehicle][0] in self.vehicle_types:
+                    name = vehicle
+                    capacity = self.vehicle_types[self.vehicles[vehicle][0]][1]
+                    miles = self.vehicle_types[self.vehicles[vehicle][0]][2]
+                    probability = random.random()
+                    logger=Logger()
+                    initial=MapNode(self.depot_company,0)
+                    vehicle_map=map
+                    v = Vehicle(name,capacity,miles,probability,logger,vehicle_map,initial)
+                    vehicles.append(v)
         return vehicles
 
     def __generate_graph(self, all_stops):
@@ -90,12 +96,12 @@ class Generator:
                     break
                 semaphore = None
                 authority = None
-                obstacle = False
-                people = 0
+                
                 if not line.startswith('Cost') and not cost:
-                    line = line.removeprefix('[').removesuffix(']')
+                    line = line[:len(line)-2].removeprefix('[').removesuffix(']')
                     line =line.split(',')                    
                     for i in range(len(line)):
+                        index = f'({count},{i})'
                         if int(line[i]) == 1:
                             semaphore = Semaphore(f'({count},{i})')
                         if int(line[i]) == 2:
@@ -103,9 +109,13 @@ class Generator:
                         if int(line[i]) == 3:
                             semaphore = Semaphore(f'({count},{i})')
                             authority = Authority(f'({count},{i})')
-                        if (count, i) in all_stops.keys():
-                            people = all_stops[(count, i)]
-                        graph.add_node((count,i),value = MapNode(f'({count},{i})',people,authority,semaphore))
+                        if index in all_stops.keys():
+                            value = all_stops[index]
+                            value.authority = authority
+                            value.semaphore = semaphore
+                            graph.add_node((count,i),value = value)
+                        else:
+                            graph.add_node((count,i),value = MapNode(f'({count},{i})',0,authority,semaphore))
                 elif line.startswith('Cost') or cost:
                     cost = True
                     if line.startswith('Cost'):
@@ -120,7 +130,7 @@ class Generator:
         return graph
                         
 
-gen = Generator([], [], [], 1, 100, 'map.txt')
+gen = Generator([],[],[], [], [], 1, 100, 'map.txt')
 
                         
 

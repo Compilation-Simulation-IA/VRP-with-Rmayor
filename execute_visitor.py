@@ -4,7 +4,7 @@ from tools import Context, Scope
 import visitor
 from utils import is_basic_type
 from my_ast import *
-# from  generate import Generator 
+from  generate import Generator 
 from agents import *
 from my_visitor import Visitor
 
@@ -76,9 +76,9 @@ class Execute:
                 if type(dec) is not FuncDeclarationNode: 
                     self.visit(dec,scope)
             i+=1
-    #   if Visitor.simulate:
-    #      gen = Generator(self.visitor.vehicles,self.visitor.clients,self.visitor.depot,self.visitor.days,self.visitor.budget,self.visitor.map)
-    #      gen.generate_simulation()
+        if self.visitor.simulate:
+            gen = Generator(self.visitor.vehicles_count,self.visitor.vehicle_types,self.visitor.clients,self.visitor.stops,self.visitor.depot,self.visitor.days,self.visitor.budget,self.visitor.map)
+            gen.generate_simulation()
 
     internals={}
     @visitor.when(FuncDeclarationNode)
@@ -111,7 +111,24 @@ class Execute:
     # def visit(self, node:VarDeclarationNode, scope:Scope):
     #    pass
             
-        
+    @visitor.when(ListNode)
+    def visit(self,node:ListNode,scope:Scope):
+        for i in node.list:
+            self.visit(node.expr,scope)
+    
+    
+    @visitor.when(ListNode)
+    def visit(self,node:IndexNode,scope:Scope):
+        if node.idlist == 'stops':
+            return self.visitor.stops(node.index)[0]
+        if node.idlist =="clients":
+            return self.visitor.clients(node.index)[0]
+        else: 
+            if node.index>=len(self.visitor.variables[node.idlist]):
+                SemanticError("Indice fuera de rango")
+            return self.visitor.variables[node.idlist][node.index]
+
+    
     @visitor.when(AssignNode)
     def visit(self, node:AssignNode, scope:Scope):
         self.visitor.variables[node.id]=self.visit(node.expr, scope)
@@ -131,9 +148,9 @@ class Execute:
 
     @visitor.when(VariableNode)
     def visit(self, node:VariableNode, scope:Scope):
-        if node.id in self.visitor.stops:
+        if node.lex in self.visitor.stops:
             return self.visitor.stops[node.lex]
-        if node.id in self.visitor.clients:
+        if node.lex in self.visitor.clients:
             return self.visitor.clients[node.lex]
         for i in self.internals:
             if node.lex == i:
@@ -212,29 +229,29 @@ class Execute:
     
     @visitor.when(PlusNode)
     def visit(self, node:PlusNode, scope:Scope):
-        if node.left in self.visitor.stops:
-            if type(node.right) == int:
-                self.visitor.stops[node.left]['people']+=int(node.right)
+        if type(node.left) is VariableNode and node.left.lex in self.visitor.stops:
+            if type(node.right) is ConstantNumNode:
+                self.visitor.stops[node.left.lex][1]+=int(node.right.lex)
                 return
-            elif node.right in self.visitor.stops:
-                self.visitor.stops[node.left]['people']+=self.visitor.stops[node.right]['people']
-                self.visitor.stops.pop(node.right)
+            elif type(node.right) is VariableNode  and node.right.lex in self.visitor.stops:
+                self.visitor.stops[node.left.lex][1]+=self.visitor.stops[node.right.lex][1]
+                self.visitor.stops.pop(node.right.lex)
                 return
-        if node.left in self.visitor.clients:
-            if  node.right in self.visitor.stops:
-                for i in self.visitor.clients[node.right]['stops']:
-                    self.visitor.clients[node.left]['stops'].append(self.visitor.clients[node.right]['stops'][i])
-                self.visitor.clients.pop(node.right)
+        if type(node.left) is VariableNode and node.left.lex in self.visitor.clients:
+            if  type(node.right) is VariableNode and node.right.lex in self.visitor.clients:
+                for i in range (len(self.visitor.clients[node.right.lex][1])):
+                    self.visitor.clients[node.left.lex][1].append(self.visitor.clients[node.right.lex][1][i])
+                self.visitor.clients.pop(node.right.lex)
                 return
         return self.visit(node.left,scope)+self.visit(node.right,scope)
 
     @visitor.when(MinusNode)
     def visit(self, node:MinusNode, scope:Scope):
-        if node.left in self.visitor.stops:
-            if type(node.right) == int:
-                self.visitor.stops[node.left]['people']-=int(node.right)
-                if self.visitor.stops[node.left]['people']<0:
-                    self.visitor.stops[node.left]['people']=0
+        if type(node.left) is VariableNode and node.left.lex in self.visitor.stops:
+            if type(node.right) is ConstantNumNode:
+                self.visitor.stops[node.left][1]-=int(node.right.lex)
+                if self.visitor.stops[node.left][1]<0:
+                    self.visitor.stops[node.left][1]=0
                 return
         return self.visit(node.left,scope) - self.visit(node.right,scope)
     
@@ -244,6 +261,16 @@ class Execute:
 
     @visitor.when(DivNode)
     def visit(self, node:DivNode, scope:Scope):
+        if type(node.left) is VariableNode and node.left.lex in self.visitor.clients:
+            if  type(node.right) is ConstantNumNode:
+                if int(node.right.lex)>len(self.visitor.clients[node.left.lex][1]):
+                    SemanticError("No se puede fraccionar "+node.left.lex+" en "+node.right.lex)
+                else:
+                    parts = np.array_split(self.visitor.clients[node.left.lex][1],int(node.right.lex))
+                    for i, part in enumerate(parts):
+                        self.visitor.clients[f"{node.left.lex}{i}"]=[self.visitor.clients[node.left.lex][0],part,self.visitor.clients[node.left.lex][2]]
+                    self.visitor.clients.pop(node.left.lex)
+                    
         return self.visit(node.left,scope) / self(node.right,scope)
     
     @visitor.when(LessNode)

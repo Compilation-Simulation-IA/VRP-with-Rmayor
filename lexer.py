@@ -174,12 +174,12 @@ class RmayorLexer:
         self._update_column(t)
         return t
 
-    def t_osquare(self, t):
+    def t_lbracket(self, t):
         r'\['
         self._update_column(t)
         return t
 
-    def t_csquare(self, t):
+    def t_rbracket(self, t):
         r'\]'
         self._update_column(t)
         return t
