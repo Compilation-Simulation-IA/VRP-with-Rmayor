@@ -226,15 +226,12 @@ def best_first_graph_search(problem, f, display=False):
         action = problem.actions(node.state)
         if len(action) > 0:
             problem.act(expr(str(action[0])))
-        print('action:' + str(action))
-        print('Node Frontier: ' + str(node))
         if problem.goal_test(node.state):
             if display:
                 print(len(explored), "paths have been expanded and", len(frontier), "paths remain in the frontier")
             return node
         explored.add(node.state)
         for child in node.expand(problem):
-            print('Frontier Child: ' + str(child))
             if child.state not in explored and child not in frontier:
                 frontier.append(child)
             elif child in frontier:

@@ -6,71 +6,6 @@ import networkx as nx
 import random
 
 """ Map Structures """
-
-#class Stop:
-#    """Representa las paradas donde se encuentran los clientes"""
-#    def __init__(self, ID: int, total_client: int, location: Tuple[float, float], time_waiting: int):
-#        self.id = ID
-#        self.total_client = total_client
-#        self.current_clients_in_stop = total_client #la cantidad de clientes que hay en la parada en ese momento. Tiene que ser menor que el total_client
-#        self.time_waiting = time_waiting #time_waiting es en minutos
-#        self.location = location
-#
-#    def __repr__(self) -> str:
-#        return f"<Stop({self.id})>"
-#    
-#    def __str__(self) -> str:
-#        return f"<Stop: ID: {self.id}, Location: {self.location}>"
-#
-#    def __gt__(self, other_stop):
-#        return self.index > other_stop.index
-#
-#    def increase_wait(self, minutes):
-#        self.time_waiting += minutes
-#
-#    def decrease_wait(self, minutes):
-#        self.time_waiting = max(self.time_waiting - minutes, 0)
-#
-#    def add_client(self, drop: bool, client: Optional[int] = None):
-#        """Si pick=True es que el vehiculo recoge a los clientes. Disminuye la cantidad de personas en la
-#        parada, pero se mantiene igual el total que habian aqui. Este valor se usara cuando el vehuiculo
-#        tenga que dejar a los clientes en sus paradas, saber cuantos soltar por cada una."""
-#        if client is None:
-#            if drop:  
-#                self.current_clients_in_stop += 1
-#            else: 
-#                self.total_client += 1
-#        else:
-#            if drop:
-#                self.current_clients_in_stop += client
-#            else: 
-#                self.total_client += client
-#    
-#    def remove_client(self, pick: bool, client: Optional[int] = None):
-#        if client is None:
-#            if pick: 
-#                self.current_clients_in_stop -= 1
-#            else:
-#                self.total_client -= 1
-#        else:
-#            if pick:
-#                self.current_clients_in_stop = min(0, self.current_clients_in_stop - client)
-#            else:
-#                self.total_client = min(0, self.total_client - client)
-#
-
-#class Warehouse:
-#    """Representa un almacén o depósito central."""
-#    def __init__(self, ID: int, location: Tuple[float, float]):
-#        self.id = ID
-#        self.location = location
-#    
-#    def __repr__(self) -> str:
-#        return f"<Warehouse({self.id})>"
-#
-#    def __str__(self) -> str:
-#        return f"<Warehouse: ID: {self.id}, Location: {self.location}>"
-
 class MapNode:
     """Representan los nodos del grafo."""
     def __init__(self, id, people, authority = None, semaphore = None):
@@ -84,34 +19,17 @@ class MapNode:
     
     def __str__(self) -> str:
         pos = f'posición {self.id} del mapa'
-        people = '' if self.people == 0 else f'que es una parada con {self.people} personas'
-        authority = '' if self.authority == None else f'con autoridades'
-        semaphore = '' if self.semaphore == None else f'con semáforo' 
+        people = '' if self.people == 0 else f' que es una parada con {self.people} personas'
+        authority = '' if self.authority == None else f' con autoridades'
+        semaphore = '' if self.semaphore == None else f' con semáforo' 
         
-        return pos + ' ' + people + ' ' + authority + ' ' + semaphore
+        return pos + people  + authority + semaphore
         
 
     def __eq__(self, obj) -> bool:
         if self.id == obj.id:
             return True
         return False
-
-    
-
-
-#class Distribution_Type: 
-#    """ Clase para guardar todas las distribuciones que siguen las variables del problema"""
-#    def __init__(self):
-#        pass
-#
-#    def generateExponential(self, lambda_value):
-#        return -(lambda_value * math.log(random.random()))
-#    
-#    def generateUniform(self, a, b):
-#        if a <= b :
-#            return random.uniform(a,b)
-#        raise Exception("Invalid argument.")
-
 class Route:
     """Representa la ruta que sigue el vehiculo para recoger a los clientes y 
     llegar a su destino"""

@@ -166,14 +166,12 @@ class PlanningProblem:
             l.append(self.agent)
             for i in range(1,len(args)):
                 l.append(args[i])
-            #print(l)
             response = dic[action_name](*l)
 
             
 
         except Exception as ex:
             print(ex)
-        #print('List_action: ' + str(list_action))
         if list_action is None:
             raise Exception("Action '{}' not found".format(action_name))
         if not list_action.check_precond(self.initial, args):
@@ -305,7 +303,6 @@ class ForwardPlan(Problem):
         
     def actions(self, state):
         a = [action for action in self.expanded_actions if all(pre in conjuncts(state) for pre in action.precond)]
-        print('Actions:' + str(a))
         return a
 
     def result(self, state, action):

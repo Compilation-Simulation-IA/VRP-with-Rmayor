@@ -11,9 +11,9 @@ import datetime
 
 
 class Color(Enum):
-    GREEN = 1
-    YELLOW = 2
-    RED = 3
+    VERDE = 1
+    AMARILLO = 2
+    ROJO = 3
 class Vehicle:
     """Representa los vehículos de la compañía"""
     
@@ -48,18 +48,15 @@ class Vehicle:
         return f"{self.id}" 
     
     def __str__(self):
-        return f"vehículo {self.id}" #, Model: {self.model}>" 
+        return f"Vehículo {self.id}" #, Model: {self.model}>" 
 
     def move(self, global_time):
         """Mueve al vehículo a su próximo destino"""
-        
-        # TODO aumentar millas recorridas
-
         speed = self.speed
         self.count_moves += 1
         cost = self.map[ast.literal_eval(self.current_location.id)][ast.literal_eval(self.route[self.count_moves].id)]['weight']
-        self.km_traveled += cost/1000 #convierto el costo de las aristas que estan en metros a km
-        self.distance += cost/1000
+        self.km_traveled += round(cost/1000,2) #convierto el costo de las aristas que estan en metros a km
+        self.distance += round(cost/1000,2)
         self.change_speed()        
         origin = self.current_location
         self.current_location = self.route[self.count_moves]
@@ -70,7 +67,7 @@ class Vehicle:
     def change_speed(self):
         self.speed = int(random.gauss(45, 10))        
     
-    def pass_yellow(self) -> bool:
+    def pass_AMARILLO(self) -> bool:
         """Calcula la probabilidad de que el vehiculo se pase o no la amarilla del semaforo.
         Devuelve True o False."""
         return random.random() < self.risk_probability
@@ -79,11 +76,7 @@ class Vehicle:
     # Devuelve la cantidad de clientes que pudo recoger en esa parada
     def load(self, global_time):
         """Modifica la cantidad de clientes que quedan en la parada y la
-         capacidad disponible en el vehículo"""
-
-        
-        # cambiar cantidad de personas en la parada en el mapa
-        #               
+         capacidad disponible en el vehículo"""             
         people = min(self.current_location.people, self.capacity - self.people_on_board)
         self.last_stop = self.current_location
         self.people_on_board += people
@@ -93,9 +86,9 @@ class Vehicle:
 
         if self.capacity == self.people_on_board:
             self.turning_back = True
-            route = self.route
+            route = self.route.copy()
             self.route = self.go_to_depot()
-            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} está lleno, cambia su ruta de {route} a {self.route} para descargar a las personas y poder seguir recogiendo.\n")
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} está lleno, cambia su ruta de:\n {route} \n -> \n {self.route} para descargar a las personas y poder seguir recogiendo.\n")
         
         return people
         
@@ -114,16 +107,16 @@ class Vehicle:
         color = semaphore.state
             
         semaphore_time_left = sum(semaphore.color_range) - semaphore.time_color
-        if color == Color.YELLOW:
-            if self.pass_yellow():# no hace nada
+        if color == Color.AMARILLO:
+            if self.pass_AMARILLO():# no hace nada
                 self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} no paró en el {semaphore}.\n")
             else:
                 wait = semaphore_time_left
-                self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} paró {wait} en el {semaphore}.\n")
+                self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} paró {wait} segundos en el {semaphore}.\n")
 
-        elif color == Color.RED:
+        elif color == Color.ROJO:
             wait = semaphore_time_left
-            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} paró {wait} en el {semaphore}.\n")
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} paró {wait} segundos en el {semaphore}.\n")
         
         else:
             self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} pasó el {semaphore}.\n")
@@ -138,7 +131,7 @@ class Vehicle:
         elif decision == 2:
             route = self.route
             self.route=self.change_route()
-            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} fue parado por la {self.current_location.authority} porque estaba cerrado el camino, cambió su ruta de {route} a {self.route}.\n")
+            self.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} fue parado por la {self.current_location.authority} porque estaba cerrado el camino, cambió su ruta de:\n {route}\n -> \n {self.route}.\n")
             
 
     def go_to_depot(self):
@@ -154,16 +147,15 @@ class Vehicle:
 
     def change_route(self):
        
-        start = len(self.route)
-        stops = []              
+        start = self.count_moves
+        stops = []   
+        stops.append(self.route[start])           
 
         for i in range(len(self.route)):
-            if self.route[i].id == self.current_location.id:
-                start = i
+            if i > start and self.route[i] in self.principal_stops and self.route[i].people > 0:
                 stops.append(self.route[i])
 
-            if i > start and self.route[i] in self.principal_stops:
-                stops.append(self.route[i])
+        stops.append(self.route[len(self.route)-1])
                 
 
         
@@ -183,7 +175,7 @@ class Vehicle:
         return path
     
     def broken(self, global_time):
-        self.km_traveled = 1/4 * self.total_km 
+        self.km_traveled = round(1/4 * self.total_km,2) 
         time_h = random.randint(30, 60) #Espera de 30min a 1h
         time_broken = 60*time_h #convertir el tiempo de min a segundos
         cost = time_h*2 + 80 # el costo del servicio. Si se demora 1h cuesta 200 pesos
@@ -245,24 +237,24 @@ class Semaphore:
 
     def __init__(self, position):
         self.position =position
-        self.state = Color.GREEN
+        self.state = Color.VERDE
         self.color_range = [random.randint(1,30), 3, random.randint(1,30)]
         self.time_color = 0
     
     def __repr__(self) -> str:
-        return f"semaphore({self.position})"
+        return f"Semáforo {self.position}"
     
     def __str__(self) -> str:
-        return f"semáforo con luz {self.state.name} en la posición {self.position} del mapa"
+        return f"Semáforo con luz {self.state.name} en la posición {self.position} del mapa"
     
     def update_color(self, global_time):
         self.time_color = global_time % sum(self.color_range)
         if self.time_color <= self.color_range[0]:
-            self.state = Color.GREEN
+            self.state = Color.VERDE
         elif self.time_color >self.color_range[0] and (self.time_color < self.color_range[0] + self.color_range[1]):
-            self.state = Color.YELLOW
+            self.state = Color.AMARILLO
         else:
-            self.state = Color.RED
+            self.state = Color.ROJO
       
 class Authority:
     """Representa la autoridad del trafico """
@@ -272,10 +264,10 @@ class Authority:
         
 
     def __repr__(self) -> str:
-        return f"authority({self.id})"
+        return f"Autoridad {self.id}"
     
     def __str__(self) -> str:
-        return f"autoridad en la posición {self.id} del mapa"
+        return f"Autoridad en la posición {self.id} del mapa"
     
     def __eq__(self, o) -> bool:
         if o == None:
@@ -352,15 +344,15 @@ class Company:
         self.available_vehicles = [] # vehiculos que no estan asignados a ningun
         self.assign()
 
-        self.logger.log(f"{self} realizó las siguientes asignaciones: {self.vehicle_client} y {self.vehicle_principal_stops}.\n")
+        self.logger.log(f"{self} realizó las siguientes asignaciones:\n Cliente - Vehículo\n {self.vehicle_client}\n\n  Vehículo - Paradas\n {self.vehicle_principal_stops}.\n")
         
         self.logger = logger
 
     def __repr__(self) -> str:
-        return f"compañia: {self.name}"
+        return f"{self.name}"
     
     def __str__(self) -> str:
-        return f"compañia {self.name}"
+        return f"{self.name}"
 
     def assign(self):
 
@@ -527,9 +519,10 @@ class Company:
         self.logger.log(f"{self} tuvo perdidas de {result} pesos en multas por el {vehicle}.\n")
         vehicle.taxes = 0
         income = 10 * vehicle.capacity * len(vehicle.route) # El pago por los servicios
-        gas = 10*(vehicle.distance/30) # Cada 30km gasta 1 litro de gasolina que cuesta 10 pesos.
+        gas = round(25*(vehicle.distance/15),2) # Cada 15km gasta 1 litro de gasolina que cuesta 25 pesos.
         self.budget +=income
-        self.logger.log(f"{self} tuvo ganancias de {income} pesos por los servivios prestados por el {vehicle}.\n")
+        self.logger.log(f"{self} tuvo ganancias de {income} pesos por los servicios prestados por el {vehicle}.\n")
+        self.logger.log(f"{self} gastó {gas} pesos en la gasolina del {vehicle} que recorrió {vehicle.distance} km.\n")
         self.budget = self.budget - (result + gas)
 
     def check_vehicle(self, vehicle_id):
@@ -538,10 +531,10 @@ class Company:
             vehicle.days_off = random.randint(2,4)
             self.budget -= 500
             self.find_replacement(vehicle)
-            self.logger.log(f"{vehicle} debe ir al mantenimiento por {vehicle.days_off}")
-            self.logger.log(f"Gastos:{500}")
+            self.logger.log(f"{vehicle} debe ir al mantenimiento por {vehicle.days_off}\n")
+            self.logger.log(f"Gastos:{500}\n")
         else:
-            self.logger.log(f"{vehicle} está en perfectas condiciones.")
+            self.logger.log(f"{vehicle} está en perfectas condiciones.\n")
 
         return vehicle.days_off        
 
@@ -679,10 +672,3 @@ class Company:
 
     def bankruptcy(self):
         return self.budget <= 0
-        
-
-             
-      
-
-        
-
