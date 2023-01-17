@@ -1,5 +1,5 @@
 
-Simulate 10
+Simulate 1
 map {
     import "map_test.txt"
 }
@@ -18,8 +18,8 @@ vehicle_type {
 
 clients {
     
-    c1 (name: "Coca Cola", stops_list: (s1), depot:d1 ) (*puede cambiarse por []*)
-    c2 (name: "Coca Cola", stops_list: (s2), depot:d1 )
+    c1 (name: "Coca", stops_list: (s1), depot:d1 ) (*puede cambiarse por []*)
+    c2 (name: "Cola", stops_list: (s2), depot:d1 )
 
 }
 

@@ -295,31 +295,32 @@ class Authority:
             vehicle.taxes += 50 # pone multa y continua
             result = 1
 
-        elif random.random() < self.probability: # Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino
-            vehicle.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} desvió a {vehicle}.\n")
+        elif random.random() < self.probability: # Calcula la probabilidad de que la autoridad pare al vehículo y lo desvie del camino            
             route = vehicle.route
             next_stop = None
-            start = len(route)
+            start = vehicle.count_moves
             path = None
 
-            for i in range(len(route)):
-                if self.id == route[i].id:
-                    start = i
-                if i > start and route[i].people > 0 or i == (len(route)-1):
-                    next_stop = route[i].id
-                    break
-            
-            origin = ast.literal_eval(self.id)
-            dest =ast.literal_eval(next_stop)            
+            if start == len(route)-1:
+                result = 0
+            else:
+                for i in range(len(route)):
+                    if i > start and route[i].people > 0 and route[i] in vehicle.principal_stops or i == (len(route)-1):
+                        next_stop = route[i].id
+                        break
+                    
+                origin = ast.literal_eval(route[start].id)
+                dest =ast.literal_eval(next_stop)            
 
-            if dest != ast.literal_eval(route[start+1].id):
-                weight = graph[origin][ast.literal_eval(route[start+1].id)]['weight']
-                graph.remove_edge(origin,ast.literal_eval(route[start+1].id))
-                path = nx.shortest_path(graph,origin,dest, weight='weight')
-                graph.add_edge(origin,ast.literal_eval(route[start+1].id),weight=weight)
+                if dest != ast.literal_eval(route[start+1].id):
+                    weight = graph[origin][ast.literal_eval(route[start+1].id)]['weight']
+                    graph.remove_edge(origin,ast.literal_eval(route[start+1].id))
+                    path = nx.shortest_path(graph,origin,dest, weight='weight')
+                    graph.add_edge(origin,ast.literal_eval(route[start+1].id),weight=weight)
 
-            if path != None:
-                result = 2 #devia el vehicle
+                if path != None:
+                    result = 2 #devia el vehicle
+                    vehicle.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} desvió a {vehicle}.\n")
         else:
             vehicle.logger.log(f"El {vehicle} no fue parado por {self}.")
         return result

@@ -1,0 +1,40 @@
+Compañía realizó las siguientes asignaciones:
+ Cliente - Vehículo
+ {'c1': [v1]}
+
+  Vehículo - Paradas
+ {'v1': [(0,1), (3,2), (7,6), (4,9)]}.
+
+Día Lunes 1:
+
+Vehículo v1 comenzó su ruta.
+
+0:18:24 Vehículo v1 terminó ruta con una distancia de 2.62 km.
+
+Vehículo v1 comenzó su ruta.
+
+0:00:00 Vehículo v1 terminó ruta con una distancia de 0 km.
+
+Vehículo v1 comenzó su ruta.
+
+0:00:00 Vehículo v1 terminó ruta con una distancia de 0 km.
+
+Vehículo v1 comenzó su ruta.
+
+0:00:00 Vehículo v1 terminó ruta con una distancia de 0 km.
+
+Vehículo v1 comenzó su ruta.
+
+0:00:00 Vehículo v1 terminó ruta con una distancia de 0 km.
+
+Vehículo v1 comenzó su ruta.
+
+0:00:00 Vehículo v1 terminó ruta con una distancia de 0 km.
+
+Vehículo v1 comenzó su ruta.
+
+0:00:00 Vehículo v1 terminó ruta con una distancia de 0 km.
+
+Termino el día.
+
+FIN

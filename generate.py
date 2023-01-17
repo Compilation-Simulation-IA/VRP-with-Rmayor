@@ -34,8 +34,7 @@ class Generator:
 
         map = self.__generate_graph(all_stops)  
         vehicles = self.__process_vehicles(map)
-        company = Company('Compañía de Transporte',self.company_budget,map,stops,vehicles,self.depot_company, Logger())
-        #poner depot MapNode
+        company = Company('Compañía',self.company_budget,map,stops,vehicles,MapNode(self.depot_company,0), Logger())
         simulation = VRP_Simulation(map,company,self.days)
         
         simulation.start_simulation()
@@ -51,8 +50,8 @@ class Generator:
         stops = {}
 
         for client in self.clients:
-            if self.clients[client][2] in  self.stops:
-                client_depot = MapNode(self.stops[self.clients[client][2]][0],self.clients[client][2][1])
+            if self.clients[client][2] in self.stops:
+                client_depot = MapNode(self.stops[self.clients[client][2]][0],self.stops[self.clients[client][2]][1])
             client_stops = []
             for s in self.clients[client][1]:
                 client_stops.append(MapNode(self.stops[s][0],self.stops[s][1]))
@@ -116,6 +115,7 @@ class Generator:
                             graph.add_node((count,i),value = value)
                         else:
                             graph.add_node((count,i),value = MapNode(f'({count},{i})',0,authority,semaphore))
+                    count +=1
                 elif line.startswith('Cost') or cost:
                     cost = True
                     if line.startswith('Cost'):
@@ -130,7 +130,7 @@ class Generator:
         return graph
                         
 
-gen = Generator([],[],[], [], [], 1, 100, 'map.txt')
+
 
                         
 
