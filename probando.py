@@ -12,12 +12,9 @@ print(Style.DIM + 'and in dim text')
 print(Style.RESET_ALL)
 print('back to normal now')
 
+def fibonacci( n):
+    if n==0 or n==1:
+        return 1
+    return fibonacci(n -1) + fibonacci(n - 2)
 
-from colorama import init
-from termcolor import colored
- 
-init()
- 
-print(colored('Hello, World!', 'green', 'on_red'))
-sec = 60
-print(str(datetime.timedelta(seconds = sec)))
+print(fibonacci(20))

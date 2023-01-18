@@ -16,22 +16,23 @@ from simulation_logger import Logger
 import matplotlib.pyplot as plt
 
 class WeekDays(Enum):
-    Lunes = 1
-    Martes = 2
-    Miércoles = 3
-    Jueves = 4
-    Viernes = 5
-    Sábado = 6
-    Domingo = 7
+    Lunes = 0
+    Martes = 1
+    Miércoles = 2
+    Jueves = 3
+    Viernes = 4
+    Sábado = 5
+    Domingo = 6
 
 class VRP_Simulation:
     def __init__(self, graph, company: Company, days: int):
         self.graph_map = graph
         self.company = company
+        self.map_copy =  graph.copy()
         self.stops_with_people = {}
         self.save_stops()
         self.go_back = False
-        self.current_date = 1
+        self.current_date = 0
         self.days = days
         self.week_day = WeekDays.Lunes.name
         
@@ -41,13 +42,13 @@ class VRP_Simulation:
                self.company.logger.log(f"La Compañia quedo en bancarrota.\n")
                break
 
-            self.company.logger.log(f"Día {self.week_day} {self.current_date}:\n")
+            self.company.logger.log(f"Día {self.week_day} {self.current_date + 1}:\n")
             plan_company = self.company.plan()
             simulate_threads = []
-
+            l = threading.Lock()
             for i,p in enumerate(plan_company):#AQUI VAN LOS HILOS
                 forward_problem_company = ForwardPlan(p)
-                thread = threading.Thread(target= self.simulation_Company, args= (forward_problem_company, i) )
+                thread = threading.Thread(target= self.simulation_Company, args= (forward_problem_company, i, l) )
                 simulate_threads.append(thread)
                 thread.start() # Iniciamos los hilos
 
@@ -55,9 +56,11 @@ class VRP_Simulation:
                 t.join()
 
             self.company.logger.log(f"Termino el día.\n") 
+            self.company.logger.log(f"Capital de {self.company}: {round(self.company.budget,2)}")
             self.current_date +=1
             self.week_day = WeekDays(self.current_date % 7).name
             self.company.check_maintenance()
+            self.load_stops()
             self.change_authorities_places()
             time.sleep(1)
 
@@ -65,9 +68,14 @@ class VRP_Simulation:
         self.write_logs()
 
     def save_stops(self):
-        for c in self.company.clients.values():
-            for stop in c[0]:
-                self.stops_with_people[stop.id] = stop.people
+        for c_i in list(self.company.clients.values()):
+            for stop in c_i[0]:
+                new_stop = stop.copy()
+                self.stops_with_people[new_stop.id] = new_stop.people
+    
+    def load_stops(self):
+        for key in self.stops_with_people.keys():
+            self.graph_map.nodes()[eval(key)]['value'].people =  self.stops_with_people[key]
             
     def change_authorities_places(self):
         count_authorities = 0
@@ -81,7 +89,7 @@ class VRP_Simulation:
         while count_authorities != 0:
             position = (random.randint(0, lim[0] - 1), random.randint(0, lim[1] - 1))
             if self.graph_map.nodes()[position]['value'].authority == None:
-                a = Authority(position, random.random())
+                a = Authority(position, 0.3)
                 map_node = self.graph_map.nodes()[position]['value']
                 map_node.authority = a
                 self.graph_map.nodes()[position].update({'value': map_node})
@@ -94,7 +102,6 @@ class VRP_Simulation:
         with open('30_simulations.txt', 'w') as f:
             f.write(info_result)
 
-        print("FIN 2.0\n")
 
     def simulation_vehicle(self,vehicle, global_time):
         wait_time = 0
@@ -108,7 +115,7 @@ class VRP_Simulation:
                     vehicle.at_authority(decision, global_time)
                     temp = self.cost_with_authority(decision)
                     wait_time += temp
-                elif action == 'move':             
+                elif action == 'move':
                     speed, cost = vehicle.move(global_time) 
                     temp = self.cost_move(speed, cost)
                     wait_time += temp
@@ -134,7 +141,7 @@ class VRP_Simulation:
             
         return None
     
-    def simulation_Company(self, problem, index: int):
+    def simulation_Company(self, problem, index: int, lock:threading.Lock()):
         global_time = 0# Declaramos que vamos a usar la variable global
 
         f = memoize(lambda node: node.path_cost, 'f')
@@ -143,27 +150,28 @@ class VRP_Simulation:
         frontier.append(node)
         explored = set()
         response = None
-        while frontier:
-            node = frontier.pop()
-            action = problem.actions(node.state)       
-            
-            if len(action) > 0:
-                action_name = action[0].name
-                response = problem.act(expr(str(action[0])))
-                if action_name == 'start_route':
-                    self.simulation_vehicle(response, global_time)
-                    
-            if problem.goal_test(node.state):
-                #company.logger.log(f"El vehiculo {self.company.vehicles[index]} ha llegado a su destino en {global_time} segundos")
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-                elif child in frontier:
-                    if f(child) < frontier[child]:
-                        del frontier[child]
+        with lock:
+            while frontier:
+                node = frontier.pop()
+                action = problem.actions(node.state)       
+
+                if len(action) > 0:
+                    action_name = action[0].name
+                    response = problem.act(expr(str(action[0])))
+                    if action_name == 'start_route':
+                        self.simulation_vehicle(response, global_time)
+
+                if problem.goal_test(node.state):
+                    #company.logger.log(f"El vehiculo {self.company.vehicles[index]} ha llegado a su destino en {global_time} segundos")
+                    return node
+                explored.add(node.state)
+                for child in node.expand(problem):
+                    if child.state not in explored and child not in frontier:
                         frontier.append(child)
+                    elif child in frontier:
+                        if f(child) < frontier[child]:
+                            del frontier[child]
+                            frontier.append(child)
         return None
 
     def cost_move(self, speed, distance): 
@@ -247,61 +255,17 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                       ((3,5),(2,5),{'weight':80}),
                                          
                        ])
-#logger = Logger()
 
-#stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1), MapNode('(7,7)', 1), MapNode('(6,6)', 1), MapNode('(4,4)', 1), MapNode('(5,5)', 1)]
-#G, nodes_color = generate_random_graph(stop_list, (3,3))
-#print(G.edges())
-#write_map(G, 'map_in')
-#print("FIN")
-#nx.draw(G, node_color= nodes_color)
-#plt.show()
-
-#logger = Logger()
-#
-#stop_list= [MapNode('(0,0)', 1), MapNode('(1,1)', 1), MapNode('(2,2)', 1), MapNode('(7,7)', 1), MapNode('(6,6)', 1), MapNode('(4,4)', 1), MapNode('(5,5)', 1)]
-#print("FIN")
-##nx.draw(G, node_color= nodes_color)
-##plt.show()
-#
-##logger = Logger()
-##
-##route1 = [n1,n2,n3,n4,n5,n6,n7,n8]
-##route2 = [n1,n2,n3,n4,n5]
-##vehicle1 = Vehicle('V1', 20, 100, 0.0, logger)
-##vehicle2 = Vehicle('V2', 10, 100, 1.0, logger)
-##vehicle1.route = route1
-#vehicle2.route = route2
-#
-#vehicles = [vehicle1, vehicle2]
-#stops = {'client1':[], 'client2':[]}
-#company = Company('C1', 100, graph, stops, vehicles, logger)
-#company.vehicles.append(vehicle1)
-#company.vehicles.append(vehicle2)
-#
-#company.routes[vehicle1] =  route1
-#company.routes[vehicle2] =  route2
-#
-#company.assignations.append({'V1':vehicle1, 'R1':route1})
-#company.assignations.append({'V2':vehicle2, 'R1':route2})
-#
-#sim = VRP_Simulation(graph,company, 1)
-#sim.start_simulation()
-#
-#print()
-#print(company)
-
-
-# stops = {'c1':[[MapNode('(4, 0)',3),MapNode('(2, 3)',2),MapNode('(6, 8)',6)],MapNode('(8, 7)',0)],'c2':[[MapNode('(1, 1)',3),MapNode('(5, 6)',3)],MapNode('(7, 7)',0)],'c3':[[MapNode('(3, 3)',4),MapNode('(2, 1)',3),MapNode('(4, 7)',3)],MapNode('(9, 9)',0)]}
-# all_stops = []
-# for value in stops.values():
-#     for stop in value[0]:
-#         all_stops.append(stop)
-#     all_stops.append(value[1])
-# map = generate_random_graph(all_stops,(10,10))
+stops = {'c1':[[MapNode('(4, 0)',3),MapNode('(2, 3)',2),MapNode('(6, 8)',6)],MapNode('(8, 7)',0)],'c2':[[MapNode('(1, 1)',3),MapNode('(5, 6)',3)],MapNode('(7, 7)',0)],'c3':[[MapNode('(3, 3)',4),MapNode('(2, 1)',3),MapNode('(4, 7)',3)],MapNode('(9, 9)',0)]}
+all_stops = []
+for value in stops.values():
+    for stop in value[0]:
+        all_stops.append(stop)
+    all_stops.append(value[1])
+map = generate_random_graph(all_stops,(10,10))
 # write_map(map, 'map_test')
-# logger = Logger()
-# vehicles = [Vehicle('V1',5,1000,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V2',5,1000,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V3',10,1000,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V4',8,1000,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V5',8,1000,0.5,logger,map,MapNode('(5, 5)',people=0))]
-# company = Company('Compañia',10000,map,stops,vehicles,MapNode('(5, 5)',people=0),logger)
-# sim = VRP_Simulation(map, company,2)
-# sim.start_simulation()
+logger = Logger()
+vehicles = [Vehicle('V1',5,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V2',5,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V3',10,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V4',8,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V5',8,5,0.5,logger,map,MapNode('(5, 5)',people=0))]
+company = Company('Compañia',10000,map,stops,vehicles,MapNode('(5, 5)',people=0),logger)
+sim = VRP_Simulation(map, company,7)
+sim.start_simulation()

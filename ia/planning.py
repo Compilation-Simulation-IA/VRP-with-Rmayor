@@ -159,19 +159,19 @@ class PlanningProblem:
         args = action.args
         list_action = first(a for a in self.actions if a.name == action_name)
         response = None
-        try:
-            object = self.agent.__class__
-            dic = object.__dict__
-            l = []
-            l.append(self.agent)
-            for i in range(1,len(args)):
-                l.append(args[i])
-            response = dic[action_name](*l)
+        #try:
+        object = self.agent.__class__
+        dic = object.__dict__
+        l = []
+        l.append(self.agent)
+        for i in range(1,len(args)):
+            l.append(args[i])
+        response = dic[action_name](*l)
 
             
 
-        except Exception as ex:
-            print(ex)
+        #except Exception as ex:
+            #print(ex)
         if list_action is None:
             raise Exception("Action '{}' not found".format(action_name))
         if not list_action.check_precond(self.initial, args):

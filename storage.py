@@ -30,6 +30,11 @@ class MapNode:
         if self.id == obj.id:
             return True
         return False
+    
+    def copy(self):
+        new_map_node = MapNode(self.id, self.people, self.authority, self.semaphore)
+        return new_map_node
+
 class Route:
     """Representa la ruta que sigue el vehiculo para recoger a los clientes y 
     llegar a su destino"""
