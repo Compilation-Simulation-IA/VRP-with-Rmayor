@@ -69,7 +69,6 @@ class VRP_Simulation:
             for stop in c[0]:
                 self.stops_with_people[stop.id] = stop.people
             
-
     def change_authorities_places(self):
         count_authorities = 0
         for key in self.graph_map.nodes().keys():
