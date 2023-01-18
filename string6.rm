@@ -1,0 +1,45 @@
+(*Hello World*)
+Simulate 10
+map {
+    import "map_test.txt"
+}
+
+stops {
+    s1 (address:"(1,2)", people:5)
+    s2 (address:"(4,3)", people:5)
+    s3 (address:"(3,8)", people:0)
+
+}
+vehicle_type {
+    
+    small (miles: 40000, capacity: 30)
+    medium (miles: 40000, capacity: 70)
+}
+
+clients {
+    
+    c1 (name: "Coca Cola", stops_list: (s1,s2),depot:s3 )
+    c2 (name: "Coca", stops_list: (s1,s2),depot:s3 )
+
+}
+
+company {
+    budget: 1000000
+    depot (address:"(9,8)")
+    small v1: 5
+    medium v2: 3
+
+}
+demands
+{
+    func testing2(): IO
+    {
+        out_string("Hello World")
+    out none
+
+    }
+        
+    
+
+    testing2()
+}

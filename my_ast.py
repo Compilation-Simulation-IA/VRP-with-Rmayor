@@ -105,10 +105,13 @@ class FuncDeclarationNode(DeclarationNode):
     def __init__(self, idx: LexToken, params, return_type: LexToken, body, return_expr):
         self.id = idx.value
         self.pos = (idx.lineno, idx.column)
-        self.params = [(pname.value, _Param(ptype)) for pname, ptype in params]
+        self.params = [[pname.value, _Param(ptype)] for pname, ptype in params]
         self.type = Type.type_dict(return_type.value,self.pos)
         self.type_pos = (return_type.lineno, return_type.column)
-        self.out_expr = return_expr
+        if return_expr.lex == 'none':
+            self.out_expr = None
+        else:
+            self.out_expr = return_expr
         self.body=body
 
 # class VarDeclarationNode(ExpressionNode):

@@ -49,7 +49,8 @@ window.columnconfigure(1, minsize=50, weight=1)
 def run():
     try:
         _input = txt_code.get(1.0, END)
-        init.start_visitor(_input)
+        string = init.start_visitor(_input)
+        txt_result.insert(END,string)
     except ValueError:
         pass
 txt_code = Text(window, borderwidth=3)
@@ -59,7 +60,6 @@ btn_run = Button(frm_buttons, text="Run", command=run, bg='green', font=myFont)
 btn_stop = Button(frm_buttons, text="Stop", command=stop, bg='red', font=myFont)
 
 text_input=Entry(frm_buttons,width=10, textvariable=txt_code)
-
 btn_run.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 btn_stop.grid(row=2, column=0, sticky="ew", padx=5)
 

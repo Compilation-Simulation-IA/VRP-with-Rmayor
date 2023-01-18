@@ -12,11 +12,12 @@ from tokens import tokens
 
 
 class Parser:
-    def __init__(self, lexer=None):
+    def __init__(self,lexer=None):
         self.lexer = lexer if lexer else RmayorLexer()
         self.outputdir = '.'
         self.tokens = tokens
         self.errors = False
+        self.string=""
         self.parser = yacc.yacc(start='program',
                                 module=self,
                                 outputdir=self.outputdir,
@@ -254,16 +255,16 @@ class RmayorParser(Parser):
             p[0] = CallNode(p[1], *p[3])
 
     def p_expr_if(self, p):
-        'factor : if expr then expr else expr fi'
+        'factor : if expr then multiexpr else multiexpr fi'
         p[0] = ConditionalNode(p[2], p[4], p[6], p.slice[1])
 
     def p_expr_if_error(self, p):
-        '''factor : if error then expr else expr fi
-                | if expr then error else expr fi
-                | if expr then expr else error fi
-                | if expr error expr else expr fi
-                | if expr then expr error expr fi
-                | if expr then expr else expr error'''
+        '''factor : if error then multiexpr else multiexpr fi
+                | if expr then error else multiexpr fi
+                | if expr then multiexpr else error fi
+                | if expr error multiexpr else multiexpr fi
+                | if expr then multiexpr error multiexpr fi
+                | if expr then multiexpr else multiexpr error'''
         p[0] = ErrorNode()
 
     def p_expr_while(self, p):
@@ -349,18 +350,20 @@ class RmayorParser(Parser):
             self.print_error(p)
         else:
             error_text = SyntaticError.ERROR % 'EOF'
+            self.string+=error_text
             column = find_column(self.lexer.lexer, self.lexer.lexer)
             line = self.lexer.lexer.lineno
             print(SyntaticError(error_text, line, column - 1))
 
     def print_error(self, tok):
         error_text = SyntaticError.ERROR % tok.value
+        self.string +=error_text
         line, column = tok.lineno, tok.column
         print(SyntaticError(error_text, line, column))
 
 
 if __name__ == "__main__":
-    with open('string2.rm', 'r') as f:
+    with open('string4.rm', 'r') as f:
         file = f.read()
     parser = RmayorParser()
     result = parser.parse(file)

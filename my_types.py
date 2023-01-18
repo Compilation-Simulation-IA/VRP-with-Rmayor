@@ -377,11 +377,11 @@ class IOType(Type):
         #self.init_methods()
 
     def out_string(string):
-            print(str(string))
+            return str(string)
             
     def out_int(_int):
-            number = int(_int)
-            print(number)
+            number = str(_int)
+            return number
 
     # def init_methods(self):
     #     #self.define_method('out_string', ['x'], [StringType()], SelfType())

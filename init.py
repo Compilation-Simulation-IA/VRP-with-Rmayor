@@ -11,16 +11,36 @@ from utils import is_basic_type
 from my_ast import *
 from my_parser import RmayorParser
 
-# with open('comp/string4.rm', 'r') as f:
-#         file = f.read()
+
 def start_visitor(file):
+        string=""
         parser = RmayorParser()
         ast = parser.parse(file)
+        string=parser.string
+        if string!='':
+                return string+'\n'
 
-        builder = Visitor(Context())
+        builder = Visitor(Context(),string)
         builder.visit(ast)
         checker = Semantic_Check(Context(),builder)
         checker.visit(ast)
-        executor = Execute(Context(),builder)
+        for i in checker.errors:
+                string+=i.text
+                if string!='':
+                   string+='\n'
+        if string !='':
+                return string
+        executor = Execute(Context(),builder,string)
         executor.visit(ast)
-        pass
+        for i in executor.errors:
+                string+=i.text
+                if string!='':
+                        string+='\n'
+        if string =='':
+                string+=executor.string+'\n'
+        
+        fi=''
+        with open('30_simulations.txt', 'r') as f:
+              fi = f.read()
+        string+=fi
+        return string

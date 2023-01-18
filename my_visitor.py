@@ -30,6 +30,20 @@ class Visitor:
         self.context:Context = context
         # self.current_type:Type = None
         self.errors:list = errors
+        self.graph=None
+        self.map=""
+        self.budget=0
+        self.name=""
+        self.stops={}
+        self.vehicles_count={}
+        self.clients={}
+        self.days=1
+        self.depot=""
+        self.vehicle_types={}
+        self.definiciones = {}
+        self.simulate=False
+        self.variables ={}
+        self.calls={}
     
     
     @visitor.on('node')
@@ -115,7 +129,7 @@ class Visitor:
         if type(node.body) is list:
             for dec in node.body:
                 self.visit(dec,new_scope)
-        else: self.visit(dec,new_scope)
+        else: self.visit(node.body,new_scope)
         self.definiciones[node.id]= [node,node.body,node.params,node.out_expr,node.type]
         
     # @visitor.when(StaticCallNode)
@@ -191,7 +205,7 @@ class Visitor:
     def visit(self, node:CallNode,scope:Scope):
         self.visit(node.obj,scope)
         for arg in node.args:
-            self.calls[node.id] = [arg.lex,scope.index]
+            self.calls[node.id,scope.index] = [arg.lex]
         # self.definiciones[node.id](*args)
 
 
@@ -202,7 +216,9 @@ class Visitor:
         args={}
         for arg in node.args:
             self.visit(arg,scope)
-            self.calls[node.id] = [arg.lex,scope.index]
+            self.calls[node.id,scope.index] = [arg]
+        if node.args == []:
+            self.calls[node.id,scope.index]=[]
         # if self.current_type.name == 'IO':
         #         if node.id == 'out_string':
         #             self.current_type.out_string(args)

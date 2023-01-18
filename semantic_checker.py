@@ -12,11 +12,11 @@ class Semantic_Check:
     # vehicle_types = {}
     # client = {}
     # definiciones = {}
-
-    def __init__(self, context:Context,visitor, errors=[]):
+    errors=[]
+    def __init__(self, context:Context,visitor):
         self.context:Context = context
         self.current_type:Type = None
-        self.errors:list = errors
+        self.errors=[]
         self.visitor = visitor
     @visitor.on('node')
     def visit(self, node):
@@ -29,7 +29,6 @@ class Semantic_Check:
         self.visit(node.clients_block,scope)
         self.visit(node.company_block,scope)
         self.visit(node.demands_block,scope)
-        self.errors=[]
     
     @visitor.when(StopsNode)
     def visit(self, node:StopsNode,scope:Scope):
@@ -60,11 +59,11 @@ class Semantic_Check:
     def visit(self, node:ClientDeclarationNode,scope:Scope):
         for stop in node.stops:
             if stop not in self.visitor.stops:
-               raise Exception("Identificador de parada no declarado: " + stop +" en "+ node.identifier)
+               self.errors.append(SemanticError("Identificador de parada no declarado: " + stop +" en "+ node.identifier,node.pos[0],node.pos[1]))
         if node.depot not in self.visitor.stops:
-            raise Exception("Identificador de deposito no declarado: " + node.depot + " en "+ node.identifier)
+            self.errors.append(SemanticError("Identificador de deposito no declarado: " + node.depot + " en "+ node.identifier,node.pos[0],node.pos[1]))
         elif self.visitor.stops[node.depot][1] > 0:
-            raise Exception ("Deposito " + node.depot + " no puede tener clientes")
+            self.errors.append(SemanticError("Deposito " + node.depot + " no puede tener clientes",node.pos[0],node.pos[1]))
         
     @visitor.when(CompanyBlockNode)
     def visit(self, node:CompanyBlockNode,scope:Scope):
@@ -76,7 +75,7 @@ class Semantic_Check:
         # min_capacity = int('inf')
         # max_stop = 0
         if node.vehicle_type not in self.visitor.vehicle_types:
-            raise TypeError("Tipo de vehiculo no declarado: "+ node.vehicle_type)
+            self.errors.append(TypeError("Tipo de vehiculo no declarado: "+ node.vehicle_type))
         #     min_capacity = min(min_capacity,dec.type.capacity)
         # for stop in self.stops:
         #     max_stop = max(max_stop,stop[2])
@@ -100,7 +99,8 @@ class Semantic_Check:
         new_scope = scope.create_child()
         # new_scope.functions = [m for m in scope.functions]
         if node.type is None:
-            raise TypeError("Tipo de retorno desconocido")
+            self.errors.append(TypeError("Tipo de retorno desconocido"))
+            return
 
         for p in node.params:
             self.visit(p[1],new_scope)
@@ -108,19 +108,20 @@ class Semantic_Check:
         if type(node.body) is list:
             for dec in node.body:
                 self.visit(dec,new_scope)
-        else: self.visit(dec,new_scope)
-        self.visit(node.out_expr,new_scope)
+        else: self.visit(node.body,new_scope)
+        if node.out_expr!=None:
+            self.visit(node.out_expr,new_scope)
   
         
     @visitor.when(StaticCallNode)
     def visit(self, node:StaticCallNode,scope:Scope):
         evaluated_args = [self.visit(arg) for arg in node.args]
         if node.id not in self.visitor.definiciones:
-              SemanticError("La función no existe")
+              self.errors.append(SemanticError("La función no existe",node.pos[0],node.pos[1]))
         else:
             for i in evaluated_args:
                 if type(evaluated_args[i])!=type(self.visitor.definiciones[1][i]):
-                    SemanticError("Un argumento no es del tipo deseado")
+                    self.errors.append(SemanticError("Un argumento no es del tipo deseado",node.pos[0],node.pos[1]))
         #     Visitor.definiciones[node.id,scope](*evaluated_args)
         # else:
               
@@ -167,7 +168,7 @@ class Semantic_Check:
     @visitor.when(ListNode)
     def visit(self,node:IndexNode,scope:Scope):
         if node.idlist != 'stops' and node.idlist !="clients" and node.idlist not in self.visitor.variables:
-            SemanticError("Lista no definida")
+            self.errors.append(SemanticError("Lista no definida",node.pos[0],node.pos[1]))
 
     @visitor.when(AssignNode)
     def visit(self, node:AssignNode, scope:Scope):
@@ -199,9 +200,9 @@ class Semantic_Check:
         if node.lex in self.visitor.stops or node.lex in self.visitor.clients or node.lex=="clients" or node.lex=="stops":
             return
         if node.lex not in self.visitor.variables:
-            SemanticError("Variable no inicializada")
+            self.errors.append(SemanticError("Variable no inicializada",node.pos[0],node.pos[1]))
         elif self.visitor.variables[node.lex][1]!=scope.index and node.lex not in scope.locals:
-            SemanticError("Variable no definida en este ambito")
+            self.errors.append(SemanticError("Variable no definida en este ambito",node.pos[0],node.pos[1]))
 
     @visitor.when(WhileNode)
     def visit(self, node:WhileNode, scope:Scope):
@@ -235,21 +236,21 @@ class Semantic_Check:
     def visit(self, node:StaticCallNode, scope:Scope):
         if node.id =="stops":
                 if type(node.args) is not int:
-                    SemanticError("Indice desconocido")
+                    self.errors.append(SemanticError("Indice desconocido",node.pos[0],node.pos[1]))
         elif node.id in self.visitor.stops:
                 if node.args!='address' and node.args!='people':
-                    SemanticError("Indice desconocido")
+                    self.errors.append(SemanticError("Indice desconocido",node.pos[0],node.pos[1]))
         if node.id =="clients":
                 if type(node.args) is not int:
-                    SemanticError("Indice desconocido")
+                    self.errors.append(SemanticError("Indice desconocido",node.pos[0],node.pos[1]))
         elif node.id in self.visitor.clients:
                 if node.args!='name' and node.args!='stops_list' and node.args!='depot':
-                    SemanticError("Indice desconocido")
+                    self.errors.append(SemanticError("Indice desconocido",node.pos[0],node.pos[1]))
 
        
         if node.id not in self.visitor.definiciones and node.id not in IOType.methods:
-            SemanticError("Se esta llamando a una funcion no declarada")
-            
+            self.errors.append(SemanticError("Se esta llamando a una funcion no declarada",node.pos[0],node.pos[1]))
+
         # args=[]
         # for arg in node.args:
         #     args.append(self.visit(arg, scope))

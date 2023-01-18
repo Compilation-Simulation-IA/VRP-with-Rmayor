@@ -257,7 +257,7 @@ class Semaphore:
       
 class Authority:
     """Representa la autoridad del trafico """
-    def __init__(self, ID, probability = 0.5):
+    def __init__(self, ID, probability = 0.0):
         self.id = ID
         self.probability = probability  # Probabilidad de que la autoridad para al vehículo. Tiene que estar entre 0 y 1e
         

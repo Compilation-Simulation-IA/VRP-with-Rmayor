@@ -8,12 +8,14 @@ from  generate import Generator
 from agents import *
 from my_visitor import Visitor
 
-class Execute:
 
-    def __init__(self, context:Context, visitor, errors=[]):
+class Execute:
+    errors=[]
+    def __init__(self, context:Context, visitor,string):
         self.context:Context = context
         self.visitor=visitor
-        self.errors:list = errors
+        self.errors = []
+        self.string=string
     
     @visitor.on('node')
     def visit(self, node):
@@ -26,7 +28,6 @@ class Execute:
         self.visit(node.clients_block,scope)
         self.visit(node.company_block,scope)
         self.visit(node.demands_block,scope)
-        self.errors=[]
     
     @visitor.when(StopsNode)
     def visit(self, node:StopsNode,scope:Scope):
@@ -84,19 +85,26 @@ class Execute:
     @visitor.when(FuncDeclarationNode)
     def visit(self, node:FuncDeclarationNode, args ,scope:Scope):
         if len(node.params)!=len(args):
-            SemanticError("Cantidad incompatible de argumentos")
+            self.errors.append(SemanticError("Cantidad incompatible de argumentos",node.pos[0],node.pos[1]))
+            return
         else:
             for i, param in enumerate(node.params):
                 if self.types_dict[param[1].value] != type(args[i]):
-                    SemanticError("Parametro con un tipo no deseado")
+                    self.errors.append(SemanticError("Parametro con un tipo no deseado",node.pos[0],node.pos[1]))
+                    return 
                 else:   
-                    self.internals[param[0]] =args
+                    self.internals[param[0]] =args[i]
+                    scope.expr_dict[param[0]]=args[i]
         if type(node.body) is list:
             for dec in node.body:
                 self.visit(dec,scope)
         else: 
                 self.visit(node.body,scope)
+        if node.out_expr==None:
+            return None
         value=self.visit(node.out_expr,scope)
+        if type(value)!=self.types_dict[node.type.name]:
+            self.errors.append(SemanticError("Tipo de retorno no deseado",node.pos[0],node.pos[1]))
         self.internals={}
         return value
     types_dict={'String':str,'Int': int,'Object':object,'Bool':bool,'IO':IOType,'SELF_TYPE':SelfType,'VEHICLE_TYPE':VehicleType}
@@ -125,15 +133,17 @@ class Execute:
             return self.visitor.clients(node.index)[0]
         else: 
             if node.index>=len(self.visitor.variables[node.idlist]):
-                SemanticError("Indice fuera de rango")
+                self.errors.append(SemanticError("Indice fuera de rango"))
             return self.visitor.variables[node.idlist][node.index]
 
     
     @visitor.when(AssignNode)
     def visit(self, node:AssignNode, scope:Scope):
-        self.visitor.variables[node.id]=self.visit(node.expr, scope)
-        if node.id in self.internals:
-            self.internals[node.id][0]=self.visit(node.expr, scope)
+        self.visitor.variables[node.id]=[self.visit(node.expr, scope),scope.index]
+       # if node.id in self.internals:
+        #    self.internals[node.id][0]=self.visit(node.expr, scope)
+        if node.id in scope.expr_dict:
+            scope.expr_dict[node.id][0] = self.visit(node.expr,scope)
 
     @visitor.when(BinaryNode)
     def visit(self, node:BinaryNode, scope:Scope):
@@ -152,11 +162,14 @@ class Execute:
             return self.visitor.stops[node.lex]
         if node.lex in self.visitor.clients:
             return self.visitor.clients[node.lex]
-        for i in self.internals:
+        # for i in self.internals:
+        #     if node.lex == i:
+        #         return self.internals[i][0]
+        for i in scope.expr_dict:
             if node.lex == i:
-                return self.internals[i][0]
+                return scope.expr_dict[i]
             
-        return self.visitor.variables[node.lex]
+        return self.visitor.variables[node.lex][0]
          
 
     @visitor.when(WhileNode)
@@ -197,16 +210,18 @@ class Execute:
             args.append(self.visit(node.args[i],scope))
             
         if args==[]: 
-            args = self.visitor.calls[node.id]
+            args = self.visitor.calls[node.id,scope.index]
 
-        else: self.visitor.calls[node.id]=args
+        else: self.visitor.calls[node.id,scope.index]=args
         if node.id == 'out_string':
-            IOType.out_string(args[0])
+            self.string+=IOType.out_string(args[0])
+            self.string+='\n'
             return
         if node.id == 'out_int':
-            IOType.out_int(args[0])
+            self.string+=IOType.out_int(args[0])
+            self.string+='\n'
             return
-        return self.visit(self.visitor.definiciones[node.id][0],args,scope)
+        return self.visit(self.visitor.definiciones[node.id][0],args,scope.create_child())
 
     # @visitor.when(OptionNode)
     # def visit(self, node:OptionNode, scope:Scope):
@@ -264,7 +279,7 @@ class Execute:
         if type(node.left) is VariableNode and node.left.lex in self.visitor.clients:
             if  type(node.right) is ConstantNumNode:
                 if int(node.right.lex)>len(self.visitor.clients[node.left.lex][1]):
-                    SemanticError("No se puede fraccionar "+node.left.lex+" en "+node.right.lex)
+                    self.errors.append(SemanticError("No se puede fraccionar "+node.left.lex+" en "+node.right.lex))
                 else:
                     parts = np.array_split(self.visitor.clients[node.left.lex][1],int(node.right.lex))
                     for i, part in enumerate(parts):
