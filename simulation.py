@@ -256,16 +256,16 @@ graph.add_edges_from([((2,0),(2,1),{'weight':100}),
                                          
                        ])
 
-stops = {'c1':[[MapNode('(4, 0)',3),MapNode('(2, 3)',2),MapNode('(6, 8)',6)],MapNode('(8, 7)',0)],'c2':[[MapNode('(1, 1)',3),MapNode('(5, 6)',3)],MapNode('(7, 7)',0)],'c3':[[MapNode('(3, 3)',4),MapNode('(2, 1)',3),MapNode('(4, 7)',3)],MapNode('(9, 9)',0)]}
-all_stops = []
-for value in stops.values():
-    for stop in value[0]:
-        all_stops.append(stop)
-    all_stops.append(value[1])
-map = generate_random_graph(all_stops,(10,10))
-# write_map(map, 'map_test')
-logger = Logger()
-vehicles = [Vehicle('V1',5,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V2',5,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V3',10,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V4',8,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V5',8,5,0.5,logger,map,MapNode('(5, 5)',people=0))]
-company = Company('Compañia',10000,map,stops,vehicles,MapNode('(5, 5)',people=0),logger)
-sim = VRP_Simulation(map, company,7)
-sim.start_simulation()
+# stops = {'c1':[[MapNode('(4, 0)',3),MapNode('(2, 3)',2),MapNode('(6, 8)',6)],MapNode('(8, 7)',0)],'c2':[[MapNode('(1, 1)',3),MapNode('(5, 6)',3)],MapNode('(7, 7)',0)],'c3':[[MapNode('(3, 3)',4),MapNode('(2, 1)',3),MapNode('(4, 7)',3)],MapNode('(9, 9)',0)]}
+# all_stops = []
+# for value in stops.values():
+#     for stop in value[0]:
+#         all_stops.append(stop)
+#     all_stops.append(value[1])
+# map = generate_random_graph(all_stops,(10,10))
+# # write_map(map, 'map_test')
+# logger = Logger()
+# vehicles = [Vehicle('V1',5,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V2',5,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V3',10,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V4',8,5,0.5,logger,map,MapNode('(5, 5)',people=0)),Vehicle('V5',8,5,0.5,logger,map,MapNode('(5, 5)',people=0))]
+# company = Company('Compañia',10000,map,stops,vehicles,MapNode('(5, 5)',people=0),logger)
+# sim = VRP_Simulation(map, company,7)
+# sim.start_simulation()
