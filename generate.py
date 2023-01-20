@@ -16,7 +16,7 @@ class Generator:
         self.clients=clients
         self.stops = stops
         self.depot_company = depot_company
-        self.days= days
+        self.days= int(days)
         self.company_budget = company_budget
         self.map = map
 
@@ -33,8 +33,9 @@ class Generator:
                 all_stops.update({stop.id:stop})
 
         map = self.__generate_graph(all_stops)  
-        vehicles = self.__process_vehicles(map)
-        company = Company('Compañía',self.company_budget,map,stops,vehicles,MapNode(self.depot_company,0), Logger())
+        logger= Logger()
+        vehicles = self.__process_vehicles(map, logger)        
+        company = Company('Compañía',self.company_budget,map,stops,vehicles,map.nodes()[eval(self.depot_company)]['value'], logger)
         simulation = VRP_Simulation(map,company,self.days)
         
         simulation.start_simulation()
@@ -60,7 +61,7 @@ class Generator:
         return stops
 
 
-    def __process_vehicles(self,map):
+    def __process_vehicles(self,map, logger):
 
         """A partir de lo recibido de la compilacion,
         se crea una lista de vehiculos"""
@@ -70,12 +71,11 @@ class Generator:
         for vehicle in self.vehicles:
             for i in range(int(self.vehicles[vehicle][1])):
                 if self.vehicles[vehicle][0] in self.vehicle_types:
-                    name = vehicle
+                    name = vehicle.capitalize() + str(i + 1)
                     capacity = self.vehicle_types[self.vehicles[vehicle][0]][1]
                     miles = self.vehicle_types[self.vehicles[vehicle][0]][2]
                     probability = random.random()
-                    logger=Logger()
-                    initial=MapNode(self.depot_company,0)
+                    initial=map.nodes()[eval(self.depot_company)]['value']
                     vehicle_map=map
                     v = Vehicle(name,capacity,miles,probability,logger,vehicle_map,initial)
                     vehicles.append(v)

@@ -3,8 +3,7 @@ class Logger:
         self.logs = []
         
     def log(self, message):
-        self.logs.append(message)
-        print(message)
+        self.logs.append(message)        
         
     def get_logs(self):
         return self.logs

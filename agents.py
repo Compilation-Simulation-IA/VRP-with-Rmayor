@@ -44,8 +44,9 @@ class Vehicle:
         return f"{self.id}" 
     
     def __str__(self):
-        return f"Vehículo {self.id}" #, Model: {self.model}>" 
-    
+        return f"Vehículo {self.id}" #, Model: {self.model}>"
+
+        
     def reset_vehicle(self):
         self.current_location = self.initial
         self.count_moves = 0
@@ -321,7 +322,7 @@ class Authority:
                     result = 2 #devia el vehicle
                     vehicle.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {self} desvió a {vehicle}.\n")
         else:
-            vehicle.logger.log(f"El {vehicle} no fue parado por {self}.")
+            vehicle.logger.log(f"{str(datetime.timedelta(seconds = global_time))} {vehicle} no fue parado por {self}.\n")
         return result
             
 class Company:
@@ -339,9 +340,8 @@ class Company:
         self.vehicle_client = {}
         self.vehicle_principal_stops = {}
         self.vehicle_route = []
-        self.substitute = {}# diccionario de vehiculo que esta sustituyendo al que esta en mantenimiento
-        # y era del cliente. La ruta que era original al vehiculo que se mando al mantenimiento
-        self.available_vehicles = [] # vehiculos que no estan asignados a ningun
+        self.substitute = {}# diccionario de vehiculo que esta sustituyendo al que esta en mantenimiento de la forma {id_vehiculo en mantenimiento:[id vehiculo sustituto, ruta vehiculo sustituto, client_id]}
+        self.available_vehicles = [] # vehiculos que no estan asignados
         self.assign()
 
         self.logger.log(f"{self} realizó las siguientes asignaciones:\n Cliente - Vehículo\n {self.vehicle_client}\n\n  Vehículo - Paradas\n {self.vehicle_principal_stops}.\n")
@@ -514,7 +514,6 @@ class Company:
         self.logger.log(f"{vehicle} comenzó su ruta.\n")
         vehicle.route = self.__get_route_from_id(route_id)
         return vehicle
-
          
         
     def buy_vehicle(self, new_vehicle: Vehicle, cost: int):
@@ -559,16 +558,28 @@ class Company:
                     if v.days_off == 0:
                         v.fixed()
                         if (v.id in self.vehicle_principal_stops.keys()):
-                            substitute_vehicle, substitute_route = self.substitute.pop(v.id)
+                            substitute =self.substitute.pop(v.id)
+                            substitute_vehicle= substitute[0]
+                            substitute_route = substitute[1]
+                            substitute_client = substitute[2]
                             substitute_vehicle.route = substitute_route
+                            self.vehicle_client[substitute_client].append(v)
+                            stops = []
+
+                            for s in substitute_vehicle.principal_stops:
+                                if s not in v.principal_stops:
+                                    stops.append(s)
+                            stops = stops + v.principal_stops[len(v.principal_stops)-2:]
+
+                            substitute_vehicle.principal_stops = stops
 
                             for item in self.vehicle_route:
                                  if substitute_vehicle.id in item.keys():
-                                     item.pop(f'R{substitute_vehicle}')
-                                     item[f'R{substitute_vehicle}'] = substitute_vehicle.route
+                                     item.pop(f'R{substitute_vehicle.id}')
+                                     item[f'R{substitute_vehicle.id}'] = substitute_vehicle.route
                                      break
                         else:
-                            self.available_vehicles(v)
+                            self.available_vehicles.append(v)
 
                        
 
@@ -584,6 +595,7 @@ class Company:
                 if vehicle.id == v.id:
                     clientid = c
                     break
+        
 
         if len(self.available_vehicles) != 0:
             max_capacity = 0
@@ -610,18 +622,28 @@ class Company:
                     item.update({selected_v.id : selected_v})
                     item.update({'R'+ selected_v.id: route})
                     break
+            
+            # ver si vehicle esta en sustituto, si es asi, cambiar vehicle por selected_v
+            for v in self.substitute.keys():
+                if self.substitute[v][0].id == vehicle.id:
+                    self.substitute[v][0] = selected_v
+                    
+
+
         # Ver si el cliente tiene asignado otros vehiculos
         elif len(self.vehicle_client[clientid]) > 1:
-            while selected_v == vehicle:
+            selected_v = vehicle
+            while selected_v.id == vehicle.id:
                 selected_v = random.choice(self.vehicle_client[clientid])
             selected_v.route = self.merge(selected_v, vehicle)
             route_selected_v = None
             for item in self.vehicle_route:
                 if selected_v.id in item.keys():
-                    route_selected_v = item.pop(f'R{selected_v}')
-                    item[f'R{selected_v}'] = selected_v.route
+                    route_selected_v = item.pop(f'R{selected_v.id}')
+                    item[f'R{selected_v.id}'] = selected_v.route
                     break
-            self.substitute.update({f'{vehicle.id}':[selected_v,route_selected_v]})
+            self.substitute.update({f'{vehicle.id}':[selected_v,route_selected_v,clientid]})
+            self.vehicle_client[clientid].remove(vehicle)
             
         ## Ver si la compañia tiene presupuesto para comprar otro vehiculo(1500 pesos)
         elif self.budget - 1500 > 0:
@@ -640,8 +662,13 @@ class Company:
                     item.pop(vehicle.id)
                     route = item.pop(list(item.keys())[0])
                     item.update({selected_v.id : selected_v})
-                    item.update({'R'+ selected_v: route})
+                    item.update({'R'+ selected_v.id: route})
                     break
+
+            # ver si vehicle esta en sustituto, si es asi, cambiar vehicle por selected_v
+            for v in self.substitute.keys():
+                if self.substitute[v][0].id == vehicle.id:
+                    self.substitute[v][0] = selected_v
            
 
     def merge(self, new_vehicle, old_vehicle):

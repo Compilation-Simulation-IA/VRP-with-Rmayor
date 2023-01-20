@@ -1,0 +1,1426 @@
+Compañía realizó las siguientes asignaciones:
+ Cliente - Vehículo
+ {'c1': [V15]}
+
+  Vehículo - Paradas
+ {'V15': [(0,1), (3,2), (7,6), (4,9)]}.
+
+Día Lunes 1:
+
+Vehículo V15 comenzó su ruta.
+
+0:00:00 Vehículo V15 se movió de posición (7,6) del mapa a posición (7,5) del mapa con una velocidad de 38km/h.
+
+0:00:18 Vehículo V15 se movió de posición (7,5) del mapa a posición (7,4) del mapa con una velocidad de 38km/h.
+
+0:00:25 Vehículo V15 se movió de posición (7,4) del mapa a posición (6,4) del mapa con una velocidad de 53km/h.
+
+0:00:30 Vehículo V15 se movió de posición (6,4) del mapa a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 25km/h.
+
+0:00:44 Vehículo V15 no fue parado por Autoridad en la posición (5,2) del mapa.
+
+0:00:45 Vehículo V15 paró 15 segundos en el Semáforo con luz AMARILLO en la posición (5,2) del mapa.
+
+0:01:01 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (5,3) del mapa con autoridades con semáforo con una velocidad de 37km/h.
+
+0:01:08 Vehículo V15 no fue parado por Autoridad en la posición (5,2) del mapa.
+
+0:01:09 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:21 Vehículo V15 se movió de posición (5,3) del mapa con autoridades con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 30km/h.
+
+0:01:34 Vehículo V15 no fue parado por Autoridad en la posición (4,3) del mapa.
+
+0:01:35 Vehículo V15 paró 1 segundos en el Semáforo con luz ROJO en la posición (4,3) del mapa.
+
+0:01:37 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (4,2) del mapa con una velocidad de 49km/h.
+
+0:01:41 Vehículo V15 se movió de posición (4,2) del mapa a posición (3,2) del mapa que es una parada con 20.0 personas con autoridades con semáforo con una velocidad de 40km/h.
+
+0:01:46 Vehículo V15 no fue parado por Autoridad en la posición (3,1) del mapa.
+
+0:01:47 Vehículo V15 cargó 20.0 personas en posición (3,2) del mapa con autoridades con semáforo, tiene 20.0 personas a bordo.
+ 
+0:08:16 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:08:17 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,1) del mapa con autoridades con semáforo con una velocidad de 44km/h.
+
+0:08:23 Vehículo V15 no fue parado por Autoridad en la posición (3,1) del mapa.
+
+0:08:24 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:08:25 Vehículo V15 se movió de posición (3,1) del mapa con autoridades con semáforo a posición (2,1) del mapa con una velocidad de 49km/h.
+
+0:08:33 Vehículo V15 se movió de posición (2,1) del mapa a posición (1,1) del mapa con una velocidad de 44km/h.
+
+0:08:48 Vehículo V15 se movió de posición (1,1) del mapa a posición (0,1) del mapa que es una parada con 5.0 personas con una velocidad de 39km/h.
+
+0:08:57 Vehículo V15 cargó 5.0 personas en posición (0,1) del mapa, tiene 25.0 personas a bordo.
+ 
+0:12:46 Vehículo V15 se movió de posición (0,1) del mapa a posición (0,2) del mapa con una velocidad de 30km/h.
+
+0:12:54 Vehículo V15 se movió de posición (0,2) del mapa a posición (0,3) del mapa con una velocidad de 26km/h.
+
+0:13:03 Vehículo V15 se movió de posición (0,3) del mapa a posición (0,4) del mapa con una velocidad de 34km/h.
+
+0:13:22 Vehículo V15 se movió de posición (0,4) del mapa a posición (1,4) del mapa con autoridades con semáforo con una velocidad de 44km/h.
+
+0:13:29 Vehículo V15 no fue parado por Autoridad en la posición (1,2) del mapa.
+
+0:13:30 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (1,2) del mapa.
+
+0:13:31 Vehículo V15 se movió de posición (1,4) del mapa con autoridades con semáforo a posición (2,4) del mapa con autoridades con semáforo con una velocidad de 53km/h.
+
+0:13:42 Vehículo V15 no fue parado por Autoridad en la posición (2,2) del mapa.
+
+0:13:43 Vehículo V15 paró 2 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:13:46 Vehículo V15 se movió de posición (2,4) del mapa con autoridades con semáforo a posición (3,4) del mapa con autoridades con semáforo con una velocidad de 29km/h.
+
+0:13:56 Vehículo V15 no fue parado por Autoridad en la posición (3,1) del mapa.
+
+0:13:57 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:13:58 Vehículo V15 se movió de posición (3,4) del mapa con autoridades con semáforo a posición (3,5) del mapa con autoridades con semáforo con una velocidad de 43km/h.
+
+0:14:12 Vehículo V15 no fue parado por Autoridad en la posición (3,1) del mapa.
+
+0:14:13 Vehículo V15 paró 5 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:14:19 Vehículo V15 se movió de posición (3,5) del mapa con autoridades con semáforo a posición (3,6) del mapa con autoridades con semáforo con una velocidad de 43km/h.
+
+0:14:28 Vehículo V15 no fue parado por Autoridad en la posición (3,1) del mapa.
+
+0:14:29 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:14:30 Vehículo V15 se movió de posición (3,6) del mapa con autoridades con semáforo a posición (3,7) del mapa con autoridades con semáforo con una velocidad de 52km/h.
+
+0:14:37 Vehículo V15 no fue parado por Autoridad en la posición (3,1) del mapa.
+
+0:14:38 Vehículo V15 paró 13 segundos en el Semáforo con luz AMARILLO en la posición (3,1) del mapa.
+
+0:14:52 Vehículo V15 se movió de posición (3,7) del mapa con autoridades con semáforo a posición (3,8) del mapa con autoridades con semáforo con una velocidad de 34km/h.
+
+0:15:05 Vehículo V15 no fue parado por Autoridad en la posición (3,1) del mapa.
+
+0:15:06 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:15:07 Vehículo V15 se movió de posición (3,8) del mapa con autoridades con semáforo a posición (4,8) del mapa con autoridades con semáforo con una velocidad de 25km/h.
+
+0:15:28 Vehículo V15 no fue parado por Autoridad en la posición (4,8) del mapa.
+
+0:15:29 Vehículo V15 paró 7 segundos en el Semáforo con luz ROJO en la posición (4,8) del mapa.
+
+0:15:37 Vehículo V15 se movió de posición (4,8) del mapa con autoridades con semáforo a posición (4,9) del mapa con autoridades con semáforo con una velocidad de 48km/h.
+
+0:15:44 Vehículo V15 no fue parado por Autoridad en la posición (4,8) del mapa.
+
+0:15:45 Vehículo V15 descargó 25.0 personas en posición (4,9) del mapa con autoridades con semáforo, tiene 0 personas a bordo.
+ 
+0:15:46 Vehículo V15 terminó ruta con una distancia de 2.43 km.
+
+Compañía tuvo perdidas de 0 pesos en multas por el Vehículo V15.
+
+Compañía tuvo ganancias de 7500.0 pesos por los servicios prestados por el Vehículo V15.
+
+Compañía gastó 4.05 pesos en la gasolina del Vehículo V15 que recorrió 2.43 km.
+
+Vehículo V15 está en perfectas condiciones.
+
+Termino el día.
+
+Capital de Compañía: 1007495.95
+Día Martes 2:
+
+Vehículo V15 comenzó su ruta.
+
+0:00:00 Vehículo V15 se movió de posición (7,6) del mapa a posición (7,5) del mapa con autoridades con una velocidad de 45km/h.
+
+0:00:16 Vehículo V15 no fue parado por Autoridad en la posición (7, 5) del mapa.
+
+0:00:17 Vehículo V15 se movió de posición (7,5) del mapa con autoridades a posición (7,4) del mapa con autoridades con una velocidad de 44km/h.
+
+0:00:23 Autoridad en la posición (7, 4) del mapa desvió a Vehículo V15.
+
+0:00:23 Vehículo V15 fue parado por la Autoridad en la posición (7, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:00:28 Vehículo V15 se movió de posición (7,4) del mapa con autoridades a posición (7,5) del mapa con autoridades con una velocidad de 46km/h.
+
+0:00:34 Vehículo V15 no fue parado por Autoridad en la posición (7, 5) del mapa.
+
+0:00:35 Vehículo V15 se movió de posición (7,5) del mapa con autoridades a posición (6,5) del mapa con una velocidad de 45km/h.
+
+0:00:41 Vehículo V15 se movió de posición (6,5) del mapa a posición (6,4) del mapa con una velocidad de 36km/h.
+
+0:00:55 Vehículo V15 se movió de posición (6,4) del mapa a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 36km/h.
+
+0:01:05 Autoridad en la posición (5, 4) del mapa multó a Vehículo V15 por ir a 62km/h.
+
+0:01:05 Vehículo V15 fue parado por la Autoridad en la posición (5, 4) del mapa por exceso de velocidad y lo multaron.
+
+0:01:12 Vehículo V15 paró 8 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:21 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (5,3) del mapa con autoridades con semáforo con una velocidad de 62km/h.
+
+0:01:26 Autoridad en la posición (5, 3) del mapa desvió a Vehículo V15.
+
+0:01:26 Vehículo V15 fue parado por la Autoridad en la posición (5, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:01:32 Vehículo V15 paró 8 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:41 Vehículo V15 se movió de posición (5,3) del mapa con autoridades con semáforo a posición (5,2) del mapa con autoridades con semáforo con una velocidad de 30km/h.
+
+0:01:49 Autoridad en la posición (5, 2) del mapa desvió a Vehículo V15.
+
+0:01:49 Vehículo V15 fue parado por la Autoridad en la posición (5, 2) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:01:53 Vehículo V15 paró 7 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:02:01 Vehículo V15 se movió de posición (5,2) del mapa con autoridades con semáforo a posición (5,3) del mapa con autoridades con semáforo con una velocidad de 40km/h.
+
+0:02:07 Vehículo V15 no fue parado por Autoridad en la posición (5, 3) del mapa.
+
+0:02:08 Vehículo V15 paró 12 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:02:21 Vehículo V15 se movió de posición (5,3) del mapa con autoridades con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 34km/h.
+
+0:02:32 Vehículo V15 no fue parado por Autoridad en la posición (4, 3) del mapa.
+
+0:02:33 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:02:34 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (4,2) del mapa con una velocidad de 58km/h.
+
+0:02:38 Vehículo V15 se movió de posición (4,2) del mapa a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 41km/h.
+
+0:02:43 Vehículo V15 no fue parado por Autoridad en la posición (4, 3) del mapa.
+
+0:02:44 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:02:45 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (4,2) del mapa con una velocidad de 44km/h.
+
+0:02:50 Vehículo V15 se movió de posición (4,2) del mapa a posición (3,2) del mapa que es una parada con 20.0 personas con autoridades con semáforo con una velocidad de 47km/h.
+
+0:02:55 Autoridad en la posición (3, 2) del mapa desvió a Vehículo V15.
+
+0:02:55 Vehículo V15 fue parado por la Autoridad en la posición (3, 2) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:03:01 Vehículo V15 cargó 20.0 personas en posición (3,2) del mapa con autoridades con semáforo, tiene 20.0 personas a bordo.
+ 
+0:09:30 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:09:31 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (2,2) del mapa con semáforo con una velocidad de 46km/h.
+
+0:09:43 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:09:44 Vehículo V15 se movió de posición (2,2) del mapa con semáforo a posición (2,1) del mapa con autoridades con una velocidad de 42km/h.
+
+0:09:51 Autoridad en la posición (2, 1) del mapa multó a Vehículo V15 por ir a 62km/h.
+
+0:09:51 Vehículo V15 fue parado por la Autoridad en la posición (2, 1) del mapa por exceso de velocidad y lo multaron.
+
+0:09:58 Vehículo V15 se movió de posición (2,1) del mapa con autoridades a posición (3,1) del mapa con semáforo con una velocidad de 62km/h.
+
+0:10:05 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:10:06 Vehículo V15 se movió de posición (3,1) del mapa con semáforo a posición (2,1) del mapa con autoridades con una velocidad de 24km/h.
+
+0:10:23 Vehículo V15 no fue parado por Autoridad en la posición (2, 1) del mapa.
+
+0:10:24 Vehículo V15 se movió de posición (2,1) del mapa con autoridades a posición (1,1) del mapa con una velocidad de 28km/h.
+
+0:10:47 Vehículo V15 se movió de posición (1,1) del mapa a posición (0,1) del mapa que es una parada con 5.0 personas con autoridades con una velocidad de 41km/h.
+
+0:10:55 Vehículo V15 no fue parado por Autoridad en la posición (0, 1) del mapa.
+
+0:10:56 Vehículo V15 cargó 5.0 personas en posición (0,1) del mapa con autoridades, tiene 25.0 personas a bordo.
+ 
+0:14:45 Vehículo V15 se movió de posición (0,1) del mapa con autoridades a posición (0,2) del mapa con autoridades con una velocidad de 33km/h.
+
+0:14:52 Autoridad en la posición (0, 2) del mapa desvió a Vehículo V15.
+
+0:14:52 Vehículo V15 fue parado por la Autoridad en la posición (0, 2) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (1,2), (1,3), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:14:57 Vehículo V15 se movió de posición (0,2) del mapa con autoridades a posición (1,2) del mapa con semáforo con una velocidad de 47km/h.
+
+0:15:06 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (1,2) del mapa.
+
+0:15:07 Vehículo V15 se movió de posición (1,2) del mapa con semáforo a posición (1,3) del mapa con semáforo con una velocidad de 26km/h.
+
+0:15:29 Vehículo V15 paró 21 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:15:51 Vehículo V15 se movió de posición (1,3) del mapa con semáforo a posición (0,3) del mapa con autoridades con una velocidad de 47km/h.
+
+0:16:05 Vehículo V15 no fue parado por Autoridad en la posición (0, 3) del mapa.
+
+0:16:06 Vehículo V15 se movió de posición (0,3) del mapa con autoridades a posición (0,4) del mapa con autoridades con una velocidad de 37km/h.
+
+0:16:23 Autoridad en la posición (0, 4) del mapa desvió a Vehículo V15.
+
+0:16:23 Vehículo V15 fue parado por la Autoridad en la posición (0, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (1,2), (1,3), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (1,2), (1,3), (0,3), (0,4), (0,3), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:16:29 Vehículo V15 se movió de posición (0,4) del mapa con autoridades a posición (0,3) del mapa con autoridades con una velocidad de 32km/h.
+
+0:16:49 Vehículo V15 no fue parado por Autoridad en la posición (0, 3) del mapa.
+
+0:16:50 Vehículo V15 se movió de posición (0,3) del mapa con autoridades a posición (1,3) del mapa con semáforo con una velocidad de 27km/h.
+
+0:17:15 Vehículo V15 paró 15 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:17:31 Vehículo V15 se movió de posición (1,3) del mapa con semáforo a posición (1,4) del mapa con autoridades con semáforo con una velocidad de 33km/h.
+
+0:17:40 Vehículo V15 no fue parado por Autoridad en la posición (1, 4) del mapa.
+
+0:17:41 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (1,2) del mapa.
+
+0:17:42 Vehículo V15 se movió de posición (1,4) del mapa con autoridades con semáforo a posición (2,4) del mapa con semáforo con una velocidad de 47km/h.
+
+0:17:54 Vehículo V15 paró 4 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:17:59 Vehículo V15 se movió de posición (2,4) del mapa con semáforo a posición (3,4) del mapa con autoridades con semáforo con una velocidad de 43km/h.
+
+0:18:06 Vehículo V15 no fue parado por Autoridad en la posición (3, 4) del mapa.
+
+0:18:07 Vehículo V15 paró 2 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:18:10 Vehículo V15 se movió de posición (3,4) del mapa con autoridades con semáforo a posición (3,5) del mapa con autoridades con semáforo con una velocidad de 51km/h.
+
+0:18:22 Vehículo V15 no fue parado por Autoridad en la posición (3, 5) del mapa.
+
+0:18:23 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:18:24 Vehículo V15 se movió de posición (3,5) del mapa con autoridades con semáforo a posición (3,6) del mapa con autoridades con semáforo con una velocidad de 29km/h.
+
+0:18:37 Vehículo V15 no fue parado por Autoridad en la posición (3, 6) del mapa.
+
+0:18:38 Vehículo V15 paró 4 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:18:43 Vehículo V15 se movió de posición (3,6) del mapa con autoridades con semáforo a posición (3,7) del mapa con autoridades con semáforo con una velocidad de 34km/h.
+
+0:18:54 Autoridad en la posición (3, 7) del mapa desvió a Vehículo V15.
+
+0:18:54 Vehículo V15 fue parado por la Autoridad en la posición (3, 7) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (1,2), (1,3), (0,3), (0,4), (0,3), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (5,3), (4,3), (4,2), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (1,2), (1,3), (0,3), (0,4), (0,3), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (4,7), (4,8), (3,8), (4,8), (4,9)].
+
+0:19:00 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:19:01 Vehículo V15 se movió de posición (3,7) del mapa con autoridades con semáforo a posición (4,7) del mapa con autoridades con semáforo con una velocidad de 53km/h.
+
+0:19:11 Vehículo V15 no fue parado por Autoridad en la posición (4, 7) del mapa.
+
+0:19:12 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:19:13 Vehículo V15 se movió de posición (4,7) del mapa con autoridades con semáforo a posición (4,8) del mapa con autoridades con semáforo con una velocidad de 39km/h.
+
+0:19:27 Autoridad en la posición (4, 8) del mapa multó a Vehículo V15 por ir a 64km/h.
+
+0:19:27 Vehículo V15 fue parado por la Autoridad en la posición (4, 8) del mapa por exceso de velocidad y lo multaron.
+
+0:19:36 Vehículo V15 paró 20 segundos en el Semáforo con luz ROJO en la posición (4,8) del mapa.
+
+0:19:57 Vehículo V15 se movió de posición (4,8) del mapa con autoridades con semáforo a posición (3,8) del mapa con autoridades con semáforo con una velocidad de 64km/h.
+
+0:20:05 Vehículo V15 no fue parado por Autoridad en la posición (3, 8) del mapa.
+
+0:20:06 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:20:07 Vehículo V15 se movió de posición (3,8) del mapa con autoridades con semáforo a posición (4,8) del mapa con autoridades con semáforo con una velocidad de 37km/h.
+
+0:20:21 Vehículo V15 no fue parado por Autoridad en la posición (4, 8) del mapa.
+
+0:20:22 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,8) del mapa.
+
+0:20:23 Vehículo V15 se movió de posición (4,8) del mapa con autoridades con semáforo a posición (4,9) del mapa con semáforo con una velocidad de 48km/h.
+
+0:20:30 Vehículo V15 descargó 25.0 personas en posición (4,9) del mapa con semáforo, tiene 0 personas a bordo.
+ 
+0:20:31 Vehículo V15 terminó ruta con una distancia de 4.15 km.
+
+Compañía tuvo perdidas de 150 pesos en multas por el Vehículo V15.
+
+Compañía tuvo ganancias de 11700.0 pesos por los servicios prestados por el Vehículo V15.
+
+Compañía gastó 6.92 pesos en la gasolina del Vehículo V15 que recorrió 4.15 km.
+
+Vehículo V15 está en perfectas condiciones.
+
+Termino el día.
+
+Capital de Compañía: 1019039.03
+Día Miércoles 3:
+
+Vehículo V15 comenzó su ruta.
+
+0:00:00 Vehículo V15 no fue parado por Autoridad en la posición (7, 6) del mapa.
+
+0:00:01 Vehículo V15 se movió de posición (7,6) del mapa con autoridades a posición (7,5) del mapa con autoridades con una velocidad de 47km/h.
+
+0:00:16 Vehículo V15 no fue parado por Autoridad en la posición (7, 5) del mapa.
+
+0:00:17 Vehículo V15 se movió de posición (7,5) del mapa con autoridades a posición (7,4) del mapa con autoridades con una velocidad de 49km/h.
+
+0:00:22 Vehículo V15 no fue parado por Autoridad en la posición (7, 4) del mapa.
+
+0:00:23 Vehículo V15 se movió de posición (7,4) del mapa con autoridades a posición (6,4) del mapa con autoridades con una velocidad de 42km/h.
+
+0:00:29 Vehículo V15 no fue parado por Autoridad en la posición (6, 4) del mapa.
+
+0:00:30 Vehículo V15 se movió de posición (6,4) del mapa con autoridades a posición (5,4) del mapa con semáforo con una velocidad de 58km/h.
+
+0:00:36 Vehículo V15 paró 4 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:00:41 Vehículo V15 se movió de posición (5,4) del mapa con semáforo a posición (5,3) del mapa con autoridades con semáforo con una velocidad de 34km/h.
+
+0:00:49 Autoridad en la posición (5, 3) del mapa desvió a Vehículo V15.
+
+0:00:49 Vehículo V15 fue parado por la Autoridad en la posición (5, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:00:54 Vehículo V15 paró 6 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:01 Vehículo V15 se movió de posición (5,3) del mapa con autoridades con semáforo a posición (5,2) del mapa con semáforo con una velocidad de 39km/h.
+
+0:01:07 Vehículo V15 paró 13 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:21 Vehículo V15 se movió de posición (5,2) del mapa con semáforo a posición (4,2) del mapa con una velocidad de 46km/h.
+
+0:01:30 Vehículo V15 se movió de posición (4,2) del mapa a posición (4,3) del mapa con semáforo con una velocidad de 43km/h.
+
+0:01:35 Vehículo V15 paró 1 segundos en el Semáforo con luz ROJO en la posición (4,3) del mapa.
+
+0:01:37 Vehículo V15 se movió de posición (4,3) del mapa con semáforo a posición (4,2) del mapa con una velocidad de 37km/h.
+
+0:01:42 Vehículo V15 se movió de posición (4,2) del mapa a posición (3,2) del mapa que es una parada con 20.0 personas con autoridades con semáforo con una velocidad de 31km/h.
+
+0:01:49 Vehículo V15 no fue parado por Autoridad en la posición (3, 2) del mapa.
+
+0:01:50 Vehículo V15 cargó 20.0 personas en posición (3,2) del mapa con autoridades con semáforo, tiene 20.0 personas a bordo.
+ 
+0:08:19 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:08:20 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,1) del mapa con autoridades con semáforo con una velocidad de 35km/h.
+
+0:08:28 Vehículo V15 no fue parado por Autoridad en la posición (3, 1) del mapa.
+
+0:08:29 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:08:30 Vehículo V15 se movió de posición (3,1) del mapa con autoridades con semáforo a posición (2,1) del mapa con autoridades con una velocidad de 45km/h.
+
+0:08:39 Autoridad en la posición (2, 1) del mapa desvió a Vehículo V15.
+
+0:08:39 Vehículo V15 fue parado por la Autoridad en la posición (2, 1) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:08:44 Vehículo V15 se movió de posición (2,1) del mapa con autoridades a posición (2,0) del mapa con autoridades con una velocidad de 37km/h.
+
+0:08:57 Vehículo V15 no fue parado por Autoridad en la posición (2, 0) del mapa.
+
+0:08:58 Vehículo V15 se movió de posición (2,0) del mapa con autoridades a posición (1,0) del mapa con una velocidad de 37km/h.
+
+0:09:09 Vehículo V15 se movió de posición (1,0) del mapa a posición (1,1) del mapa con autoridades con una velocidad de 47km/h.
+
+0:09:19 Vehículo V15 no fue parado por Autoridad en la posición (1, 1) del mapa.
+
+0:09:20 Vehículo V15 se movió de posición (1,1) del mapa con autoridades a posición (0,1) del mapa que es una parada con 5.0 personas con autoridades con una velocidad de 58km/h.
+
+0:09:26 Vehículo V15 no fue parado por Autoridad en la posición (0, 1) del mapa.
+
+0:09:27 Vehículo V15 cargó 5.0 personas en posición (0,1) del mapa con autoridades, tiene 25.0 personas a bordo.
+ 
+0:13:16 Vehículo V15 se movió de posición (0,1) del mapa con autoridades a posición (0,2) del mapa con una velocidad de 53km/h.
+
+0:13:21 Vehículo V15 se movió de posición (0,2) del mapa a posición (0,3) del mapa con autoridades con una velocidad de 26km/h.
+
+0:13:30 Vehículo V15 no fue parado por Autoridad en la posición (0, 3) del mapa.
+
+0:13:31 Vehículo V15 se movió de posición (0,3) del mapa con autoridades a posición (0,4) del mapa con autoridades con una velocidad de 48km/h.
+
+0:13:44 Autoridad en la posición (0, 4) del mapa desvió a Vehículo V15.
+
+0:13:44 Vehículo V15 fue parado por la Autoridad en la posición (0, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:13:49 Vehículo V15 se movió de posición (0,4) del mapa con autoridades a posición (0,3) del mapa con autoridades con una velocidad de 39km/h.
+
+0:14:05 Autoridad en la posición (0, 3) del mapa desvió a Vehículo V15.
+
+0:14:05 Vehículo V15 fue parado por la Autoridad en la posición (0, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:14:09 Vehículo V15 se movió de posición (0,3) del mapa con autoridades a posición (0,2) del mapa con una velocidad de 29km/h.
+
+0:14:17 Vehículo V15 se movió de posición (0,2) del mapa a posición (1,2) del mapa con autoridades con semáforo con una velocidad de 42km/h.
+
+0:14:27 Vehículo V15 no fue parado por Autoridad en la posición (1, 2) del mapa.
+
+0:14:28 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (1,2) del mapa.
+
+0:14:29 Vehículo V15 se movió de posición (1,2) del mapa con autoridades con semáforo a posición (1,3) del mapa con autoridades con semáforo con una velocidad de 42km/h.
+
+0:14:43 Autoridad en la posición (1, 3) del mapa desvió a Vehículo V15.
+
+0:14:43 Vehículo V15 fue parado por la Autoridad en la posición (1, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:14:49 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:15:01 Vehículo V15 se movió de posición (1,3) del mapa con autoridades con semáforo a posición (2,3) del mapa con semáforo con una velocidad de 39km/h.
+
+0:15:13 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:15:14 Vehículo V15 se movió de posición (2,3) del mapa con semáforo a posición (2,4) del mapa con autoridades con semáforo con una velocidad de 50km/h.
+
+0:15:25 Vehículo V15 no fue parado por Autoridad en la posición (2, 4) del mapa.
+
+0:15:26 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:15:27 Vehículo V15 se movió de posición (2,4) del mapa con autoridades con semáforo a posición (1,4) del mapa con semáforo con una velocidad de 51km/h.
+
+0:15:38 Vehículo V15 paró 12 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:15:51 Vehículo V15 se movió de posición (1,4) del mapa con semáforo a posición (2,4) del mapa con autoridades con semáforo con una velocidad de 40km/h.
+
+0:16:05 Vehículo V15 no fue parado por Autoridad en la posición (2, 4) del mapa.
+
+0:16:06 Vehículo V15 paró 2 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:16:09 Vehículo V15 se movió de posición (2,4) del mapa con autoridades con semáforo a posición (3,4) del mapa con autoridades con semáforo con una velocidad de 50km/h.
+
+0:16:15 Autoridad en la posición (3, 4) del mapa multó a Vehículo V15 por ir a 63km/h.
+
+0:16:15 Vehículo V15 fue parado por la Autoridad en la posición (3, 4) del mapa por exceso de velocidad y lo multaron.
+
+0:16:21 Vehículo V15 paró 9 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:16:31 Vehículo V15 se movió de posición (3,4) del mapa con autoridades con semáforo a posición (3,5) del mapa con autoridades con semáforo con una velocidad de 63km/h.
+
+0:16:41 Vehículo V15 no fue parado por Autoridad en la posición (3, 5) del mapa.
+
+0:16:42 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:16:43 Vehículo V15 se movió de posición (3,5) del mapa con autoridades con semáforo a posición (3,6) del mapa con autoridades con semáforo con una velocidad de 50km/h.
+
+0:16:51 Autoridad en la posición (3, 6) del mapa desvió a Vehículo V15.
+
+0:16:51 Vehículo V15 fue parado por la Autoridad en la posición (3, 6) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (2,0), (1,0), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (3,6), (4,6), (4,7), (3,7), (3,8), (4,8), (4,9)].
+
+0:16:55 Vehículo V15 paró 8 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:17:04 Vehículo V15 se movió de posición (3,6) del mapa con autoridades con semáforo a posición (4,6) del mapa con autoridades con semáforo con una velocidad de 46km/h.
+
+0:17:18 Vehículo V15 no fue parado por Autoridad en la posición (4, 6) del mapa.
+
+0:17:19 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:17:20 Vehículo V15 se movió de posición (4,6) del mapa con autoridades con semáforo a posición (4,7) del mapa con semáforo con una velocidad de 41km/h.
+
+0:17:32 Vehículo V15 paró 4 segundos en el Semáforo con luz ROJO en la posición (4,3) del mapa.
+
+0:17:37 Vehículo V15 se movió de posición (4,7) del mapa con semáforo a posición (3,7) del mapa con semáforo con una velocidad de 51km/h.
+
+0:17:47 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:17:48 Vehículo V15 se movió de posición (3,7) del mapa con semáforo a posición (3,8) del mapa con semáforo con una velocidad de 50km/h.
+
+0:17:57 Vehículo V15 paró 12 segundos en el Semáforo con luz AMARILLO en la posición (3,1) del mapa.
+
+0:18:10 Vehículo V15 se movió de posición (3,8) del mapa con semáforo a posición (4,8) del mapa con semáforo con una velocidad de 57km/h.
+
+0:18:19 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,8) del mapa.
+
+0:18:20 Vehículo V15 se movió de posición (4,8) del mapa con semáforo a posición (4,9) del mapa con semáforo con una velocidad de 45km/h.
+
+0:18:27 Vehículo V15 descargó 25.0 personas en posición (4,9) del mapa con semáforo, tiene 0 personas a bordo.
+ 
+0:18:28 Vehículo V15 terminó ruta con una distancia de 3.9 km.
+
+Compañía tuvo perdidas de 50 pesos en multas por el Vehículo V15.
+
+Compañía tuvo ganancias de 11100.0 pesos por los servicios prestados por el Vehículo V15.
+
+Compañía gastó 6.5 pesos en la gasolina del Vehículo V15 que recorrió 3.9 km.
+
+Vehículo V15 está en perfectas condiciones.
+
+Termino el día.
+
+Capital de Compañía: 1030082.53
+Día Jueves 4:
+
+Vehículo V15 comenzó su ruta.
+
+0:00:00 Vehículo V15 se movió de posición (7,6) del mapa a posición (7,5) del mapa con una velocidad de 49km/h.
+
+0:00:14 Vehículo V15 se movió de posición (7,5) del mapa a posición (7,4) del mapa con autoridades con una velocidad de 45km/h.
+
+0:00:20 Autoridad en la posición (7, 4) del mapa desvió a Vehículo V15.
+
+0:00:20 Vehículo V15 fue parado por la Autoridad en la posición (7, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:00:24 Vehículo V15 se movió de posición (7,4) del mapa con autoridades a posición (7,5) del mapa con una velocidad de 19km/h.
+
+0:00:37 Vehículo V15 se movió de posición (7,5) del mapa a posición (6,5) del mapa con autoridades con una velocidad de 49km/h.
+
+0:00:42 Vehículo V15 no fue parado por Autoridad en la posición (6, 5) del mapa.
+
+0:00:43 Vehículo V15 se movió de posición (6,5) del mapa con autoridades a posición (6,4) del mapa con autoridades con una velocidad de 35km/h.
+
+0:00:57 Autoridad en la posición (6, 4) del mapa desvió a Vehículo V15.
+
+0:00:57 Vehículo V15 fue parado por la Autoridad en la posición (6, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (5,3), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:01:01 Vehículo V15 se movió de posición (6,4) del mapa con autoridades a posición (6,3) del mapa con autoridades con una velocidad de 50km/h.
+
+0:01:08 Autoridad en la posición (6, 3) del mapa desvió a Vehículo V15.
+
+0:01:08 Vehículo V15 fue parado por la Autoridad en la posición (6, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (5,3), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:01:13 Vehículo V15 se movió de posición (6,3) del mapa con autoridades a posición (6,4) del mapa con autoridades con una velocidad de 47km/h.
+
+0:01:21 Vehículo V15 no fue parado por Autoridad en la posición (6, 4) del mapa.
+
+0:01:22 Vehículo V15 se movió de posición (6,4) del mapa con autoridades a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 60km/h.
+
+0:01:28 Vehículo V15 no fue parado por Autoridad en la posición (5, 4) del mapa.
+
+0:01:29 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:41 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (5,3) del mapa con semáforo con una velocidad de 33km/h.
+
+0:01:49 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:02:01 Vehículo V15 se movió de posición (5,3) del mapa con semáforo a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 48km/h.
+
+0:02:07 Autoridad en la posición (5, 4) del mapa desvió a Vehículo V15.
+
+0:02:07 Vehículo V15 fue parado por la Autoridad en la posición (5, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (4,3), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:02:11 Vehículo V15 paró 9 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:02:21 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (4,4) del mapa con autoridades con semáforo con una velocidad de 37km/h.
+
+0:02:33 Autoridad en la posición (4, 4) del mapa desvió a Vehículo V15.
+
+0:02:33 Vehículo V15 fue parado por la Autoridad en la posición (4, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (4,3), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:02:39 Vehículo V15 paró 1 segundos en el Semáforo con luz ROJO en la posición (4,3) del mapa.
+
+0:02:41 Vehículo V15 se movió de posición (4,4) del mapa con autoridades con semáforo a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 42km/h.
+
+0:02:52 Vehículo V15 no fue parado por Autoridad en la posición (5, 4) del mapa.
+
+0:02:53 Vehículo V15 paró 7 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:03:01 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (5,3) del mapa con semáforo con una velocidad de 30km/h.
+
+0:03:10 Vehículo V15 paró 10 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:03:21 Vehículo V15 se movió de posición (5,3) del mapa con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 30km/h.
+
+0:03:34 Vehículo V15 no fue parado por Autoridad en la posición (4, 3) del mapa.
+
+0:03:35 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:03:36 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (5,3) del mapa con semáforo con una velocidad de 39km/h.
+
+0:03:46 Vehículo V15 paró 14 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:04:01 Vehículo V15 se movió de posición (5,3) del mapa con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 28km/h.
+
+0:04:14 Autoridad en la posición (4, 3) del mapa desvió a Vehículo V15.
+
+0:04:14 Vehículo V15 fue parado por la Autoridad en la posición (4, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:04:19 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:04:20 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (3,3) del mapa con autoridades con semáforo con una velocidad de 57km/h.
+
+0:04:24 Vehículo V15 no fue parado por Autoridad en la posición (3, 3) del mapa.
+
+0:04:25 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:04:26 Vehículo V15 se movió de posición (3,3) del mapa con autoridades con semáforo a posición (3,2) del mapa que es una parada con 20.0 personas con autoridades con semáforo con una velocidad de 39km/h.
+
+0:04:37 Autoridad en la posición (3, 2) del mapa desvió a Vehículo V15.
+
+0:04:37 Vehículo V15 fue parado por la Autoridad en la posición (3, 2) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:04:42 Vehículo V15 cargó 20.0 personas en posición (3,2) del mapa con autoridades con semáforo, tiene 20.0 personas a bordo.
+ 
+0:11:11 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:11:12 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,3) del mapa con autoridades con semáforo con una velocidad de 49km/h.
+
+0:11:21 Vehículo V15 no fue parado por Autoridad en la posición (3, 3) del mapa.
+
+0:11:22 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:11:34 Vehículo V15 se movió de posición (3,3) del mapa con autoridades con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 38km/h.
+
+0:11:40 Vehículo V15 no fue parado por Autoridad en la posición (4, 3) del mapa.
+
+0:11:41 Vehículo V15 paró 3 segundos en el Semáforo con luz ROJO en la posición (4,3) del mapa.
+
+0:11:45 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (4,2) del mapa con autoridades con una velocidad de 52km/h.
+
+0:11:49 Vehículo V15 no fue parado por Autoridad en la posición (4, 2) del mapa.
+
+0:11:50 Vehículo V15 se movió de posición (4,2) del mapa con autoridades a posición (3,2) del mapa con autoridades con semáforo con una velocidad de 51km/h.
+
+0:11:54 Vehículo V15 no fue parado por Autoridad en la posición (3, 2) del mapa.
+
+0:11:55 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:12:07 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,1) del mapa con autoridades con semáforo con una velocidad de 30km/h.
+
+0:12:16 Vehículo V15 no fue parado por Autoridad en la posición (3, 1) del mapa.
+
+0:12:17 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:12:18 Vehículo V15 se movió de posición (3,1) del mapa con autoridades con semáforo a posición (2,1) del mapa con autoridades con una velocidad de 49km/h.
+
+0:12:26 Vehículo V15 no fue parado por Autoridad en la posición (2, 1) del mapa.
+
+0:12:27 Vehículo V15 se movió de posición (2,1) del mapa con autoridades a posición (1,1) del mapa con autoridades con una velocidad de 43km/h.
+
+0:12:43 Vehículo V15 se movió de posición (1,1) del mapa con autoridades a posición (0,1) del mapa que es una parada con 5.0 personas con una velocidad de 36km/h.
+
+0:12:52 Vehículo V15 cargó 5.0 personas en posición (0,1) del mapa, tiene 25.0 personas a bordo.
+ 
+0:16:41 Vehículo V15 se movió de posición (0,1) del mapa a posición (0,2) del mapa con autoridades con una velocidad de 31km/h.
+
+0:16:49 Vehículo V15 no fue parado por Autoridad en la posición (0, 2) del mapa.
+
+0:16:50 Vehículo V15 se movió de posición (0,2) del mapa con autoridades a posición (0,3) del mapa con autoridades con una velocidad de 37km/h.
+
+0:16:56 Autoridad en la posición (0, 3) del mapa multó a Vehículo V15 por ir a 62km/h.
+
+0:16:56 Vehículo V15 fue parado por la Autoridad en la posición (0, 3) del mapa por exceso de velocidad y lo multaron.
+
+0:17:00 Vehículo V15 se movió de posición (0,3) del mapa con autoridades a posición (0,4) del mapa con autoridades con una velocidad de 62km/h.
+
+0:17:11 Autoridad en la posición (0, 4) del mapa desvió a Vehículo V15.
+
+0:17:11 Vehículo V15 fue parado por la Autoridad en la posición (0, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:17:15 Vehículo V15 se movió de posición (0,4) del mapa con autoridades a posición (0,3) del mapa con autoridades con una velocidad de 30km/h.
+
+0:17:36 Autoridad en la posición (0, 3) del mapa desvió a Vehículo V15.
+
+0:17:36 Vehículo V15 fue parado por la Autoridad en la posición (0, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:17:41 Vehículo V15 se movió de posición (0,3) del mapa con autoridades a posición (0,2) del mapa con autoridades con una velocidad de 54km/h.
+
+0:17:46 Vehículo V15 no fue parado por Autoridad en la posición (0, 2) del mapa.
+
+0:17:47 Vehículo V15 se movió de posición (0,2) del mapa con autoridades a posición (1,2) del mapa con autoridades con semáforo con una velocidad de 56km/h.
+
+0:17:55 Vehículo V15 no fue parado por Autoridad en la posición (1, 2) del mapa.
+
+0:17:56 Vehículo V15 paró 24 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:18:21 Vehículo V15 se movió de posición (1,2) del mapa con autoridades con semáforo a posición (1,3) del mapa con autoridades con semáforo con una velocidad de 41km/h.
+
+0:18:35 Autoridad en la posición (1, 3) del mapa desvió a Vehículo V15.
+
+0:18:35 Vehículo V15 fue parado por la Autoridad en la posición (1, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:18:40 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (1,2) del mapa.
+
+0:18:41 Vehículo V15 se movió de posición (1,3) del mapa con autoridades con semáforo a posición (2,3) del mapa con semáforo con una velocidad de 40km/h.
+
+0:18:53 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:18:54 Vehículo V15 se movió de posición (2,3) del mapa con semáforo a posición (2,4) del mapa con semáforo con una velocidad de 38km/h.
+
+0:19:09 Vehículo V15 no paró en el Semáforo con luz AMARILLO en la posición (2,2) del mapa.
+
+0:19:10 Vehículo V15 se movió de posición (2,4) del mapa con semáforo a posición (1,4) del mapa con autoridades con semáforo con una velocidad de 38km/h.
+
+0:19:25 Vehículo V15 no fue parado por Autoridad en la posición (1, 4) del mapa.
+
+0:19:26 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (1,2) del mapa.
+
+0:19:27 Vehículo V15 se movió de posición (1,4) del mapa con autoridades con semáforo a posición (2,4) del mapa con semáforo con una velocidad de 53km/h.
+
+0:19:38 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:19:39 Vehículo V15 se movió de posición (2,4) del mapa con semáforo a posición (3,4) del mapa con autoridades con semáforo con una velocidad de 44km/h.
+
+0:19:45 Vehículo V15 no fue parado por Autoridad en la posición (3, 4) del mapa.
+
+0:19:46 Vehículo V15 paró 2 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:19:49 Vehículo V15 se movió de posición (3,4) del mapa con autoridades con semáforo a posición (3,5) del mapa con autoridades con semáforo con una velocidad de 48km/h.
+
+0:20:01 Autoridad en la posición (3, 5) del mapa desvió a Vehículo V15.
+
+0:20:01 Vehículo V15 fue parado por la Autoridad en la posición (3, 5) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:20:06 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:20:07 Vehículo V15 se movió de posición (3,5) del mapa con autoridades con semáforo a posición (2,5) del mapa con autoridades con semáforo con una velocidad de 27km/h.
+
+0:20:18 Vehículo V15 no fue parado por Autoridad en la posición (2, 5) del mapa.
+
+0:20:19 Vehículo V15 paró 2 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:20:22 Vehículo V15 se movió de posición (2,5) del mapa con autoridades con semáforo a posición (2,6) del mapa con autoridades con semáforo con una velocidad de 23km/h.
+
+0:20:40 Vehículo V15 no fue parado por Autoridad en la posición (2, 6) del mapa.
+
+0:20:41 Vehículo V15 paró 2 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:20:44 Vehículo V15 se movió de posición (2,6) del mapa con autoridades con semáforo a posición (3,6) del mapa con autoridades con semáforo con una velocidad de 59km/h.
+
+0:20:55 Vehículo V15 no fue parado por Autoridad en la posición (3, 6) del mapa.
+
+0:20:56 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:20:57 Vehículo V15 se movió de posición (3,6) del mapa con autoridades con semáforo a posición (3,7) del mapa con semáforo con una velocidad de 56km/h.
+
+0:21:04 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:21:05 Vehículo V15 se movió de posición (3,7) del mapa con semáforo a posición (3,8) del mapa con autoridades con semáforo con una velocidad de 28km/h.
+
+0:21:21 Autoridad en la posición (3, 8) del mapa desvió a Vehículo V15.
+
+0:21:21 Vehículo V15 fue parado por la Autoridad en la posición (3, 8) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (6,3), (6,4), (5,4), (5,3), (5,4), (4,4), (5,4), (5,3), (4,3), (5,3), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (0,3), (0,2), (1,2), (1,3), (2,3), (2,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (3,8), (3,9), (4,9), (4,8), (4,9)].
+
+0:21:26 Vehículo V15 paró 1 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:21:28 Vehículo V15 se movió de posición (3,8) del mapa con autoridades con semáforo a posición (3,9) del mapa con semáforo con una velocidad de 44km/h.
+
+0:21:40 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:21:41 Vehículo V15 se movió de posición (3,9) del mapa con semáforo a posición (4,9) del mapa con semáforo con una velocidad de 65km/h.
+
+0:21:46 Vehículo V15 descargó 25.0 personas en posición (4,9) del mapa con semáforo, tiene 0 personas a bordo.
+ 
+0:21:47 Vehículo V15 terminó ruta con una distancia de 4.85 km.
+
+Compañía tuvo perdidas de 50 pesos en multas por el Vehículo V15.
+
+Compañía tuvo ganancias de 14700.0 pesos por los servicios prestados por el Vehículo V15.
+
+Compañía gastó 8.08 pesos en la gasolina del Vehículo V15 que recorrió 4.85 km.
+
+Vehículo V15 está en perfectas condiciones.
+
+Termino el día.
+
+Capital de Compañía: 1044724.45
+Día Viernes 5:
+
+Vehículo V15 comenzó su ruta.
+
+0:00:00 Vehículo V15 no fue parado por Autoridad en la posición (7, 6) del mapa.
+
+0:00:01 Vehículo V15 se movió de posición (7,6) del mapa con autoridades a posición (7,5) del mapa con una velocidad de 38km/h.
+
+0:00:19 Vehículo V15 se movió de posición (7,5) del mapa a posición (7,4) del mapa con autoridades con una velocidad de 47km/h.
+
+0:00:25 Autoridad en la posición (7, 4) del mapa multó a Vehículo V15 por ir a 66km/h.
+
+0:00:25 Vehículo V15 fue parado por la Autoridad en la posición (7, 4) del mapa por exceso de velocidad y lo multaron.
+
+0:00:36 Vehículo V15 se movió de posición (7,4) del mapa con autoridades a posición (6,4) del mapa con una velocidad de 66km/h.
+
+0:00:40 Vehículo V15 se movió de posición (6,4) del mapa a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 51km/h.
+
+0:00:47 Vehículo V15 no fue parado por Autoridad en la posición (5, 4) del mapa.
+
+0:00:48 Vehículo V15 paró 12 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:01 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (5,3) del mapa con autoridades con semáforo con una velocidad de 26km/h.
+
+0:01:11 Autoridad en la posición (5, 3) del mapa desvió a Vehículo V15.
+
+0:01:11 Vehículo V15 fue parado por la Autoridad en la posición (5, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:01:17 Vehículo V15 paró 3 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:21 Vehículo V15 se movió de posición (5,3) del mapa con autoridades con semáforo a posición (5,2) del mapa con semáforo con una velocidad de 27km/h.
+
+0:01:30 Vehículo V15 paró 10 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:41 Vehículo V15 se movió de posición (5,2) del mapa con semáforo a posición (4,2) del mapa con autoridades con una velocidad de 55km/h.
+
+0:01:49 Vehículo V15 no fue parado por Autoridad en la posición (4, 2) del mapa.
+
+0:01:50 Vehículo V15 se movió de posición (4,2) del mapa con autoridades a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 52km/h.
+
+0:01:54 Autoridad en la posición (4, 3) del mapa desvió a Vehículo V15.
+
+0:01:54 Vehículo V15 fue parado por la Autoridad en la posición (4, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (3,3), (3,2), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:01:59 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:02:00 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (3,3) del mapa con semáforo con una velocidad de 53km/h.
+
+0:02:05 Vehículo V15 paró 7 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:02:13 Vehículo V15 se movió de posición (3,3) del mapa con semáforo a posición (3,2) del mapa que es una parada con 20.0 personas con autoridades con semáforo con una velocidad de 49km/h.
+
+0:02:22 Autoridad en la posición (3, 2) del mapa desvió a Vehículo V15.
+
+0:02:22 Vehículo V15 fue parado por la Autoridad en la posición (3, 2) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (3,3), (3,2), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:02:28 Vehículo V15 cargó 20.0 personas en posición (3,2) del mapa con autoridades con semáforo, tiene 20.0 personas a bordo.
+ 
+0:08:57 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:08:58 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,3) del mapa con semáforo con una velocidad de 32km/h.
+
+0:09:11 Vehículo V15 paró 10 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:09:22 Vehículo V15 se movió de posición (3,3) del mapa con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 45km/h.
+
+0:09:27 Vehículo V15 no fue parado por Autoridad en la posición (4, 3) del mapa.
+
+0:09:28 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:09:29 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (4,2) del mapa con autoridades con una velocidad de 42km/h.
+
+0:09:34 Vehículo V15 no fue parado por Autoridad en la posición (4, 2) del mapa.
+
+0:09:35 Vehículo V15 se movió de posición (4,2) del mapa con autoridades a posición (3,2) del mapa con autoridades con semáforo con una velocidad de 36km/h.
+
+0:09:41 Autoridad en la posición (3, 2) del mapa desvió a Vehículo V15.
+
+0:09:41 Vehículo V15 fue parado por la Autoridad en la posición (3, 2) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:09:46 Vehículo V15 paró 8 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:09:55 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (2,2) del mapa con autoridades con semáforo con una velocidad de 43km/h.
+
+0:10:08 Vehículo V15 no fue parado por Autoridad en la posición (2, 2) del mapa.
+
+0:10:09 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:10:10 Vehículo V15 se movió de posición (2,2) del mapa con autoridades con semáforo a posición (2,1) del mapa con una velocidad de 53km/h.
+
+0:10:16 Vehículo V15 se movió de posición (2,1) del mapa a posición (3,1) del mapa con semáforo con una velocidad de 36km/h.
+
+0:10:27 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:10:28 Vehículo V15 se movió de posición (3,1) del mapa con semáforo a posición (2,1) del mapa con una velocidad de 35km/h.
+
+0:10:40 Vehículo V15 se movió de posición (2,1) del mapa a posición (1,1) del mapa con autoridades con una velocidad de 45km/h.
+
+0:10:55 Vehículo V15 no fue parado por Autoridad en la posición (1, 1) del mapa.
+
+0:10:56 Vehículo V15 se movió de posición (1,1) del mapa con autoridades a posición (0,1) del mapa que es una parada con 5.0 personas con autoridades con una velocidad de 57km/h.
+
+0:11:02 Vehículo V15 no fue parado por Autoridad en la posición (0, 1) del mapa.
+
+0:11:03 Vehículo V15 cargó 5.0 personas en posición (0,1) del mapa con autoridades, tiene 25.0 personas a bordo.
+ 
+0:14:52 Vehículo V15 se movió de posición (0,1) del mapa con autoridades a posición (0,2) del mapa con una velocidad de 41km/h.
+
+0:14:58 Vehículo V15 se movió de posición (0,2) del mapa a posición (0,3) del mapa con una velocidad de 37km/h.
+
+0:15:04 Vehículo V15 se movió de posición (0,3) del mapa a posición (0,4) del mapa con una velocidad de 30km/h.
+
+0:15:25 Vehículo V15 se movió de posición (0,4) del mapa a posición (1,4) del mapa con semáforo con una velocidad de 16km/h.
+
+0:15:44 Vehículo V15 paró 6 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:15:51 Vehículo V15 se movió de posición (1,4) del mapa con semáforo a posición (2,4) del mapa con autoridades con semáforo con una velocidad de 46km/h.
+
+0:16:03 Vehículo V15 no fue parado por Autoridad en la posición (2, 4) del mapa.
+
+0:16:04 Vehículo V15 paró 4 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:16:09 Vehículo V15 se movió de posición (2,4) del mapa con autoridades con semáforo a posición (3,4) del mapa con semáforo con una velocidad de 57km/h.
+
+0:16:14 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:16:15 Vehículo V15 se movió de posición (3,4) del mapa con semáforo a posición (3,5) del mapa con autoridades con semáforo con una velocidad de 54km/h.
+
+0:16:26 Autoridad en la posición (3, 5) del mapa desvió a Vehículo V15.
+
+0:16:26 Vehículo V15 fue parado por la Autoridad en la posición (3, 5) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (3,3), (3,2), (3,3), (4,3), (4,2), (3,2), (2,2), (2,1), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:16:31 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:16:32 Vehículo V15 se movió de posición (3,5) del mapa con autoridades con semáforo a posición (2,5) del mapa con semáforo con una velocidad de 59km/h.
+
+0:16:37 Vehículo V15 paró 4 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:16:42 Vehículo V15 se movió de posición (2,5) del mapa con semáforo a posición (2,6) del mapa con semáforo con una velocidad de 49km/h.
+
+0:16:51 Vehículo V15 paró 1 segundos en el Semáforo con luz ROJO en la posición (2,2) del mapa.
+
+0:16:53 Vehículo V15 se movió de posición (2,6) del mapa con semáforo a posición (3,6) del mapa con autoridades con semáforo con una velocidad de 33km/h.
+
+0:17:12 Vehículo V15 no fue parado por Autoridad en la posición (3, 6) del mapa.
+
+0:17:13 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:17:14 Vehículo V15 se movió de posición (3,6) del mapa con autoridades con semáforo a posición (3,7) del mapa con autoridades con semáforo con una velocidad de 41km/h.
+
+0:17:23 Vehículo V15 no fue parado por Autoridad en la posición (3, 7) del mapa.
+
+0:17:24 Vehículo V15 no paró en el Semáforo con luz AMARILLO en la posición (3,1) del mapa.
+
+0:17:25 Vehículo V15 se movió de posición (3,7) del mapa con autoridades con semáforo a posición (3,8) del mapa con autoridades con semáforo con una velocidad de 60km/h.
+
+0:17:33 Vehículo V15 no fue parado por Autoridad en la posición (3, 8) del mapa.
+
+0:17:34 Vehículo V15 paró 2 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:17:37 Vehículo V15 se movió de posición (3,8) del mapa con autoridades con semáforo a posición (4,8) del mapa con semáforo con una velocidad de 32km/h.
+
+0:17:53 Vehículo V15 paró 19 segundos en el Semáforo con luz ROJO en la posición (4,8) del mapa.
+
+0:18:13 Vehículo V15 se movió de posición (4,8) del mapa con semáforo a posición (4,9) del mapa con semáforo con una velocidad de 46km/h.
+
+0:18:20 Vehículo V15 descargó 25.0 personas en posición (4,9) del mapa con semáforo, tiene 0 personas a bordo.
+ 
+0:18:21 Vehículo V15 terminó ruta con una distancia de 3.41 km.
+
+Compañía tuvo perdidas de 50 pesos en multas por el Vehículo V15.
+
+Compañía tuvo ganancias de 10500.0 pesos por los servicios prestados por el Vehículo V15.
+
+Compañía gastó 5.68 pesos en la gasolina del Vehículo V15 que recorrió 3.41 km.
+
+Vehículo V15 está en perfectas condiciones.
+
+Termino el día.
+
+Capital de Compañía: 1055168.77
+Día Sábado 6:
+
+Vehículo V15 comenzó su ruta.
+
+0:00:00 Autoridad en la posición (7, 6) del mapa multó a Vehículo V15 por ir a 68km/h.
+
+0:00:00 Vehículo V15 fue parado por la Autoridad en la posición (7, 6) del mapa por exceso de velocidad y lo multaron.
+
+0:00:09 Vehículo V15 se movió de posición (7,6) del mapa con autoridades a posición (7,5) del mapa con autoridades con una velocidad de 68km/h.
+
+0:00:19 Vehículo V15 no fue parado por Autoridad en la posición (7, 5) del mapa.
+
+0:00:20 Vehículo V15 se movió de posición (7,5) del mapa con autoridades a posición (7,4) del mapa con autoridades con una velocidad de 34km/h.
+
+0:00:27 Autoridad en la posición (7, 4) del mapa desvió a Vehículo V15.
+
+0:00:27 Vehículo V15 fue parado por la Autoridad en la posición (7, 4) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:00:32 Vehículo V15 se movió de posición (7,4) del mapa con autoridades a posición (7,5) del mapa con autoridades con una velocidad de 50km/h.
+
+0:00:37 Vehículo V15 no fue parado por Autoridad en la posición (7, 5) del mapa.
+
+0:00:38 Vehículo V15 se movió de posición (7,5) del mapa con autoridades a posición (6,5) del mapa con autoridades con una velocidad de 41km/h.
+
+0:00:44 Vehículo V15 no fue parado por Autoridad en la posición (6, 5) del mapa.
+
+0:00:45 Vehículo V15 se movió de posición (6,5) del mapa con autoridades a posición (6,4) del mapa con una velocidad de 40km/h.
+
+0:00:57 Vehículo V15 se movió de posición (6,4) del mapa a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 32km/h.
+
+0:01:08 Vehículo V15 no fue parado por Autoridad en la posición (5, 4) del mapa.
+
+0:01:09 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:21 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (5,3) del mapa con autoridades con semáforo con una velocidad de 35km/h.
+
+0:01:29 Autoridad en la posición (5, 3) del mapa desvió a Vehículo V15.
+
+0:01:29 Vehículo V15 fue parado por la Autoridad en la posición (5, 3) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:01:34 Vehículo V15 paró 6 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:41 Vehículo V15 se movió de posición (5,3) del mapa con autoridades con semáforo a posición (5,2) del mapa con semáforo con una velocidad de 59km/h.
+
+0:01:45 Vehículo V15 paró 15 segundos en el Semáforo con luz AMARILLO en la posición (5,2) del mapa.
+
+0:02:01 Vehículo V15 se movió de posición (5,2) del mapa con semáforo a posición (4,2) del mapa con autoridades con una velocidad de 54km/h.
+
+0:02:09 Autoridad en la posición (4, 2) del mapa desvió a Vehículo V15.
+
+0:02:09 Vehículo V15 fue parado por la Autoridad en la posición (4, 2) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:02:15 Vehículo V15 se movió de posición (4,2) del mapa con autoridades a posición (3,2) del mapa que es una parada con 20.0 personas con autoridades con semáforo con una velocidad de 45km/h.
+
+0:02:20 Autoridad en la posición (3, 2) del mapa multó a Vehículo V15 por ir a 63km/h.
+
+0:02:20 Vehículo V15 fue parado por la Autoridad en la posición (3, 2) del mapa por exceso de velocidad y lo multaron.
+
+0:02:29 Vehículo V15 cargó 20.0 personas en posición (3,2) del mapa con autoridades con semáforo, tiene 20.0 personas a bordo.
+ 
+0:08:58 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:08:59 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,3) del mapa con autoridades con semáforo con una velocidad de 63km/h.
+
+0:09:06 Vehículo V15 no fue parado por Autoridad en la posición (3, 3) del mapa.
+
+0:09:07 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:09:08 Vehículo V15 se movió de posición (3,3) del mapa con autoridades con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 29km/h.
+
+0:09:16 Vehículo V15 no fue parado por Autoridad en la posición (4, 3) del mapa.
+
+0:09:17 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:09:18 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (4,2) del mapa con autoridades con una velocidad de 45km/h.
+
+0:09:23 Vehículo V15 no fue parado por Autoridad en la posición (4, 2) del mapa.
+
+0:09:24 Vehículo V15 se movió de posición (4,2) del mapa con autoridades a posición (3,2) del mapa con autoridades con semáforo con una velocidad de 23km/h.
+
+0:09:33 Vehículo V15 no fue parado por Autoridad en la posición (3, 2) del mapa.
+
+0:09:34 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:09:35 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,1) del mapa con autoridades con semáforo con una velocidad de 31km/h.
+
+0:09:44 Vehículo V15 no fue parado por Autoridad en la posición (3, 1) del mapa.
+
+0:09:45 Vehículo V15 paró 9 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:09:55 Vehículo V15 se movió de posición (3,1) del mapa con autoridades con semáforo a posición (2,1) del mapa con autoridades con una velocidad de 51km/h.
+
+0:10:03 Vehículo V15 no fue parado por Autoridad en la posición (2, 1) del mapa.
+
+0:10:04 Vehículo V15 se movió de posición (2,1) del mapa con autoridades a posición (1,1) del mapa con autoridades con una velocidad de 41km/h.
+
+0:10:20 Vehículo V15 no fue parado por Autoridad en la posición (1, 1) del mapa.
+
+0:10:21 Vehículo V15 se movió de posición (1,1) del mapa con autoridades a posición (0,1) del mapa que es una parada con 5.0 personas con una velocidad de 47km/h.
+
+0:10:28 Vehículo V15 cargó 5.0 personas en posición (0,1) del mapa, tiene 25.0 personas a bordo.
+ 
+0:14:17 Vehículo V15 se movió de posición (0,1) del mapa a posición (0,2) del mapa con autoridades con una velocidad de 33km/h.
+
+0:14:24 Vehículo V15 no fue parado por Autoridad en la posición (0, 2) del mapa.
+
+0:14:25 Vehículo V15 se movió de posición (0,2) del mapa con autoridades a posición (0,3) del mapa con una velocidad de 43km/h.
+
+0:14:31 Vehículo V15 se movió de posición (0,3) del mapa a posición (0,4) del mapa con autoridades con una velocidad de 51km/h.
+
+0:14:44 Vehículo V15 no fue parado por Autoridad en la posición (0, 4) del mapa.
+
+0:14:45 Vehículo V15 se movió de posición (0,4) del mapa con autoridades a posición (1,4) del mapa con autoridades con semáforo con una velocidad de 38km/h.
+
+0:14:53 Vehículo V15 no fue parado por Autoridad en la posición (1, 4) del mapa.
+
+0:14:54 Vehículo V15 paró 6 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:15:01 Vehículo V15 se movió de posición (1,4) del mapa con autoridades con semáforo a posición (2,4) del mapa con autoridades con semáforo con una velocidad de 42km/h.
+
+0:15:14 Vehículo V15 no fue parado por Autoridad en la posición (2, 4) del mapa.
+
+0:15:15 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:15:16 Vehículo V15 se movió de posición (2,4) del mapa con autoridades con semáforo a posición (3,4) del mapa con autoridades con semáforo con una velocidad de 40km/h.
+
+0:15:23 Vehículo V15 no fue parado por Autoridad en la posición (3, 4) del mapa.
+
+0:15:24 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:15:25 Vehículo V15 se movió de posición (3,4) del mapa con autoridades con semáforo a posición (3,5) del mapa con autoridades con semáforo con una velocidad de 51km/h.
+
+0:15:37 Autoridad en la posición (3, 5) del mapa desvió a Vehículo V15.
+
+0:15:37 Vehículo V15 fue parado por la Autoridad en la posición (3, 5) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (3,8), (4,8), (4,9)].
+
+0:15:41 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:15:42 Vehículo V15 se movió de posición (3,5) del mapa con autoridades con semáforo a posición (2,5) del mapa con semáforo con una velocidad de 46km/h.
+
+0:15:49 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:15:50 Vehículo V15 se movió de posición (2,5) del mapa con semáforo a posición (2,6) del mapa con semáforo con una velocidad de 48km/h.
+
+0:15:59 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:16:00 Vehículo V15 se movió de posición (2,6) del mapa con semáforo a posición (3,6) del mapa con semáforo con una velocidad de 48km/h.
+
+0:16:13 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:16:14 Vehículo V15 se movió de posición (3,6) del mapa con semáforo a posición (3,7) del mapa con autoridades con semáforo con una velocidad de 55km/h.
+
+0:16:21 Autoridad en la posición (3, 7) del mapa desvió a Vehículo V15.
+
+0:16:21 Vehículo V15 fue parado por la Autoridad en la posición (3, 7) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (4,7), (4,8), (3,8), (4,8), (4,9)].
+
+0:16:25 Vehículo V15 paró 5 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:16:31 Vehículo V15 se movió de posición (3,7) del mapa con autoridades con semáforo a posición (4,7) del mapa con semáforo con una velocidad de 42km/h.
+
+0:16:43 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (4,3) del mapa.
+
+0:16:44 Vehículo V15 se movió de posición (4,7) del mapa con semáforo a posición (4,8) del mapa con semáforo con una velocidad de 41km/h.
+
+0:16:57 Vehículo V15 paró 23 segundos en el Semáforo con luz AMARILLO en la posición (4,8) del mapa.
+
+0:17:21 Vehículo V15 se movió de posición (4,8) del mapa con semáforo a posición (3,8) del mapa con autoridades con semáforo con una velocidad de 50km/h.
+
+0:17:32 Autoridad en la posición (3, 8) del mapa desvió a Vehículo V15.
+
+0:17:32 Vehículo V15 fue parado por la Autoridad en la posición (3, 8) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (4,7), (4,8), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (7,5), (6,5), (6,4), (5,4), (5,3), (5,2), (4,2), (3,2), (3,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (2,5), (2,6), (3,6), (3,7), (4,7), (4,8), (3,8), (3,9), (4,9), (4,8), (4,9)].
+
+0:17:38 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:17:39 Vehículo V15 se movió de posición (3,8) del mapa con autoridades con semáforo a posición (3,9) del mapa con semáforo con una velocidad de 37km/h.
+
+0:17:53 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:17:54 Vehículo V15 se movió de posición (3,9) del mapa con semáforo a posición (4,9) del mapa con semáforo con una velocidad de 48km/h.
+
+0:18:01 Vehículo V15 descargó 25.0 personas en posición (4,9) del mapa con semáforo, tiene 0 personas a bordo.
+ 
+0:18:02 Vehículo V15 terminó ruta con una distancia de 3.49 km.
+
+Compañía tuvo perdidas de 100 pesos en multas por el Vehículo V15.
+
+Compañía tuvo ganancias de 11100.0 pesos por los servicios prestados por el Vehículo V15.
+
+Compañía gastó 5.82 pesos en la gasolina del Vehículo V15 que recorrió 3.49 km.
+
+Vehículo V15 está en perfectas condiciones.
+
+Termino el día.
+
+Capital de Compañía: 1066162.95
+Día Domingo 7:
+
+Vehículo V15 comenzó su ruta.
+
+0:00:00 Vehículo V15 no fue parado por Autoridad en la posición (7, 6) del mapa.
+
+0:00:01 Vehículo V15 se movió de posición (7,6) del mapa con autoridades a posición (7,5) del mapa con autoridades con una velocidad de 36km/h.
+
+0:00:20 Vehículo V15 no fue parado por Autoridad en la posición (7, 5) del mapa.
+
+0:00:21 Vehículo V15 se movió de posición (7,5) del mapa con autoridades a posición (7,4) del mapa con autoridades con una velocidad de 49km/h.
+
+0:00:26 Autoridad en la posición (7, 4) del mapa multó a Vehículo V15 por ir a 68km/h.
+
+0:00:26 Vehículo V15 fue parado por la Autoridad en la posición (7, 4) del mapa por exceso de velocidad y lo multaron.
+
+0:00:35 Vehículo V15 se movió de posición (7,4) del mapa con autoridades a posición (6,4) del mapa con autoridades con una velocidad de 68km/h.
+
+0:00:39 Vehículo V15 no fue parado por Autoridad en la posición (6, 4) del mapa.
+
+0:00:40 Vehículo V15 se movió de posición (6,4) del mapa con autoridades a posición (5,4) del mapa con autoridades con semáforo con una velocidad de 33km/h.
+
+0:00:51 Vehículo V15 no fue parado por Autoridad en la posición (5, 4) del mapa.
+
+0:00:52 Vehículo V15 paró 8 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:01 Vehículo V15 se movió de posición (5,4) del mapa con autoridades con semáforo a posición (5,3) del mapa con semáforo con una velocidad de 43km/h.
+
+0:01:07 Vehículo V15 paró 13 segundos en el Semáforo con luz ROJO en la posición (5,2) del mapa.
+
+0:01:21 Vehículo V15 se movió de posición (5,3) del mapa con semáforo a posición (4,3) del mapa con autoridades con semáforo con una velocidad de 45km/h.
+
+0:01:30 Vehículo V15 no fue parado por Autoridad en la posición (4, 3) del mapa.
+
+0:01:31 Vehículo V15 no paró en el Semáforo con luz AMARILLO en la posición (4,3) del mapa.
+
+0:01:32 Vehículo V15 se movió de posición (4,3) del mapa con autoridades con semáforo a posición (4,2) del mapa con una velocidad de 57km/h.
+
+0:01:36 Vehículo V15 se movió de posición (4,2) del mapa a posición (3,2) del mapa que es una parada con 20.0 personas con autoridades con semáforo con una velocidad de 38km/h.
+
+0:01:42 Vehículo V15 no fue parado por Autoridad en la posición (3, 2) del mapa.
+
+0:01:43 Vehículo V15 cargó 20.0 personas en posición (3,2) del mapa con autoridades con semáforo, tiene 20.0 personas a bordo.
+ 
+0:08:12 Vehículo V15 paró 3 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:08:16 Vehículo V15 se movió de posición (3,2) del mapa con autoridades con semáforo a posición (3,1) del mapa con semáforo con una velocidad de 46km/h.
+
+0:08:22 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:08:23 Vehículo V15 se movió de posición (3,1) del mapa con semáforo a posición (2,1) del mapa con autoridades con una velocidad de 54km/h.
+
+0:08:31 Vehículo V15 no fue parado por Autoridad en la posición (2, 1) del mapa.
+
+0:08:32 Vehículo V15 se movió de posición (2,1) del mapa con autoridades a posición (1,1) del mapa con autoridades con una velocidad de 34km/h.
+
+0:08:51 Vehículo V15 no fue parado por Autoridad en la posición (1, 1) del mapa.
+
+0:08:52 Vehículo V15 se movió de posición (1,1) del mapa con autoridades a posición (0,1) del mapa que es una parada con 5.0 personas con autoridades con una velocidad de 14km/h.
+
+0:09:15 Vehículo V15 no fue parado por Autoridad en la posición (0, 1) del mapa.
+
+0:09:16 Vehículo V15 cargó 5.0 personas en posición (0,1) del mapa con autoridades, tiene 25.0 personas a bordo.
+ 
+0:13:05 Vehículo V15 se movió de posición (0,1) del mapa con autoridades a posición (0,2) del mapa con autoridades con una velocidad de 30km/h.
+
+0:13:13 Vehículo V15 no fue parado por Autoridad en la posición (0, 2) del mapa.
+
+0:13:14 Vehículo V15 se movió de posición (0,2) del mapa con autoridades a posición (0,3) del mapa con una velocidad de 31km/h.
+
+0:13:21 Vehículo V15 se movió de posición (0,3) del mapa a posición (0,4) del mapa con autoridades con una velocidad de 51km/h.
+
+0:13:34 Vehículo V15 no fue parado por Autoridad en la posición (0, 4) del mapa.
+
+0:13:35 Vehículo V15 se movió de posición (0,4) del mapa con autoridades a posición (1,4) del mapa con autoridades con semáforo con una velocidad de 46km/h.
+
+0:13:42 Vehículo V15 no fue parado por Autoridad en la posición (1, 4) del mapa.
+
+0:13:43 Vehículo V15 paró 27 segundos en el Semáforo con luz ROJO en la posición (1,2) del mapa.
+
+0:14:11 Vehículo V15 se movió de posición (1,4) del mapa con autoridades con semáforo a posición (2,4) del mapa con semáforo con una velocidad de 28km/h.
+
+0:14:31 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (2,2) del mapa.
+
+0:14:32 Vehículo V15 se movió de posición (2,4) del mapa con semáforo a posición (3,4) del mapa con autoridades con semáforo con una velocidad de 41km/h.
+
+0:14:39 Vehículo V15 no fue parado por Autoridad en la posición (3, 4) del mapa.
+
+0:14:40 Vehículo V15 paró 11 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:14:52 Vehículo V15 se movió de posición (3,4) del mapa con autoridades con semáforo a posición (3,5) del mapa con autoridades con semáforo con una velocidad de 58km/h.
+
+0:15:02 Vehículo V15 no fue parado por Autoridad en la posición (3, 5) del mapa.
+
+0:15:03 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:15:04 Vehículo V15 se movió de posición (3,5) del mapa con autoridades con semáforo a posición (3,6) del mapa con semáforo con una velocidad de 50km/h.
+
+0:15:12 Vehículo V15 no paró en el Semáforo con luz AMARILLO en la posición (3,1) del mapa.
+
+0:15:13 Vehículo V15 se movió de posición (3,6) del mapa con semáforo a posición (3,7) del mapa con semáforo con una velocidad de 56km/h.
+
+0:15:20 Vehículo V15 paró 4 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:15:25 Vehículo V15 se movió de posición (3,7) del mapa con semáforo a posición (3,8) del mapa con autoridades con semáforo con una velocidad de 33km/h.
+
+0:15:38 Autoridad en la posición (3, 8) del mapa desvió a Vehículo V15.
+
+0:15:38 Vehículo V15 fue parado por la Autoridad en la posición (3, 8) del mapa porque estaba cerrado el camino, cambió su ruta de:
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (4,8), (4,9)]
+ -> 
+ [(7,6), (7,5), (7,4), (6,4), (5,4), (5,3), (4,3), (4,2), (3,2), (3,1), (2,1), (1,1), (0,1), (0,2), (0,3), (0,4), (1,4), (2,4), (3,4), (3,5), (3,6), (3,7), (3,8), (3,9), (4,9), (4,8), (4,9)].
+
+0:15:43 Vehículo V15 pasó el Semáforo con luz VERDE en la posición (3,1) del mapa.
+
+0:15:44 Vehículo V15 se movió de posición (3,8) del mapa con autoridades con semáforo a posición (3,9) del mapa con semáforo con una velocidad de 53km/h.
+
+0:15:54 Vehículo V15 paró 3 segundos en el Semáforo con luz ROJO en la posición (3,1) del mapa.
+
+0:15:58 Vehículo V15 se movió de posición (3,9) del mapa con semáforo a posición (4,9) del mapa con semáforo con una velocidad de 44km/h.
+
+0:16:06 Vehículo V15 descargó 25.0 personas en posición (4,9) del mapa con semáforo, tiene 0 personas a bordo.
+ 
+0:16:07 Vehículo V15 terminó ruta con una distancia de 2.43 km.
+
+Compañía tuvo perdidas de 50 pesos en multas por el Vehículo V15.
+
+Compañía tuvo ganancias de 8100.0 pesos por los servicios prestados por el Vehículo V15.
+
+Compañía gastó 4.05 pesos en la gasolina del Vehículo V15 que recorrió 2.43 km.
+
+Vehículo V15 está en perfectas condiciones.
+
+Termino el día.
+
+Capital de Compañía: 1074208.9
+FIN

@@ -57,11 +57,10 @@ txt_code = Text(window, borderwidth=3)
 txt_result = Text(window, borderwidth=3)
 frm_buttons = Frame(window, relief=RAISED, bd=2, bg='white')
 btn_run = Button(frm_buttons, text="Run", command=run, bg='green', font=myFont)
-btn_stop = Button(frm_buttons, text="Stop", command=stop, bg='red', font=myFont)
 
 text_input=Entry(frm_buttons,width=10, textvariable=txt_code)
 btn_run.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
-btn_stop.grid(row=2, column=0, sticky="ew", padx=5)
+
 
 frm_buttons.grid(row=1, column=0, sticky="ns")
 txt_code.grid(row=1, column=1, sticky="nsew")

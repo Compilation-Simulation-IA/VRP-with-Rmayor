@@ -40,7 +40,7 @@ def start_visitor(file):
                 string+=executor.string+'\n'
         
         fi=''
-        with open('30_simulations.txt', 'r') as f:
+        with open('simulations.txt', 'r') as f:
               fi = f.read()
         string+=fi
         return string
