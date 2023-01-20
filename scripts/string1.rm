@@ -32,5 +32,21 @@ company {
 }
 
 demands {
-   c1+c2
+    aux<-0
+        if a = 0
+        then aux<-1
+        else
+            if a =1
+            then aux <- 1
+            else
+            aux<-testing2(a-1)+testing2(a-2)
+           fi
+        fi
+    out aux
+
+    }
+        
+    
+    a <- testing2(3)
+    out_int(a)
 }

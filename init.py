@@ -14,6 +14,8 @@ from my_parser import RmayorParser
 
 def start_visitor(file):
         string=""
+        with open('30_simulations.txt', 'w') as f:
+              f.write("")
         parser = RmayorParser()
         ast = parser.parse(file)
         string=parser.string
@@ -25,7 +27,9 @@ def start_visitor(file):
         checker = Semantic_Check(Context(),builder)
         checker.visit(ast)
         for i in checker.errors:
-                string+=i.text
+                if type(i)==TypeError:
+                        string+=i.args[0]
+                else: string+=i.text
                 if string!='':
                    string+='\n'
         if string !='':
@@ -40,7 +44,10 @@ def start_visitor(file):
                 string+=executor.string+'\n'
         
         fi=''
-        with open('simulations.txt', 'r') as f:
+        with open('30_simulations.txt', 'r') as f:
               fi = f.read()
         string+=fi
+        with open('30_simulations.txt', 'w') as f:
+              f.write("")
+
         return string

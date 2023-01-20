@@ -98,7 +98,7 @@ class VRP_Simulation:
         info = self.company.logger.get_logs()
         #info_strings = [str(elem) for elem in info]
         info_result = "\n".join(info)
-        with open('simulations.txt', 'w') as f:
+        with open('30_simulations.txt', 'w') as f:
             f.write(info_result)
 
 

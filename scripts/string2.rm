@@ -19,7 +19,7 @@ vehicle_type {
 
 clients {
     
-    c1 (name: "Coca Cola", stops_list: (s1,s2),depot:s3 ) (*puede cambiarse por []*)
+    c1 (name: "CocaCola", stops_list: (s1,s2),depot:s3 ) (*puede cambiarse por []*)
     c2 (name: "Coca", stops_list: (s1),depot:s3 ) 
 
 }
@@ -27,15 +27,29 @@ clients {
 company {
     budget: 1000000
     depot (address:"156A, #107, Playa, La Habana, Cuba")
-    v1 small: 5
-    v2 medium: 3
+    small v1: 5
+    medium v2: 3
 
 }
 demands{
 
-x <- false
-if x
-then 1
-else 2
-fi
+ func testing2(a:Int): Int
+    {
+        aux<-0
+        if a = 0
+        then aux<-1
+        else
+            if a =1
+            then aux <- 1
+            else
+            aux<-testing2(a-1)+testing2(a-2)
+           fi
+        fi
+    out aux
+
+    }
+        
+    
+    a <- testing2(3)
+    out_int(a)
 }
